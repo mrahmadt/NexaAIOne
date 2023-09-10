@@ -29,6 +29,7 @@ class AIEndPoint extends Model
         'requestSchema', 
         'supportHistory', 
         'supportCaching', 
+        'isActive', 
     ];
 
     /**
@@ -38,6 +39,7 @@ class AIEndPoint extends Model
      */
     protected $casts = [
         'requestSchema' => 'array',
+        'isActive' => 'boolean',
         'supportHistory' => 'boolean',
         'supportCaching' => 'boolean',
     ];

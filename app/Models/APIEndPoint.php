@@ -95,9 +95,9 @@ class APIEndPoint extends Model
     /**
      * Get the AIModels associated with this APIEndPoint.
      */
-    public function LLMs()
+    public function aiendpoint()
     {
-        return $this->belongsToMany('App\Models\LLM', 'api_end_point_llm');
+        return $this->belongsTo('App\Models\AIEndPoint');
     }
 
     /**

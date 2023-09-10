@@ -20,6 +20,8 @@ return new class extends Migration
             $table->json('requestSchema')->nullable();
             $table->boolean('supportHistory')->default(false);
             $table->boolean('supportCaching')->default(false);
+            $table->boolean('isActive')->default(true);
+
             $table->timestamps();
         });
     }

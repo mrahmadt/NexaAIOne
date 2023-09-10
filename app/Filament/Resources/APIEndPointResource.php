@@ -32,17 +32,16 @@ use Filament\Forms\Components\Grid;
 use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-
-
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\CheckboxList;
 class APIEndPointResource extends Resource
 {
     protected static ?string $model = APIEndPoint::class;
-
+    protected static ?int $navigationSort = 1;
     protected static ?string $modelLabel = 'API';
     protected static ?string $pluralModelLabel = 'APIs';
     protected static ?string $slug = 'apis';
     protected static ?string $navigationLabel = 'APIs';
-
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-oval-left-ellipsis';
 
     
@@ -55,90 +54,98 @@ class APIEndPointResource extends Resource
                 Select::make('ai_end_points_id')
                 ->relationship(name: 'aiendpoint', titleAttribute: 'name')
                 ->loadingMessage('Loading...')->live()
-                ->afterStateUpdated(function (Set $set, Get $get) {
-                    $AIEndPoint = AIEndPoint::where(['id'=>$get('ai_end_points_id'), 'isActive'=>true ])->first();
-                    $set('description', $AIEndPoint->requestSchema[0]['desc']);
-                    $set('AIEndPoint', $AIEndPoint->toArray());
+                ->afterStateUpdated(function (Set $set, Get $get, string $operation) {
+                    if($operation=='create'){
+                        $AIEndPoint = AIEndPoint::where(['id'=>$get('ai_end_points_id'), 'isActive'=>true ])->first();
 
-                    $set('supportHistory', $AIEndPoint->supportHistory);
-                    $set('supportCaching', $AIEndPoint->supportCaching);
+                        $className = '\App\AIEndPoints\\' . $AIEndPoint->className;
+                        $REQUEST_SCHEMA = $className::REQUEST_SCHEMA;
+                        $LLMS = $className::LLMS;
 
-                    $set('members', $AIEndPoint->requestSchema);
-                }),
+                        $set('enableHistory', $AIEndPoint->supportHistory);
+                        $set('enableCaching', $AIEndPoint->supportCaching);
+                        
+                        $set('requestSchema', $REQUEST_SCHEMA);
+
+                        $set('AIEndPoint', $AIEndPoint->toArray());
+
+                        $set('AI_LLMs', $LLMS);
+                    }
+                })->columnSpan('full'),
 
                 TextInput::make('name')->columnSpan('full')->required(),
                 Textarea::make('description')->columnSpan('full')->nullable(),
                 TextInput::make('apiName')->columnSpan('full')->prefix('https://.../api/')->required(),
 
-                Toggle::make('supportHistory')->disabled(function (Get $get, string $operation) { return (($operation=='create') && (isset($get('AIEndPoint')['supportHistory']))) ? (!$get('AIEndPoint')['supportHistory']) : false; }),
-                Toggle::make('supportCaching')->disabled(function (Get $get, string $operation) { return (($operation=='create') && (isset($get('AIEndPoint')['supportCaching']))) ? (!$get('AIEndPoint')['supportCaching']) : false; }),
+                CheckboxList::make('llms')
+                ->options(function (Get $get, string $operation) { 
+                    $result = [];
+                        if(!is_null($get('AI_LLMs'))) {
+                            foreach ($get('AI_LLMs') as $item) {
+                                $result[$item['modelName']] = $item['name'];
+                            }
+                        }
+                    return $result; 
+                })
+                ->descriptions(function (Get $get, string $operation) { 
+                    $result = [];
+                    if(!is_null($get('AI_LLMs'))) {
+                        foreach ($get('AI_LLMs') as $item) {
+                            $result[$item['modelName']] = $item['description'];
+                        }
+                    }
+                    return $result; 
+                })
+                ->columns(2)
+                ->columnSpan('full')
+                ->required(),
 
-                TextInput::make('operation')->columnSpan('full')->default(function (string $operation) { return $operation; }),
 
-                Repeater::make('members')
+
+                Toggle::make('enableUsage')->default(true),
+                Toggle::make('isActive')->default(true),
+
+
+                Toggle::make('enableCaching')->disabled(function (Get $get, string $operation) { return (($operation=='create') && (isset($get('AIEndPoint')['supportCaching']))) ? (!$get('AIEndPoint')['supportCaching']) : false; }),
+                TextInput::make('cachingPeriod')
+                ->numeric()
+                ->default(1440)->visible(fn(Get $get): bool => $get('enableCaching')),
+
+
+
+                Toggle::make('enableHistory')->disabled(function (Get $get, string $operation) { return (($operation=='create') && (isset($get('AIEndPoint')['supportHistory']))) ? (!$get('AIEndPoint')['supportHistory']) : false; }),
+
+                Radio::make('historyMethod')
+                ->options( APIEndPoint::HISTORYMETHOD )
+                ->inline()
+                ->default(0)->visible(fn(Get $get): bool => $get('enableHistory')),
+
+
+
+                Repeater::make('requestSchema')
                 ->schema([
                     TextInput::make('name')->required(),
-                    Select::make('role')
+                    Select::make('type')
                         ->options([
                             'member' => 'Member',
                             'administrator' => 'Administrator',
                             'owner' => 'Owner',
                         ])
                         ->required(),
-                ])->columns(2)->columnSpan('full'),
-                // Select::make('ai_end_points_id')
-                // ->label('AI End Points')
-                // ->options(AIEndPoint::all()->pluck('name', 'id')),
+                    Textarea::make('desc')->label('Description'),
+                    TextInput::make('default')->label('Value'),
+                    Toggle::make('is_ApiOption')->label('Is Changeable via API?')->default(true),
 
-
-                // Select::make('type')
-                // ->options([
-                //     'employee' => 'Employee',
-                //     'freelancer' => 'Freelancer',
-                // ])
-                // ->live()
-                // ->afterStateUpdated(fn (Select $component) => $component
-                //     ->getContainer()
-                //     ->getComponent('dynamicTypeFields')
-                //     ->getChildComponentContainer()
-                //     ->fill()),
-                
-                //     Grid::make(2)
-                //     ->schema(fn (Get $get): array => match ($get('type')) {
-                //         'employee' => [
-                //             TextInput::make('employee_number')
-                //                 ->required(),
-                //             FileUpload::make('badge')
-                //                 ->image()
-                //                 ->required(),
-                //         ],
-                //         'freelancer' => [
-                //             TextInput::make('hourly_rate')
-                //                 ->numeric()
-                //                 ->required()
-                //                 ->prefix('€'),
-                //             FileUpload::make('contract')
-                //                 ->required(),
-                //         ],
-                //         default => [],
-                //     })
-                //     ->key('dynamicTypeFields'),
-
-                // TextInput::make('aiendpoint.apiName')->columnSpan('full')->required()->key('dynamicTypeFields'),
-
-                // Textarea::make('description')->columnSpan('full')->nullable(),
-                // Toggle::make('enableUsage')->required(),
-                // Toggle::make('enableHistory')->required(),
-                // Textarea::make('historyMethod_id')->columnSpan('full')->nullable(),
-                // Textarea::make('historyOptions')->columnSpan('full')->nullable(),
-
-                // CodeField::make('requestSchema')
-                // ->afterStateHydrated(function (?array $state, CodeField $component): void {
-                //     $component->state( ($state ? json_encode($state, JSON_PRETTY_PRINT) : "{\n\n}") );
-                // })
-                // ->dehydrated(false)->maxHeight('500px')->setLanguage(CodeField::JSON)->withLineNumbers()->columnSpan('full')->label('API Request Schema'),
-
-
+                ])->columns(2)->columnSpan('full')
+                ->reorderable(false)
+                ->reorderableWithDragAndDrop(false)
+                ->collapsible()
+                // ->cloneable()
+                ->itemLabel(fn (array $state): ?string => $state['name'] ?? null)
+                ->deleteAction(
+                    fn (Action $action) => $action->requiresConfirmation(),
+                )
+                ->addActionLabel('Add API Option'),
 
             ]);
 

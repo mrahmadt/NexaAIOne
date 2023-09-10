@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name', 40);
             $table->string('description', 255)->nullable();
-            $table->string('apiName', 50);
+            $table->string('apiName', 100);
             $table->unsignedBigInteger('ai_end_points_id');
             $table->foreign('ai_end_points_id')->references('id')->on('ai_end_points');
             $table->boolean('enableUsage')->default(true);

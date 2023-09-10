@@ -19,12 +19,11 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Columns\IconColumn;
-use Creagia\FilamentCodeField\CodeField;
 
 class AIEndPointResource extends Resource
 {
     protected static ?string $model = AIEndPoint::class;
-
+    protected static ?int $navigationSort = 3;
     protected static ?string $modelLabel = 'AI End Point';
     protected static ?string $pluralModelLabel = 'AI End Points';
     protected static ?string $slug = 'AI-End-Point';
@@ -42,14 +41,8 @@ class AIEndPointResource extends Resource
                 Textarea::make('description')->columnSpan('full')->nullable(),
                 Toggle::make('supportHistory')->required(),
                 Toggle::make('supportCaching')->required(),
+                Toggle::make('isActive')->required()->default(true),
                 
-                CodeField::make('requestSchema')
-                ->afterStateHydrated(function (?array $state, CodeField $component): void {
-                    $component->state( ($state ? json_encode($state, JSON_PRETTY_PRINT) : "{\n\n}") );
-                })
-                ->dehydrated(false)->maxHeight('500px')->setLanguage(CodeField::JSON)->withLineNumbers()->columnSpan('full')->label('API Request Schema'),
-
-                // \InvadersXX\FilamentJsoneditor\Forms\JSONEditor::make('requestSchema')->columnSpan('full')->modes(['code', 'form',  'view', 'preview'])->required(),
         ]);
     }
 
@@ -58,8 +51,9 @@ class AIEndPointResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')->sortable()->weight(FontWeight::Bold)->searchable()->wrap()->description(fn (AIEndPoint $record): string => $record->description),
-                ToggleColumn::make('supportHistory'),
-                ToggleColumn::make('supportCaching'),
+                ToggleColumn::make('isActive')->disabled(),
+                ToggleColumn::make('supportHistory')->disabled(),
+                ToggleColumn::make('supportCaching')->disabled(),
             ])
             ->filters([
                 //

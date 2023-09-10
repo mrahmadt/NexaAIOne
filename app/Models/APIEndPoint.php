@@ -32,10 +32,16 @@ class APIEndPoint extends Model
         'requestSchema',
         'toolsConfig',
         'enableCaching',
-        'cachingObjects',
         'cachingPeriod',
         'isActive',
+        'ai_end_points_id',
     ];
+/*
+        'historyOptions',
+        'toolsConfig',
+        'requestSchema',
+        'model',
+*/
 
     /**
      * The attributes that should be cast to native types.
@@ -49,8 +55,6 @@ class APIEndPoint extends Model
         'toolsConfig' => 'array',
         'enableCaching' => 'boolean',
         'isActive' => 'boolean',
-
-        // 'cachingObjects' might need a custom cast if you plan to work with it as an array
     ];
 
     /**

@@ -26,7 +26,6 @@ class AIEndPoint extends Model
         'description',
         'className',
         'ApiReference',
-        'requestSchema', 
         'supportHistory', 
         'supportCaching', 
         'isActive', 
@@ -38,17 +37,8 @@ class AIEndPoint extends Model
      * @var array
      */
     protected $casts = [
-        'requestSchema' => 'array',
         'isActive' => 'boolean',
         'supportHistory' => 'boolean',
         'supportCaching' => 'boolean',
     ];
-    /**
-     * Get the AIModels associated with this AIEndPoint.
-     */
-    public function LLMs()
-    {
-        return $this->belongsToMany('App\Models\LLM', 'ai_end_point_llm');
-    }
-
 }

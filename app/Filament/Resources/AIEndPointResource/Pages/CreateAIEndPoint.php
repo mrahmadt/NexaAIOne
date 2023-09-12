@@ -9,4 +9,6 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateAIEndPoint extends CreateRecord
 {
     protected static string $resource = AIEndPointResource::class;
+    protected static bool $canCreateAnother = false;
+
 }

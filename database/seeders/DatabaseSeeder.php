@@ -13,7 +13,9 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
+            LLMsTableSeeder::class,
             AiEndPointsTableSeeder::class,
+            AiEndPointsLLMsTableSeeder::class,
         ]);
     }
 }

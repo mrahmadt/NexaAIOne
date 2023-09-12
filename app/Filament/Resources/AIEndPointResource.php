@@ -19,6 +19,8 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Forms\Components\Select;
+use App\Models\LLM;
 
 class AIEndPointResource extends Resource
 {
@@ -39,6 +41,15 @@ class AIEndPointResource extends Resource
                 TextInput::make('className')->columnSpan('full')->required(),
                 TextInput::make('ApiReference')->columnSpan('full')->nullable(),
                 Textarea::make('description')->columnSpan('full')->nullable(),
+
+                Select::make('llm_id')->columnSpan('full')
+                ->multiple()->label('LLMs')
+                ->relationship(name: 'llms', titleAttribute: 'name')
+                ->options(LLM::all()->pluck('name', 'id'))
+                ->preload()
+                ->searchable(),
+    
+
                 Toggle::make('supportHistory')->required(),
                 Toggle::make('supportCaching')->required(),
                 Toggle::make('isActive')->required()->default(true),
@@ -50,7 +61,7 @@ class AIEndPointResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')->sortable()->weight(FontWeight::Bold)->searchable()->wrap()->description(fn (AIEndPoint $record): string => $record->description),
+                TextColumn::make('name')->sortable()->weight(FontWeight::Bold)->searchable()->wrap()->description(fn (AIEndPoint $record): string => ($record->description ? $record->description: ' ')),
                 ToggleColumn::make('isActive')->disabled(),
                 ToggleColumn::make('supportHistory')->disabled(),
                 ToggleColumn::make('supportCaching')->disabled(),
@@ -74,7 +85,7 @@ class AIEndPointResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\LlmsRelationManager::class,
         ];
     }
     

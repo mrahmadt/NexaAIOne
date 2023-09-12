@@ -3,19 +3,32 @@
 namespace App\AIEndPoints;
 
 
-class OpenAITranscriptionService {
-    public const REQUEST_SCHEMA = [
-            [
+class OpenAITranscriptionService extends AIEndPoint
+{
+
+    protected static $REQUEST_SCHEMA = [
+        [
+            "name" => "cachingPeriod",
+            "type" => "number",
+            "required" => false,
+            "desc" => "How long should a file be cached, in minutes? If the same file is submitted again, it will be retrieved from the cache if available. Set to 0 to disable caching.",
+            "default" => 1440,
+            "isApiOption" => true,
+        ],    
+        [
                 "name" => "file",
                 "type" => "file",
                 "required" => true,
                 "desc" => "The audio file object (not file name) to transcribe, in one of these formats: flac, mp3, mp4, mpeg, mpga, m4a, ogg, wav, or webm.",
+                "_noDefaultValue" => true,
+                "isApiOption" => true,
             ],
             [
                 "name" => "prompt",
                 "type" => "string",
                 "required" => false,
                 "desc" => "An optional text to guide the model's style or continue a previous audio segment. The prompt should match the audio language.",
+                "isApiOption" => true,
             ],
             [
                 "name" => "response_format",
@@ -23,6 +36,7 @@ class OpenAITranscriptionService {
                 "required" => false,
                 "desc" => "The format of the transcript output, in one of these options: json, text, srt, verbose_json, or vtt.",
                 "default" => "text",
+                "isApiOption" => true,
             ],
             [
                 "name" => "temperature",
@@ -36,15 +50,8 @@ class OpenAITranscriptionService {
                 "type" => "string",
                 "required" => false,
                 "desc" => "The language of the input audio. Supplying the input language in ISO-639-1 format will improve accuracy and latency.",
+                "isApiOption" => true,
             ]
     ];
-    public const LLMS = [
-            [
-                'name' => 'Whisper',
-                'description' => 'Whisper is a general-purpose speech recognition model. It is trained on a large dataset of diverse audio and is also a multi-task model that can perform multilingual speech recognition as well as speech translation and language identification.',
-                'modelName' => 'whisper-1',
-                'ownedBy' => 'OpenAI',
-                'maxTokens' => null,
-            ],
-    ];
+
 }

@@ -19,23 +19,9 @@ return new class extends Migration
             $table->unsignedBigInteger('ai_end_points_id');
             $table->foreign('ai_end_points_id')->references('id')->on('ai_end_points');
             $table->boolean('enableUsage')->default(true);
-            $table->boolean('enableHistory')->default(false);
-            $table->unsignedTinyInteger('historyMethod_id')->default(0);
-            $table->json('historyOptions')->nullable();
-            $table->json('requestSchema');
-            /*
-            name
-            description
-            type
-            required
-            default
-            value or parameter
-
-            */
             $table->json('toolsConfig')->nullable();
-            $table->boolean('enableCaching')->default(false);
-            $table->unsignedInteger('cachingPeriod')->default(1440);
             $table->boolean('isActive')->default(true);
+            $table->json('requestSchema');
             $table->timestamps();
         });
     }

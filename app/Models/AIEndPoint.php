@@ -41,4 +41,9 @@ class AIEndPoint extends Model
         'supportHistory' => 'boolean',
         'supportCaching' => 'boolean',
     ];
+
+    public function llms()
+    {
+        return $this->belongsToMany(LLM::class, 'ai_end_point_llm', 'ai_end_point_id', 'llm_id')->withTimestamps();
+    }
 }

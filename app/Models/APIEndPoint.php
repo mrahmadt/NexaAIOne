@@ -26,13 +26,8 @@ class APIEndPoint extends Model
         'description',
         'apiName',
         'enableUsage',
-        'enableHistory',
-        'historyMethod',
-        'historyOptions',
         'requestSchema',
         'toolsConfig',
-        'enableCaching',
-        'cachingPeriod',
         'isActive',
         'ai_end_points_id',
     ];
@@ -51,57 +46,16 @@ class APIEndPoint extends Model
     protected $casts = [
         'enableUsage' => 'boolean',
         'requestSchema' => 'array',
-        'historyOptions' => 'array',
         'toolsConfig' => 'array',
-        'enableCaching' => 'boolean',
         'isActive' => 'boolean',
     ];
-
-    /**
-    * History Method
-    *
-    * @var array
-    */
-    public const HISTORYMETHOD = [
-        'Truncate','Summary','Embeddings'
-    ];
-
-    /**
-    * get History Method
-    */
-    public function getHistoryMethod()
-    {
-        return self::HISTORYMETHOD[ $this->attributes['historyMethod_id'] ];
-    }
-    
-    /**
-   * returns the id of a given History Method
-   *
-   * @param string $historyMethod  tool's History Method
-   * @return int HistoryMethodID
-   */
-    public static function getHistoryMethodID($historyMethod)
-    {
-        return array_search($historyMethod, self::HISTORYMETHOD);
-    }
-
-    /**
-    * set History Method
-    */
-    public function setHistoryMethodAttribute($value)
-    {
-        $historyMethod = self::getHistoryMethodID($value);
-        if ($historyMethod) {
-            $this->attributes['historyMethod_id'] = $historyMethod;
-        }
-    }
 
     /**
      * Get the AIModels associated with this APIEndPoint.
      */
     public function aiendpoint()
     {
-        return $this->belongsTo('App\Models\AIEndPoint');
+        return $this->belongsTo('App\Models\AIEndPoint', 'ai_end_points_id', 'id');
     }
 
     /**

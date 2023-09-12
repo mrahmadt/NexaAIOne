@@ -9,4 +9,6 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateAPIEndPoint extends CreateRecord
 {
     protected static string $resource = APIEndPointResource::class;
+    protected static bool $canCreateAnother = false;
+
 }

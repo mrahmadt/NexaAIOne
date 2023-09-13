@@ -13,8 +13,11 @@ class AIServiceController extends Controller
     private $NotOptions = [];
     private $options = [];
 
+
     public function service(Request $request, string $id) : JsonResponse
     {
+
+        exit;
         $this->APIEndPoint = APIEndPoint::where(['id'=>$id, 'isActive'=>true])->first();
         if(!$this->APIEndPoint) return $this->errorMessage('No API found');
         $this->prepareOptions();

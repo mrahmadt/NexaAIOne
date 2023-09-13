@@ -11,6 +11,7 @@ abstract class AIEndPoint{
     public static function getSchema(?int $AIEndPointID = null, ?Model $AIEndPoint = null){
         $requestSchema = static::$REQUEST_SCHEMA;
         $llmOptions = [];
+        $llmMaxTokens = [];
         if ($AIEndPointID !== null) {
             $AIEndPoint = $AIEndPoint::where(['id'=>$AIEndPointID, 'isActive'=>true ])->first();
             $llms = $AIEndPoint->llms()->get();
@@ -19,10 +20,11 @@ abstract class AIEndPoint{
         }
         foreach ($llms as $llm) {
             $llmOptions[$llm->modelName] = $llm->name;
-            
+            $llmMaxTokens[$llm->modelName] = $llm->maxTokens;
         }
         foreach ($requestSchema as $index => $subArray) {
             if(isset($requestSchema[$index]['name']) && $requestSchema[$index]['name'] == 'model') {
+                $requestSchema[$index]['options'] = $llmOptions;
                 $requestSchema[$index]['options'] = $llmOptions;
                 $requestSchema[$index]['default'] = implode(',',array_keys($llmOptions));
             }
@@ -41,11 +43,6 @@ abstract class AIEndPoint{
                 $requestSchema[$index],
             );
 
-            // "options": {
-            //     "gpt-4": "GPT-4",
-            //     "gpt-4-32k": "GPT-4 32k",
-            //     "whisper-1": "Whisper"
-            // },
         }
         return $requestSchema;
     }

@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ai_end_point_llm', function (Blueprint $table) {
+        Schema::create('llm_service', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('llm_id');
-            $table->unsignedBigInteger('ai_end_point_id');
+            $table->unsignedBigInteger('service_id');
             $table->timestamps();
             $table->foreign('llm_id')->references('id')->on('llms')->onDelete('cascade');
-            $table->foreign('ai_end_point_id')->references('id')->on('ai_end_points')->onDelete('cascade');
+            $table->foreign('service_id')->references('id')->on('services')->onDelete('cascade');
         });
     }
 
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ai_end_point_llm');
+        Schema::dropIfExists('llm_service');
     }
 };

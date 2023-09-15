@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class APIEndPoint extends Model
+class Api extends Model
 {
     use HasFactory;
 
@@ -14,7 +14,7 @@ class APIEndPoint extends Model
      *
      * @var string
      */
-    protected $table = 'api_end_points';
+    protected $table = 'apis';
 
     /**
      * The attributes that are mass assignable.
@@ -24,19 +24,13 @@ class APIEndPoint extends Model
     protected $fillable = [
         'name',
         'description',
-        'apiName',
+        'endpoint',
         'enableUsage',
-        'requestSchema',
+        'options',
         'toolsConfig',
         'isActive',
-        'ai_end_points_id',
+        'service_id',
     ];
-/*
-        'historyOptions',
-        'toolsConfig',
-        'requestSchema',
-        'model',
-*/
 
     /**
      * The attributes that should be cast to native types.
@@ -45,7 +39,7 @@ class APIEndPoint extends Model
      */
     protected $casts = [
         'enableUsage' => 'boolean',
-        'requestSchema' => 'array',
+        'options' => 'array',
         'toolsConfig' => 'array',
         'isActive' => 'boolean',
     ];
@@ -53,9 +47,9 @@ class APIEndPoint extends Model
     /**
      * Get the AIModels associated with this APIEndPoint.
      */
-    public function aiendpoint()
+    public function servies()
     {
-        return $this->belongsTo('App\Models\AIEndPoint', 'ai_end_points_id', 'id');
+        return $this->belongsTo('App\Models\Service', 'service_id', 'id');
     }
 
     /**
@@ -63,7 +57,7 @@ class APIEndPoint extends Model
      */
     public function tools()
     {
-        return $this->belongsToMany('App\Models\Tool', 'api_end_point_tool');
+        return $this->belongsToMany('App\Models\Tool', 'service_tool');
     }
     
     /**
@@ -73,7 +67,7 @@ class APIEndPoint extends Model
      */
     public function apps()
     {
-        return $this->belongsToMany(App::class, 'app_api_end_point');
+        return $this->belongsToMany(App::class, 'api_app');
     }
 
 }

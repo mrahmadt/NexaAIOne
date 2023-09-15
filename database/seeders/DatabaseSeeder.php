@@ -14,8 +14,8 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             LLMsTableSeeder::class,
-            AiEndPointsTableSeeder::class,
-            AiEndPointsLLMsTableSeeder::class,
+            ServiceTableSeeder::class,
+            ServicesLLMsTableSeeder::class,
         ]);
     }
 }

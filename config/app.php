@@ -5,12 +5,6 @@ use Illuminate\Support\ServiceProvider;
 
 return [
 
-    'openai_api_key' => env('OPENAI_API_KEY'),
-    'openai_base_uri' => env('OPENAI_BASE_URI'),
-    'openai_default_chat_model' => env('OPENAI_DEFAULT_CHAT_MODEL'),
-
-    'openai_summarization_model' => env('OPENAI_SUMMARIZATION_MODEL', null),
-    'openai_summarization_prompt' => env('OPENAI_SUMMARIZATION_PROMPT'),
     /*
     |--------------------------------------------------------------------------
     | Application Name

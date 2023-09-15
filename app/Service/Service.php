@@ -4,7 +4,7 @@ namespace App\AIEndPoints;
 
 use Illuminate\Database\Eloquent\Model;
 
-abstract class AIEndPoint{
+abstract class Service{
     // abstract public static function getSchema();
     protected static $REQUEST_SCHEMA = ['A'];
 
@@ -25,7 +25,7 @@ abstract class AIEndPoint{
         foreach ($requestSchema as $index => $subArray) {
             if(isset($requestSchema[$index]['name']) && $requestSchema[$index]['name'] == 'model') {
                 $requestSchema[$index]['options'] = $llmOptions;
-                $requestSchema[$index]['options'] = $llmOptions;
+                $requestSchema[$index]['maxTokens'] = $llmMaxTokens;
                 $requestSchema[$index]['default'] = implode(',',array_keys($llmOptions));
             }
 

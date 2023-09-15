@@ -3,7 +3,7 @@
 namespace App\AIEndPoints;
 
 
-class OpenAITranscriptionService extends AIEndPoint
+class OpenAITranscriptionService extends Service
 {
 
     protected static $REQUEST_SCHEMA = [

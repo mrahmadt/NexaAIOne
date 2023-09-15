@@ -3,7 +3,7 @@
 namespace App\AIEndPoints;
 
 
-class OpenAITranslationService extends AIEndPoint
+class OpenAITranslationService extends Service
 {
     protected static $REQUEST_SCHEMA = [
         [

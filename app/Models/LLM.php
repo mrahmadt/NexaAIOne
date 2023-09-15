@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class LLM extends Model
+class Llm extends Model
 {
     use HasFactory;
 
@@ -29,8 +29,8 @@ class LLM extends Model
         'maxTokens'
     ];
 
-    public function aiEndPoints()
+    public function services()
     {
-        return $this->belongsToMany(AIEndPoint::class, 'ai_end_point_llm', 'llm_id', 'ai_end_point_id')->withTimestamps();
+        return $this->belongsToMany(Service::class, 'llm_service', 'llm_id', 'service_id')->withTimestamps();
     }
 }

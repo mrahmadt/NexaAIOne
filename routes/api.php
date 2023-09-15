@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\AIServiceController;
+use App\Http\Controllers\APIController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -20,5 +20,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::prefix('v1')->group(function () {
-    Route::post('/s/{id}/{name?}', [AIServiceController::class, 'service']);
+    Route::post('/a/{id}/{name?}', [APIController::class, 'execute']);
 });
+
+// Route::prefix('test')->group(function () {
+//     Route::post('/options', [testController::class, 'options']);
+//     Route::post('/caching', [testController::class, 'caching']);
+//     Route::post('/memory', [testController::class, 'memory']);
+// });

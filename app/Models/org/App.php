@@ -4,17 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+// use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
-class AIEndPoint extends Model
+class App extends Model
 {
-    use HasFactory;
+    use HasApiTokens, HasFactory, Notifiable;
 
         /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'ai_end_points';
+    protected $table = 'apps';
 
     /**
      * The attributes that are mass assignable.
@@ -22,13 +25,11 @@ class AIEndPoint extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 
+        'name',
         'description',
-        'className',
-        'ApiReference',
-        'supportHistory', 
-        'supportCaching', 
-        'isActive', 
+        'owner',
+        'email',
+        'isActive'
     ];
 
     /**
@@ -38,12 +39,16 @@ class AIEndPoint extends Model
      */
     protected $casts = [
         'isActive' => 'boolean',
-        'supportHistory' => 'boolean',
-        'supportCaching' => 'boolean',
     ];
 
-    public function llms()
+    /**
+     * Get the API End Points associated with this App.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function apis()
     {
-        return $this->belongsToMany(LLM::class, 'ai_end_point_llm', 'ai_end_point_id', 'llm_id')->withTimestamps();
+        return $this->belongsToMany(Api::class, 'api_app');
     }
+
 }

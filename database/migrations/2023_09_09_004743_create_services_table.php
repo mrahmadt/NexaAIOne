@@ -11,26 +11,25 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('api_end_points', function (Blueprint $table) {
+        Schema::create('services', function (Blueprint $table) {
             $table->id();
             $table->string('name', 40);
             $table->string('description', 255)->nullable();
-            $table->string('apiName', 100);
-            $table->unsignedBigInteger('ai_end_points_id');
-            $table->foreign('ai_end_points_id')->references('id')->on('ai_end_points');
-            $table->boolean('enableUsage')->default(true);
-            $table->json('toolsConfig')->nullable();
+            $table->string('className', 100);
+            $table->string('reference', 150)->nullable();;
+            $table->boolean('supportHistory')->default(false);
+            $table->boolean('supportCaching')->default(false);
             $table->boolean('isActive')->default(true);
-            $table->json('requestSchema');
             $table->timestamps();
         });
     }
+
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('api_end_points');
+        Schema::dropIfExists('services');
     }
 };

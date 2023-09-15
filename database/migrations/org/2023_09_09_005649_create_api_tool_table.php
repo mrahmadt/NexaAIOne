@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('api_end_point_tool', function (Blueprint $table) {
-            $table->unsignedBigInteger('api_end_point_id');
+        Schema::create('api_tool', function (Blueprint $table) {
+            $table->unsignedBigInteger('service_id');
             $table->unsignedBigInteger('tool_id');
-            $table->primary(['api_end_point_id', 'tool_id']);  // Composite primary key
+            $table->primary(['service_id', 'tool_id']);  // Composite primary key
 
-            $table->foreign('api_end_point_id')
+            $table->foreign('service_id')
                 ->references('id')
-                ->on('api_end_points')
+                ->on('services')
                 ->onDelete('cascade');  // Setup cascading on delete
 
             $table->foreign('tool_id')
@@ -35,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('api_end_point_tool');
+        Schema::dropIfExists('api_tool');
     }
 };

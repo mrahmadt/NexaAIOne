@@ -47,7 +47,7 @@ class Api extends Model
     /**
      * Get the AIModels associated with this APIEndPoint.
      */
-    public function servies()
+    public function service()
     {
         return $this->belongsTo('App\Models\Service', 'service_id', 'id');
     }

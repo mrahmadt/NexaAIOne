@@ -1,9 +1,9 @@
 <?php
 
-namespace App\AIEndPoints;
+namespace App\Services;
 
 
-class OpenAITranscriptionService extends Service
+class OpenAITranscriptionService extends BaseService
 {
 
     protected static $REQUEST_SCHEMA = [

@@ -1,20 +1,24 @@
 <?php
-
 namespace App\Features;
 
 use Illuminate\Support\Facades\Cache;
 
 trait HasCaching
 {
-    use HasOptions;
+    /**
+     * An array that defines the options for caching.
+     *
+     * @var array
+     */
     protected static $cachingOptions = [
         'cachingPeriod' => [
             "name" => "cachingPeriod",
             "type" => "number",
             "required" => false,
             "desc" => "How long should a message response be cached, in minutes? If the same message is submitted again, the response will be retrieved from the cache if available. Set to 0 to disable caching.",
-            "default" => 1440,
+            "default" => 0,
             "isApiOption" => true,
+            "_group" => 'Caching',
         ],
         'cacheScope' => [
             "name" => "cacheScope",
@@ -26,7 +30,8 @@ trait HasCaching
             "options"=>[
                 'session' => 'Per Session',
                 'global' => 'Global'
-            ]
+            ],
+            "_group" => 'Caching',
         ],
         'clearCache' => [
             "name" => "clearCache",
@@ -35,6 +40,7 @@ trait HasCaching
             "desc" => "Clear cache for the specified message.",
             "isApiOption" => true,
             'default' => false,
+            "_group" => 'Caching',
         ],
         'session' => [
             "name" => "session",
@@ -43,19 +49,23 @@ trait HasCaching
             "desc" => "Unique session id for this message.",
             "default" => "global",
             "isApiOption" => true,
+            "_group" => 'General',
         ],
     ];
-    
-    
-    //$this->options['cachingPeriod']
-    //$this->options['cacheScope']
-    //$this->options['session']
-    //$this->options['message']
 
+    /**
+     * The cache key for the message response.
+     *
+     * @var string
+     */
     protected $cacheKey = 'unknown';
+
+    /**
+     * A boolean that indicates whether the cache has been initialized.
+     *
+     * @var bool
+     */
     protected $cacheInit = false;
-
-
 
     /**
      * Initializes the cache key based on the provided options.
@@ -69,18 +79,20 @@ trait HasCaching
      */
     private function __cacheInit()
     {
-        if (!isset($this->options['cachingPeriod'])) {
+        if (!isset($this->options['cachingPeriod']) || $this->options['cachingPeriod'] == 0) {
             return false;
         }
         if($this->cacheInit) {
             return true;
         }
-        
         $this->cacheInit = true;
-        $this->cacheKey = 'msg:' . md5($this->cacheKey);
+        
         if($this->options['cacheScope'] == 'session') {
-            $this->cacheKey = $this->options['session'] . ':' . $this->cacheKey;
+            $this->cacheKey = 'msg:' . $this->api_id. ':'. $this->options['session'] . ':' .  md5($this->options['userMessage']);
+        } else {
+            $this->cacheKey = 'msg:' . $this->api_id. ':'. md5($this->options['userMessage']);
         }
+        $this->debug('__cacheInit()', $this->cacheKey);
         return true;
     }
 
@@ -95,7 +107,12 @@ trait HasCaching
         if(!$this->__cacheInit()) {
             return false;
         }
+        if($this->options['clearCache'] == false) {
+            return false;
+        }
+        $this->debug('clearCache()', true);
         Cache::forget($this->cacheKey);
+        return true;
     }
 
     /**
@@ -118,7 +135,10 @@ trait HasCaching
             $value = Cache::get($this->cacheKey);
             $seconds = $this->options['cachingPeriod'] * 60;
             Cache::put($this->cacheKey, $value, $seconds);
+            $this->debug('getCache()', $value);
             return $value;
+        } else {
+            $this->debug('getCache()', null);
         }
         return $default;
     }
@@ -132,11 +152,16 @@ trait HasCaching
      * @param mixed $value The value to be cached.
      * @return void
      */
-    private function setCache($value)
+    private function setCache($value = null)
     {
         if(!$this->__cacheInit()) {
             return false;
         }
+        if(!$value) {
+            $value = end($this->messages);
+            reset($this->messages);
+        }
+        $this->debug('setCache()', $value);
         $seconds = $this->options['cachingPeriod'] * 60;
         Cache::put($this->cacheKey, $value, $seconds);
     }

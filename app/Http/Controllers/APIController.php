@@ -12,28 +12,31 @@ class APIController extends Controller
     private $options = [];
     public function execute(Request $request, string $id) : JsonResponse
     {
-
-        exit;
         $this->ApiModel = Api::where(['id'=>$id, 'isActive'=>true])->first();
-        if(!$this->ApiModel) return $this->errorMessage('No API found');
-
+        if(!$this->ApiModel) return $this->responseMessage(['message'=>'No API found']);
         $className = '\App\Services\\' . $this->ApiModel->service->className;
-        $APIservice = new $className($this->options, $this->ApiModel);
-        return response()->json($this->options);
-        return response()->json($APIservice->execute());
-        return response()->json($this->options);
+        $APIservice = new $className($request->all(), $this->ApiModel);
+        $response = $APIservice->execute();
+        
+        $header_get_messages = $request->header('X-GET-MESSAGES', 0);
+        if($header_get_messages){
+            $response['__messages'] = $APIservice->getMessages();
+        }
+        return $this->responseMessage($response);
+        // return  response()->json($response, ($response['status'] ? 200 : 400));
+        
     }
 
-    private function errorMessage($message)
-    {
-        return response()->json(array_merge($this->responseMessageBase(status: 'error'), [
-            'message' => $message,
-        ]));
-    }
-
-    private function responseMessageBase(?string $status = 'unknown'){
-        return [
-            'status' => $status,
+    protected function responseMessage($response = []){
+        $defaultResponse = [
+            'status' => false,
+            'message' => null,
+            'serviceResponse' => null,
         ];
+        $response = array_merge($defaultResponse, $response);
+        
+        return  response()->json($response, ($response['status'] ? 200 : 400));
     }
+
+
 }

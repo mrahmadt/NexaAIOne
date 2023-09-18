@@ -20,11 +20,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::prefix('v1')->group(function () {
-    Route::post('/a/{id}/{name?}', [APIController::class, 'execute']);
+    Route::post('/call/{id}/{name?}', [APIController::class, 'execute']);
 });
 
-// Route::prefix('test')->group(function () {
-//     Route::post('/options', [testController::class, 'options']);
+Route::prefix('test')->group(function () {
+    Route::post('/test', [App\Http\Controllers\testController::class, 'test']);
 //     Route::post('/caching', [testController::class, 'caching']);
 //     Route::post('/memory', [testController::class, 'memory']);
-// });
+});

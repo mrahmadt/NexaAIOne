@@ -1,9 +1,9 @@
 <?php
 
-namespace App\AIEndPoints;
+namespace App\Services;
 
 
-class OpenAITranslationService extends Service
+class OpenAITranslationService extends BaseService
 {
     protected static $REQUEST_SCHEMA = [
         [

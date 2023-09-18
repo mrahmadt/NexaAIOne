@@ -30,15 +30,3 @@ Document Indexing / Repostory
 
 
 
-API ---> Flow of connections and connect multiple services together
-Name: API
-
-features --> functions that can be used by API to help such as memory
-Name: Feature:
-
-Service --> the core function that will do something
-Name: Service
-
-Repository --> Document Management
-
-LLM ---> list of LLMs and configuration

@@ -14,24 +14,6 @@ class ServicesLLMsTableSeeder extends Seeder
     public function run(): void
     {
         DB::table('llm_service')->insert([
-            'service_id' => 1,
-            'llm_id' => 5,
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
-        DB::table('llm_service')->insert([
-            'service_id' => 2,
-            'llm_id' => 5,
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
-        DB::table('llm_service')->insert([
-            'service_id' => 1,
-            'llm_id' => 5,
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
-        DB::table('llm_service')->insert([
             'service_id' => 3,
             'llm_id' => 1,
             'created_at' => now(),
@@ -44,16 +26,29 @@ class ServicesLLMsTableSeeder extends Seeder
             'updated_at' => now()
         ]);
         DB::table('llm_service')->insert([
-            'service_id' => 1,
+            'service_id' => 3,
             'llm_id' => 3,
             'created_at' => now(),
             'updated_at' => now()
         ]);
         DB::table('llm_service')->insert([
-            'service_id' => 1,
+            'service_id' => 3,
             'llm_id' => 4,
             'created_at' => now(),
             'updated_at' => now()
         ]);
+        DB::table('llm_service')->insert([
+            'service_id' => 1,
+            'llm_id' => 5,
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+        DB::table('llm_service')->insert([
+            'service_id' => 2,
+            'llm_id' => 5,
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
     }
 }

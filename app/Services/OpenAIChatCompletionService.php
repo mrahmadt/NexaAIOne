@@ -43,9 +43,11 @@ class OpenAIChatCompletionService extends BaseService
     }
 
     public function execute(){
-
-        $clearCache = $this->clearCache();
-        $clearMemory = $this->clearMemory();
+        $clearCache = false;
+        $clearMemory = false;
+        
+        if($this->options['clearCache']) $clearCache = $this->clearCache();
+        if($this->options['clearMemory']) $clearMemory = $this->clearMemory();
 
         if(!$this->options['userMessage']) {
             if($clearCache) {

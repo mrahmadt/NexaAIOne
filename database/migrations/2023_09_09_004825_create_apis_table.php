@@ -19,7 +19,7 @@ return new class extends Migration
             $table->unsignedBigInteger('service_id');
             $table->foreign('service_id')->references('id')->on('services');
             $table->boolean('enableUsage')->default(true);
-            $table->json('toolsConfig')->nullable();
+            // $table->json('toolsConfig')->nullable();
             $table->boolean('isActive')->default(true);
             $table->json('options');
             $table->timestamps();

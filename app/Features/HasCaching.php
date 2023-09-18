@@ -107,9 +107,6 @@ trait HasCaching
         if(!$this->__cacheInit()) {
             return false;
         }
-        if($this->options['clearCache'] == false) {
-            return false;
-        }
         $this->debug('clearCache()', true);
         Cache::forget($this->cacheKey);
         return true;

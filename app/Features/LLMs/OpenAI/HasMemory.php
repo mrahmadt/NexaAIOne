@@ -5,6 +5,7 @@
 namespace App\Features\LLMs\OpenAI;
 
 use Illuminate\Support\Facades\Cache;
+use App\Models\Memory;
 
 trait HasMemory
 {
@@ -21,6 +22,13 @@ trait HasMemory
      * @var string
      */
     protected $memoryMetakey;
+
+    /**
+     * A string that represents hash of the session.
+     *
+     * @var string
+     */
+    protected $sessionHash;
 
     /**
      * An array that defines the options for conversation tracking.
@@ -62,7 +70,7 @@ trait HasMemory
             "name" => "memoryPeriod",
             "type" => "number",
             "required" => false,
-            "desc" => "How long, in minutes, should the conversation be retained in memory? If no new messages are received within this duration, the conversation history will be cleared",
+            "desc" => "How long, in minutes, should the conversation be retained in memory? If no new messages are received within this duration, the conversation history will be cleared (ignored for Long Memory)",
             "default" => 60,
             "isApiOption" => false,
             "_group" => 'Memory',
@@ -122,6 +130,7 @@ trait HasMemory
             } elseif ($this->options['memoryOptimization'] == 'summarization') {
                 $this->optimizeMemorySummary($memoryMaxTokens);
             } elseif ($this->options['memoryOptimization'] == 'embeddings') {
+                $this->optimizeMemoryEmbeddings($memoryMaxTokens);
             }
             $this->messages[] = $lastMessage;
             $this->messagesMeta[] = $lastMessageMeta;
@@ -137,6 +146,11 @@ trait HasMemory
             $debugData['optimizeMemory'] = false;
         }
         $this->debug('optimizeMemory()', $debugData);
+    }
+
+    private function optimizeMemoryEmbeddings($memoryMaxTokens){
+        $this->extraResponses['memoryOptimization'] = 'Embeddings';
+
     }
 
     private function optimizeMemoryTruncate($memoryMaxTokens)
@@ -168,7 +182,7 @@ trait HasMemory
     private function optimizeMemorySummary($memoryMaxTokens)
     {
         $this->extraResponses['memoryOptimization'] = 'Summarization';
-        $prompt_system = [ 'role'=> 'system', 'content'=> config('memory.summarization_prompt') ];
+        $prompt_system = [ 'role'=> 'system', 'content'=> config('openai.memory_summarization_prompt') ];
         $totalWords = ($memoryMaxTokens / 4) . ' words';
         $totalTokens = $memoryMaxTokens . ' tokens';
         $prompt_system['content'] = str_replace(['{{totalTokens}}','{{totalWords}}'], [$totalTokens,$totalWords], $prompt_system['content']);
@@ -191,7 +205,7 @@ trait HasMemory
         }
         $prompt_user = [ 'role'=> 'user', 'content'=> $conversationToSummary ];
         $ChatCompletionOptions = [];
-        $ChatCompletionOptions['model'] = config('memory.summarization_model') ?? $ChatCompletionOptions['model'];
+        $ChatCompletionOptions['model'] = config('openai.memory_summarization_model') ?? $ChatCompletionOptions['model'];
         $response = $this->sendMessageToLLM([$prompt_system, $prompt_user], $ChatCompletionOptions, true);
 
         $messagesToKeep[] = ['role'=>'system', 'content'=> 'Previous context:'. $response->choices[0]->message->content];
@@ -205,7 +219,7 @@ trait HasMemory
      *
      * If the 'enableMemory' option is not set to 'disabled', this function
      * serializes and caches both the messages and their metadata.
-     * The cached items will expire based on the 'memoryPeriod' option.
+     * The cached items will expire based on the 'memoryPeriod' option and short memory.
      *
      * @access private
      * @return void
@@ -215,9 +229,16 @@ trait HasMemory
         if (!$this->__memoryInit()) {
             return false;
         }
-        $seconds = $this->options['memoryPeriod'] * 60;
-        Cache::put($this->memoryKey, $this->messages, $seconds);
-        Cache::put($this->memoryMetakey, $this->messagesMeta, $seconds);
+        if($this->options['enableMemory'] == 'longMemory'){
+            Memory::updateOrCreate(
+                ['api_id'=>$this->api_id, 'sessionHash'=>$this->sessionHash],
+                ['messages' => $this->messages, 'messagesMeta' => $this->messagesMeta]
+            );
+        }else{
+            $seconds = $this->options['memoryPeriod'] * 60;
+            Cache::put($this->memoryKey, $this->messages, $seconds);
+            Cache::put($this->memoryMetakey, $this->messagesMeta, $seconds);
+        }
         $this->debug('saveMessagesToMemory()', ['messages' => $this->messages, 'messagesMeta' => $this->messagesMeta]);
         return true;
     }
@@ -237,16 +258,17 @@ trait HasMemory
         if (!$this->__memoryInit()) {
             return false;
         }
-        if($this->options['clearMemory'] == false) {
-            return false;
+        if($this->options['enableMemory'] == 'longMemory'){
+            Memory::where(['api_id'=>$this->api_id, 'sessionHash'=>$this->sessionHash])->delete();
+        }else{
+            Cache::forget($this->memoryKey);
+            Cache::forget($this->memoryMetakey);
         }
-        Cache::forget($this->memoryKey);
-        Cache::forget($this->memoryMetakey);
         $this->debug('clearMemory()', true);
         return true;
     }
 
-        /**
+    /**
      * Initializes the conversation history cache.
      *
      * @param array $options
@@ -260,9 +282,9 @@ trait HasMemory
         if($this->memoryKey) {
             return true;
         }
-        $sessionMD5 = md5($this->options['session']);
-        $this->memoryKey = 'memory:'. $this->api_id. ':'. $sessionMD5;
-        $this->memoryMetakey = 'memoryMeta:' . $this->api_id. ':'. $sessionMD5;
+        $this->sessionHash = md5($this->options['session']);
+        $this->memoryKey = 'memory:'. $this->api_id. ':'. $this->sessionHash;
+        $this->memoryMetakey = 'memoryMeta:' . $this->api_id. ':'. $this->sessionHash;
 
         $this->debug('__memoryInit()', ['memoryKey' => $this->memoryKey, 'memoryMetakey' => $this->memoryMetakey]);
         return true;
@@ -273,7 +295,7 @@ trait HasMemory
      * If the 'enableMemory' option is not set to 'disabled', this function
      * fetches the messages and their metadata from the cache.
      * After retrieval, it refreshes the expiration time of the cached items
-     * based on the 'memoryPeriod' option.
+     * based on the 'memoryPeriod' option if short memory.
      * Finally, it updates the class properties with the fetched values.
      *
      * @access private
@@ -283,17 +305,25 @@ trait HasMemory
     {
         $this->messages = [];
         $this->messagesMeta = [];
+        $memoryKey_value = [];
+        $memoryMetakey_value = [];
         if (!$this->__memoryInit()) { return false; }
-        $seconds = $this->options['memoryPeriod'] * 60;
-        
-        $memoryKey_value = Cache::get($this->memoryKey);
-        $memoryMetakey_value = Cache::get($this->memoryMetakey);
 
-        Cache::put($this->memoryKey, $memoryKey_value, $seconds);
-        Cache::put($this->memoryMetakey, $memoryMetakey_value, $seconds);
-
-        $this->messages = $memoryKey_value;
-        $this->messagesMeta = $memoryMetakey_value;
+        if($this->options['enableMemory'] == 'longMemory'){
+            $memory = Memory::where(['api_id'=>$this->api_id, 'sessionHash'=>$this->sessionHash])->first();
+            if($memory){
+                $memoryKey_value = $memory->messages;
+                $memoryMetakey_value = $memory->messagesMeta;
+            }
+        }else{
+            $seconds = $this->options['memoryPeriod'] * 60;
+            $memoryKey_value = Cache::get($this->memoryKey);
+            $memoryMetakey_value = Cache::get($this->memoryMetakey);
+            Cache::put($this->memoryKey, $memoryKey_value, $seconds);
+            Cache::put($this->memoryMetakey, $memoryMetakey_value, $seconds);
+        }
+        if($memoryKey_value) $this->messages = $memoryKey_value;
+        if($memoryMetakey_value) $this->messagesMeta = $memoryMetakey_value;
         $this->debug('getMessagesFromMemory()', ['messages' => $this->messages, 'messagesMeta' => $this->messagesMeta]);
     }
 }

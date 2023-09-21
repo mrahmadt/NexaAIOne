@@ -18,7 +18,7 @@ class ServiceTableSeeder extends Seeder
             'description' => 'OpenAI Transcribes audio into the input language',
             'className' => 'OpenAITranscriptionService',
             'reference'=>'https://platform.openai.com/docs/api-reference/audio/createTranscription',
-            'supportHistory' => false,
+            'supportMemory' => false,
             'supportCaching' => true,
             'created_at' => now(),
             'updated_at' => now()
@@ -29,7 +29,7 @@ class ServiceTableSeeder extends Seeder
             'description' => 'OpenAI Translates audio into English',
             'className' => 'OpenAITranslationService',
             'reference'=>'https://platform.openai.com/docs/api-reference/audio/createTranslation',
-            'supportHistory' => false,
+            'supportMemory' => false,
             'supportCaching' => true,
             'created_at' => now(),
             'updated_at' => now()
@@ -40,7 +40,7 @@ class ServiceTableSeeder extends Seeder
             'description' => 'OpenAI Creates a model response for the given chat conversation',
             'reference' => 'https://platform.openai.com/docs/api-reference/chat/create',
             'className' => 'OpenAIChatCompletionService',
-            'supportHistory' => true,
+            'supportMemory' => true,
             'supportCaching' => true,
             'created_at' => now(),
             'updated_at' => now()

@@ -26,8 +26,9 @@ class Service extends Model
         'description',
         'className',
         'reference',
-        'supportHistory', 
+        'supportMemory', 
         'supportCaching', 
+        'supportCollection', 
         'isActive', 
     ];
 
@@ -38,8 +39,9 @@ class Service extends Model
      */
     protected $casts = [
         'isActive' => 'boolean',
-        'supportHistory' => 'boolean',
+        'supportMemory' => 'boolean',
         'supportCaching' => 'boolean',
+        'supportCollection' => 'boolean',
     ];
 
     public function llms()

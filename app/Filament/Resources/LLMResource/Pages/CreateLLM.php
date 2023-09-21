@@ -1,12 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\LLMResource\Pages;
+namespace App\Filament\Resources\LlmResource\Pages;
 
-use App\Filament\Resources\LLMResource;
+use App\Filament\Resources\LlmResource;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
-class CreateLLM extends CreateRecord
+class CreateLlm extends CreateRecord
 {
-    protected static string $resource = LLMResource::class;
+    protected static string $resource = LlmResource::class;
+    protected static bool $canCreateAnother = false;
+
 }

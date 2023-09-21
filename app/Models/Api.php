@@ -27,9 +27,9 @@ class Api extends Model
         'endpoint',
         'enableUsage',
         'options',
-        'toolsConfig',
         'isActive',
         'service_id',
+        'collection_id',
     ];
 
     /**
@@ -40,28 +40,26 @@ class Api extends Model
     protected $casts = [
         'enableUsage' => 'boolean',
         'options' => 'array',
-        'toolsConfig' => 'array',
         'isActive' => 'boolean',
     ];
 
     /**
-     * Get the AIModels associated with this APIEndPoint.
+     * Get the AIModels associated with this API.
      */
     public function service()
     {
         return $this->belongsTo('App\Models\Service', 'service_id', 'id');
     }
+    /**
+     * Get the AIModels associated with this API.
+     */
+    public function collection()
+    {
+        return $this->belongsTo(Collection::class, 'collection_id', 'id');
+    }
 
     /**
-     * Get the Tools associated with this APIEndPoint.
-     */
-    public function tools()
-    {
-        return $this->belongsToMany('App\Models\Tool', 'service_tool');
-    }
-    
-    /**
-     * Get the Apps associated with this API End Point.
+     * Get the Apps associated with this API.
      * 
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */

@@ -10,6 +10,7 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Widgets;
+use Filament\Navigation\NavigationItem;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -51,6 +52,13 @@ class AdminPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
+            ->sidebarCollapsibleOnDesktop()
+            ->navigationItems([
+                NavigationItem::make('Queues')
+                    ->url('/horizon/dashboard', shouldOpenInNewTab: true)
+                    ->icon('heroicon-o-queue-list')
+                    ->group('Reports')
+                    ->sort(3)])
             ->authMiddleware([
                 Authenticate::class,
             ]);

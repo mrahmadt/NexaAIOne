@@ -17,9 +17,10 @@ return new class extends Migration
             $table->string('description', 255)->nullable();
             $table->string('endpoint', 100);
             $table->unsignedBigInteger('service_id');
+            $table->unsignedBigInteger('collection_id')->nullable();
             $table->foreign('service_id')->references('id')->on('services');
+            $table->foreign('collection_id')->references('id')->on('collections');
             $table->boolean('enableUsage')->default(true);
-            // $table->json('toolsConfig')->nullable();
             $table->boolean('isActive')->default(true);
             $table->json('options');
             $table->timestamps();
@@ -31,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('api_end_points');
+        Schema::dropIfExists('apis');
     }
 };

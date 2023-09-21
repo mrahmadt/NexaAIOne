@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\LLMResource\Pages;
+namespace App\Filament\Resources\LlmResource\Pages;
 
-use App\Filament\Resources\LLMResource;
+use App\Filament\Resources\LlmResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
-class EditLLM extends EditRecord
+class EditLlm extends EditRecord
 {
-    protected static string $resource = LLMResource::class;
+    protected static string $resource = LlmResource::class;
 
     protected function getHeaderActions(): array
     {

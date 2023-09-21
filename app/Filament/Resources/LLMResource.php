@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\LLMResource\Pages;
-use App\Filament\Resources\LLMResource\RelationManagers;
-use App\Models\LLM;
+use App\Filament\Resources\LlmResource\Pages;
+use App\Filament\Resources\LlmResource\RelationManagers;
+use App\Models\Llm;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -12,20 +12,17 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Support\Enums\FontWeight;
-use Filament\Tables\Columns\TextColumn;
 
-class LLMResource extends Resource
+class LlmResource extends Resource
 {
-    protected static ?string $model = LLM::class;
-    protected static ?int $navigationSort = 4;
-    protected static ?string $modelLabel = 'LLM';
-    protected static ?string $pluralModelLabel = 'LLMs';
-    protected static ?string $slug = 'llms';
-    protected static ?string $navigationLabel = 'LLMs';
+    protected static ?string $model = Llm::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-language';
+    protected static ?string $navigationLabel = 'LLMs';
+    protected static ?string $navigationGroup = 'Settings';
+    protected static ?string $modelLabel = 'LLM';
 
+    protected static ?int $navigationSort = 2;
     public static function form(Form $form): Form
     {
         return $form
@@ -43,7 +40,7 @@ class LLMResource extends Resource
                     ->maxLength(255),
                 Forms\Components\TextInput::make('maxTokens')
                     ->numeric(),
-            ]);
+            ])->columns(1);
     }
 
     public static function table(Table $table): Table
@@ -51,12 +48,8 @@ class LLMResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable()
-                    ->description(fn (LLM $record): string => $record->description)
-                    ->wrap()
-                    ->weight(FontWeight::Bold)
-                    ->size(TextColumn\TextColumnSize::Medium)
-                    ,
+                    ->icon('heroicon-o-language')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('modelName')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('ownedBy')
@@ -83,25 +76,22 @@ class LLMResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ])
-            ->emptyStateActions([
-                Tables\Actions\CreateAction::make(),
             ]);
     }
     
     public static function getRelations(): array
     {
         return [
-            RelationManagers\AiEndPointsRelationManager::class,
+            //
         ];
     }
     
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListLLMS::route('/'),
-            'create' => Pages\CreateLLM::route('/create'),
-            'edit' => Pages\EditLLM::route('/{record}/edit'),
+            'index' => Pages\ListLlms::route('/'),
+            'create' => Pages\CreateLlm::route('/create'),
+            'edit' => Pages\EditLlm::route('/{record}/edit'),
         ];
     }    
 }

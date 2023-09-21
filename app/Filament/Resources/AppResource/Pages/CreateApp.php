@@ -9,4 +9,6 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateApp extends CreateRecord
 {
     protected static string $resource = AppResource::class;
+    protected static bool $canCreateAnother = false;
+
 }

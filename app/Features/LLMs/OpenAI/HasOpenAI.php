@@ -213,7 +213,7 @@ We generally recommend altering this or top_p but not both.",
             $this->LLMclient = $this->LLMclient->withQueryParam('api-version', $this->options['openaiApiVersion']);
         }
         if($this->options['openaiOrganization']) {
-            $this->LLMclient = $this->LLMclient->withOrganization('api-version', $this->options['openaiOrganization']);
+            $this->LLMclient = $this->LLMclient->withOrganization($this->options['openaiOrganization']);
         }
         
         $this->debug('setupLLM()', ['ChatCompletionOptions' => $this->ChatCompletionOptions]);

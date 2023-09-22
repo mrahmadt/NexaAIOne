@@ -28,6 +28,25 @@ class Chunk extends Model
         'embeds' => Vector::class
     ];
 
+    protected static function boot() {
+        parent::boot();
+        static::creating(function ($record) {
+            // $collection = Collection::where(['collection_id', $record->collection_id])->first();
+            $embedder = Embedder::where(['collection_id', $record->embedder_id])->first();
+            $className = '\App\Services\\' . $embedder->className;
+            $EmbedderClass = new $className($embedder->options);
+            $EmbedderClass->create($record);
+            //use App\Embedders\OpenAIEmbedding;
+            if(!isset($record->embeds)){
+
+                // $embeddingModel = new OpenAIEmbedding([
+            }
+        });
+        // static::updating(function ($record) {
+        //     $record->name = $record->name ?? uniqid();
+        // });
+    }    
+
     // Belongs to a Collection
     public function collection()
     {

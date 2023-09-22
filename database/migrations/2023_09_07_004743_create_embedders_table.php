@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name', 40);
             $table->string('description', 255)->nullable();
             $table->string('className', 100);
+            $table->json('options')->nullable();
             $table->timestamps();
         });
     }

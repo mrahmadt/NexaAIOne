@@ -26,5 +26,10 @@ class Embedder extends Model
         'name', 
         'description',
         'className',
+        'options',
+    ];
+
+    protected $casts = [
+        'options' => 'array',
     ];
 }

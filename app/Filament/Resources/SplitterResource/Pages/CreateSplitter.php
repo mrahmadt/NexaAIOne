@@ -10,5 +10,4 @@ class CreateSplitter extends CreateRecord
 {
     protected static string $resource = SplitterResource::class;
     protected static bool $canCreateAnother = false;
-
 }

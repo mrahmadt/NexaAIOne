@@ -21,6 +21,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::prefix('v1')->group(function () {
     Route::post('/call/{id}/{name?}', [APIController::class, 'execute']);
+
+    Route::post('/collections/documents/create', [DocumentController::class, 'create']);
+    Route::delete('/collections/document/delete/{document_id}', [DocumentController::class, 'delete']);
+    Route::get('/collections/document/get/{document_id}', [DocumentController::class, 'getDocument']);
+    Route::get('/collections/documents/list/{collection_id}', [DocumentController::class, 'listDocuments']);
+    Route::get('/collections/documents/status/{jobID}', [DocumentController::class, 'documentCreationStatus']);
 });
 
 Route::prefix('test')->group(function () {

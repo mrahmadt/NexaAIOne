@@ -16,10 +16,10 @@ return new class extends Migration
             $table->string('name', 40);
             $table->string('description', 255)->nullable();
             $table->string('authToken', 100);
-            $table->integer('defaultTotalReturnChunk')->default(4);
-            $table->unsignedBigInteger('loader_id');
-            $table->unsignedBigInteger('splitter_id');
-            $table->unsignedBigInteger('embedder_id');
+            $table->integer('defaultTotalReturnDocuments')->default(3);
+            $table->unsignedBigInteger('loader_id')->nullable();
+            $table->unsignedBigInteger('splitter_id')->nullable();;
+            $table->unsignedBigInteger('embedder_id')->nullable();;
             $table->timestamps();
 
             // Foreign keys

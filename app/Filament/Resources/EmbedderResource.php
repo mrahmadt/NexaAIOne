@@ -13,6 +13,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Support\Enums\FontWeight;
+use Filament\Forms\Components\KeyValue;
 
 class EmbedderResource extends Resource
 {
@@ -21,7 +22,7 @@ class EmbedderResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-variable';
     protected static ?string $navigationGroup = 'Settings';
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 8;
     public static function form(Form $form): Form
     {
         return $form
@@ -34,6 +35,7 @@ class EmbedderResource extends Resource
                 Forms\Components\TextInput::make('className')
                     ->required()
                     ->maxLength(100),
+                Forms\Components\KeyValue::make('options'),
             ])->columns(1);
     }
 
@@ -48,9 +50,10 @@ class EmbedderResource extends Resource
                 ->description(fn (Embedder $record): string => (string)$record->description)
                 ->wrap(),
                 Tables\Columns\TextColumn::make('description')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('className')
-                    ->searchable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

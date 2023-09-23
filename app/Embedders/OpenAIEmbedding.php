@@ -21,7 +21,7 @@ class OpenAIEmbedding
         $this->options['fakeLLM'] = false;
         
         foreach(['apiKey','baseUri','apiVersion','organization','model','fakeLLM'] as $key){
-            if(isset($this->options[$key])) $this->options[$key] = $options[$key];
+            if(isset($options[$key])) $this->options[$key] = $options[$key];
         }
         
         $this->client = OpenAI::factory()->withApiKey($this->options['apiKey']);
@@ -41,14 +41,27 @@ class OpenAIEmbedding
         $this->client = $this->client->make();
     }
 
-    public function create($input){
+    public function execute($input){
         if($this->options['fakeLLM']){
-            return [
-                0.0023064255,
-                0.0023064255,
-                -0.009327292,
-                -0.0028842222,
-            ];
+            return json_encode([
+                    "object"=> "list",
+                    "data"=> [
+                      [
+                        "object"=> "embedding",
+                        "embedding"=> [
+                          0.0023064255,
+                          -0.009327292,
+                          -0.0028842222,
+                        ],
+                        "index"=> 0
+                      ]
+                    ],
+                    "model"=> "text-embedding-ada-002",
+                    "usage"=> [
+                      "prompt_tokens"=> 8,
+                      "total_tokens"=> 8
+                    ]
+            ], JSON_FORCE_OBJECT);
         }
         $response = $this->client->embeddings()->create([
             'model' => $this->options['model'],
@@ -58,7 +71,7 @@ class OpenAIEmbedding
         if(!isset($response->embeddings[0])){
             return false;
         }else{
-            return $response->embeddings[0]->embedding;
+            return $response;
         }
     }
 }

@@ -18,7 +18,7 @@ class Collection extends Model
         'name',
         'description',
         'authToken',
-        'defaultTotalReturnChunk',
+        'defaultTotalReturnDocuments',
         'loader_id',
         'splitter_id',
         'embedder_id',
@@ -60,11 +60,4 @@ class Collection extends Model
         return $this->hasMany(Document::class);
     }
 
-    /**
-     * Get the embedder associated with the collection.
-     */
-    public function chunks()
-    {
-        return $this->hasMany(Chunk::class);
-    }
 }

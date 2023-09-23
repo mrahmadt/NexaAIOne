@@ -25,25 +25,5 @@ class DocumentsRelationManager extends RelationManager
         return DocumentResource::table($table)->headerActions([
             Tables\Actions\CreateAction::make(),
         ]);
-        // return $table
-        //     ->recordTitleAttribute('name')
-        //     ->columns([
-        //         Tables\Columns\TextColumn::make('name'),
-        //     ])
-        //     ->filters([
-        //         //
-        //     ])
-        //     ->headerActions([
-        //         Tables\Actions\CreateAction::make(),
-        //     ])
-        //     ->actions([
-        //         Tables\Actions\EditAction::make(),
-        //         Tables\Actions\DeleteAction::make(),
-        //     ])
-        //     ->bulkActions([
-        //         Tables\Actions\BulkActionGroup::make([
-        //             Tables\Actions\DeleteBulkAction::make(),
-        //         ]),
-        //     ]);
     }
 }

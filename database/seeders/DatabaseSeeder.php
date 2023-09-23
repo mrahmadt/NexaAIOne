@@ -16,6 +16,9 @@ class DatabaseSeeder extends Seeder
             LLMsTableSeeder::class,
             ServiceTableSeeder::class,
             ServicesLLMsTableSeeder::class,
+            EmbeddersTableSeeder::class,
+            LoadersTableSeeder::class,
+            SplittersTableSeeder::class,
         ]);
     }
 }

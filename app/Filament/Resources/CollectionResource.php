@@ -21,7 +21,9 @@ class CollectionResource extends Resource
     protected static ?string $model = Collection::class;
     protected static ?string $label = 'Collection';
     protected static ?string $navigationIcon = 'heroicon-o-archive-box';
-    protected static ?int $navigationSort = 3;
+    protected static ?string $navigationGroup = 'My Data';
+
+    protected static ?int $navigationSort = 1;
     public static function form(Form $form): Form
     {
         return $form
@@ -46,34 +48,31 @@ class CollectionResource extends Resource
                 ->default(static function (): string {
                     return Collection::newAuthToken();
                 }),
-            Forms\Components\Select::make('defaultTotalReturnChunk')
+            Forms\Components\Select::make('defaultTotalReturnDocuments')
             ->options([
                 1 => 'One',
-                2 => '2 chunks',
-                3 => '3 chunks',
-                4 => '4 chunks',
-                5 => '5 chunks',
-                6 => '6 chunks',
-                7 => '7 chunks',
+                2 => '2 Documents',
+                3 => '3 Documents',
+                4 => '4 Documents',
+                5 => '5 Documents',
+                6 => '6 Documents',
+                7 => '7 Documents',
             ])
-            ->label('Total Chunks to Return to API?')
+            ->label('Max Documents to inject in LLM requests?')
             ->required()
             ->default(3),
             Forms\Components\Select::make('loader_id')
                 ->relationship(name: 'loader', titleAttribute: 'name')
-                ->required()
                 ->preload()
                 ->searchable(['name', 'description'])
                 ->loadingMessage('Loading...')->live(),
             Forms\Components\Select::make('splitter_id')
                 ->relationship(name: 'splitter', titleAttribute: 'name')
-                ->required()
                 ->preload()
                 ->searchable(['name', 'description'])
                 ->loadingMessage('Loading...')->live(),
             Forms\Components\Select::make('embedder_id')
                 ->relationship(name: 'embedder', titleAttribute: 'name')
-                ->required()
                 ->preload()
                 ->searchable(['name', 'description'])
                 ->loadingMessage('Loading...')->live(),

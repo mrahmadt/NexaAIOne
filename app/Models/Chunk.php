@@ -12,6 +12,8 @@ class Chunk extends Model
     use HasFactory;
 
     protected $fillable = [
+        'content',
+        'content_tokens',
         'meta',
         'embeds',
         'collection_id',
@@ -31,20 +33,29 @@ class Chunk extends Model
     protected static function boot() {
         parent::boot();
         static::creating(function ($record) {
-            // $collection = Collection::where(['collection_id', $record->collection_id])->first();
-            $embedder = Embedder::where(['collection_id', $record->embedder_id])->first();
-            $className = '\App\Services\\' . $embedder->className;
-            $EmbedderClass = new $className($embedder->options);
-            $EmbedderClass->create($record);
-            //use App\Embedders\OpenAIEmbedding;
             if(!isset($record->embeds)){
-
-                // $embeddingModel = new OpenAIEmbedding([
+                $embedder = Embedder::where(['collection_id', $record->embedder_id])->first();
+                $className = '\App\Embedders\\' . $embedder->className;
+                $EmbedderClass = new $className($embedder->options);
+                $embeds = $EmbedderClass->create($record);
+                if($embeds && isset($embeds->embeddings[0]->embedding)){
+                    $record->embeds = $embeds->embeddings[0]->embedding;
+                    $record->tokens = $embeds->usage->totalTokens;
+                }
             }
         });
-        // static::updating(function ($record) {
-        //     $record->name = $record->name ?? uniqid();
-        // });
+        static::updating(function ($record) {
+            if(!isset($record->embeds) ) {
+                $embedder = Embedder::where(['collection_id', $record->embedder_id])->first();
+                $className = '\App\Embedders\\' . $embedder->className;
+                $EmbedderClass = new $className($embedder->options);
+                $embeds = $EmbedderClass->create($record);
+                if($embeds && isset($embeds->embeddings[0]->embedding)) {
+                    $record->embeds = $embeds->embeddings[0]->embedding;
+                    $record->tokens = $embeds->usage->totalTokens;
+                }
+            }
+        });
     }    
 
     // Belongs to a Collection

@@ -10,5 +10,4 @@ class CreateLoader extends CreateRecord
 {
     protected static string $resource = LoaderResource::class;
     protected static bool $canCreateAnother = false;
-
 }

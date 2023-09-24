@@ -28,7 +28,7 @@ class OpenAIChatCompletionService extends BaseService
     protected $api_id;
 
 
-    public function __construct($userOptions, $ApiModel , $httpRequest = null){
+    public function __construct($userOptions = [], $ApiModel = null, $httpRequest = null){
         if($userOptions) {
             $this->ApiModel = $ApiModel;
             $this->api_id = $ApiModel->id;

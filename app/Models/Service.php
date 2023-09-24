@@ -46,6 +46,6 @@ class Service extends Model
 
     public function llms()
     {
-        return $this->belongsToMany(Llm::class, 'llm_service', 'service_id', 'llm_id')->withTimestamps();
+        return $this->belongsToMany(LLM::class, 'llm_service', 'service_id', 'llm_id')->withTimestamps();
     }
 }

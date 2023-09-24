@@ -74,15 +74,18 @@ abstract class BaseService{
         $apiOptions=[];
         $NotOptions=[];
         $sysOptions=[];
-        foreach($this->ApiModel->options as $index => $item){
-            if(isset($item['isApiOption']) && $item['isApiOption']){
-                $apiOptions[$item['name']] = $item['default'] ?? $defaultOptions[$item['name']]['default'];
-            }elseif(( !isset($item['isApiOption']) || $item['isApiOption'] == false )){
-                $NotOptions[$item['name']] = $item['default'] ?? $defaultOptions[$item['name']]['default'];
+        foreach($this->ApiModel->options as $group => $options){
+            foreach ($options as $index => $item) {
+                if(isset($item['isApiOption']) && $item['isApiOption']){
+                    $apiOptions[$item['name']] = $item['default'] ?? $defaultOptions[$item['name']]['default'];
+                }elseif(( !isset($item['isApiOption']) || $item['isApiOption'] == false )){
+                    $NotOptions[$item['name']] = $item['default'] ?? $defaultOptions[$item['name']]['default'];
+                }
+                $sysOptions[$item['name']] = $item;
             }
-            $sysOptions[$item['name']] = $item;
         }
 
+        //TODO: userOptions check "false" & "true" values, convert them to boolean
         $this->options = array_merge(
             $apiOptions,
             $userOptions,
@@ -114,7 +117,7 @@ abstract class BaseService{
      * @return array
      */
 
-    public function getOptionSchema(?int $service_id = null, ?Model $serviceModel = null){
+    public function getOptionSchema(?Model $serviceModel = null, ?int $service_id = null){
         $llmOptions = [];
         $llmMaxTokens = [];
         $defaultOptions = [];
@@ -139,7 +142,17 @@ abstract class BaseService{
             $defaultOptions['model']['maxTokens'] = $llmMaxTokens;
             $defaultOptions['model']['default'] = implode(',',array_keys($llmOptions));
         }
-        return $defaultOptions;
+
+        $groupedOptions = [];
+    
+        foreach ($defaultOptions as $key => $option) {
+            $defaultOptions[$key]['isApiOption'] = $option['isApiOption'] ?? 1;
+            $defaultOptions[$key]['_allowApiOption'] = $option['_allowApiOption'] ?? 1;
+            $defaultOptions[$key]['type'] = $option['type'] ?? 'Any';
+            $group = isset($option["_group"]) ? $option["_group"] : 'General';
+            $groupedOptions[$group][$key] = $option;
+        }
+        return $groupedOptions;
     }
 
     /**

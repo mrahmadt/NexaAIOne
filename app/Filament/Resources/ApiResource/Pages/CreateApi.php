@@ -10,4 +10,10 @@ class CreateApi extends CreateRecord
 {
     protected static string $resource = ApiResource::class;
     protected static bool $canCreateAnother = false;
+
+    // protected function mutateFormDataBeforeCreate(array $data): array
+    // {
+    //     dd($data);
+    //     return $data;
+    // }
 }

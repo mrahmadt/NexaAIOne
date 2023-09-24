@@ -24,7 +24,7 @@ trait HasDebug
             "type" => "boolean",
             "required" => false,
             "desc" => "Retains all request and response data, facilitating issue troubleshooting and prompt optimization",
-            "default" => false,
+            "default" => 0,
             "_group" => 'Debugging',
         ],
     ];

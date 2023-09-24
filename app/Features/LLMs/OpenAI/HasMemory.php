@@ -61,7 +61,7 @@ trait HasMemory
                 'noOptimization' => 'No memory optimization',
                 'truncate' => 'Truncate',
                 'summarization' => 'Summarization',
-                'embeddings' => 'Embeddings',
+                // 'embeddings' => 'Embeddings',
             ],
             "_group" => 'Memory',
         ],
@@ -90,7 +90,7 @@ trait HasMemory
             "required" => false,
             "desc" => "Clear memory for this session.",
             "isApiOption" => true,
-            "default" => false,
+            "default" => 0,
             "_group" => 'Memory',
         ],
         'session' => [

@@ -54,7 +54,7 @@ class AppResource extends Resource
                 ->required()->default(true),
             Forms\Components\Select::make('services')
                 ->multiple()
-                ->relationship(name: 'apis', titleAttribute: 'name')
+                ->relationship(name: 'apis', titleAttribute: 'name',modifyQueryUsing: fn (Builder $query) => $query->where('isActive',true))
                 ->preload()
                 ->searchable(['name', 'description'])
                 ->loadingMessage('Loading...')->live()

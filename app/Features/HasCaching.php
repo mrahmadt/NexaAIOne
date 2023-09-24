@@ -39,7 +39,7 @@ trait HasCaching
             "required" => false,
             "desc" => "Clear cache for the specified message.",
             "isApiOption" => true,
-            'default' => false,
+            'default' => 0,
             "_group" => 'Caching',
         ],
         'session' => [

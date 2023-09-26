@@ -1,18 +1,11 @@
-
-### Suggested Names:
-
-- **AICentral Hub**
-- **UnifyAI Suite**
-- **EnterpriseAISync**
-- **NexaAIOne**
-- **AIFusion Pro**
+# Not Ready Yet, you are welcome to join us
 
 ### Introduction:
 
-Introducing `[Chosen Name]`, the next-generation open-source AI management platform designed for enterprises, startups, and developers alike. Experience a centralized AI REST API management platform, crafted with advanced features to empower your applications. Offers an intuitive yet powerful AI API management solution for every user, from novice developers to AI experts.
+Introducing **NexaAIOne**, the next-generation open-source AI management platform designed for enterprises, startups, and developers alike. Experience a centralized AI REST API management platform crafted with advanced features to empower your applications. Offers an intuitive yet powerful AI API management solution for every user, from novice developers to AI experts.
 
 
-### Why You Should Use This App in Your Company/Startup/Project:
+### Why you should use **NexaAIOne**:
 
 - **Production Ready**: With minimum configuration, launch a platform that's secure, swift, and scalable.
 - **Developer-Friendly**: Designed with non-AI experts in mind, Offers hassle-free API integration, eliminating concerns about caching, memory management, and complex AI processes.
@@ -37,22 +30,6 @@ Introducing `[Chosen Name]`, the next-generation open-source AI management platf
 - **Auto-Documentation**: Seamlessly generate comprehensive documentation for all APIs, ensuring clarity and ease-of-use for developers at every skill level.
 
 
---------
---------
-
-
-
-# *NOT FINISHED YET*
-
---------
-
-https://github.com/jeffgreco13/filament-breezy
-https://github.com/chiiya/filament-access-control
-
-https://filamentphp.com/docs/3.x/panels/resources/getting-started
-
-sail artisan make:filament-resource Chunk --generate
-sail artisan make:filament-resource Splitter --generate
 sail artisan make:filament-resource Loader --generate
 
 sail artisan make:filament-user

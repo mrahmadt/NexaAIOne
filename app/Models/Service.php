@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class Service extends Model
 {
@@ -43,6 +44,13 @@ class Service extends Model
         'supportCaching' => 'boolean',
         'supportCollection' => 'boolean',
     ];
+
+    protected static function boot() {
+        parent::boot();
+        static::updating(function ($record) {
+            Cache::forget('service:class:'.$record->id);
+        });
+    }
 
     public function llms()
     {

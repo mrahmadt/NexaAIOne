@@ -15,6 +15,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Set;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Support\Enums\FontWeight;
+use Filament\Forms\Components\Placeholder;
+use Illuminate\Support\HtmlString;
 
 class AppResource extends Resource
 {
@@ -26,20 +28,28 @@ class AppResource extends Resource
 
     public static function form(Form $form): Form
     {
+        if($form->getOperation() == 'create'){
+            $introDescription = Placeholder::make('')->content('Create an App and associate APIs to it so you can use Auth Token to access them from your application.');
+        }else{
+            $introDescription = Placeholder::make('')->content('Edit an App and associate APIs to it so you can use Auth Token to access them from your application.');
+        }
         return $form
         ->schema([
+            $introDescription,
             Forms\Components\TextInput::make('name')
                 ->required()
+                ->helperText('Any name to help you identify this app.')
                 ->maxLength(40),
             Forms\Components\TextInput::make('description')
                 ->maxLength(255),
             Forms\Components\TextInput::make('owner')
                 ->maxLength(60),
             Forms\Components\TextInput::make('authToken')
+                ->helperText(new HtmlString('Bearer authentication tokens that you can use to access any of the associate APIs. <a href="https://swagger.io/docs/specification/authentication/bearer-authentication/">Bearer Authentication</a>'))
                 ->required()
                 ->minLength(50)
                 ->maxLength(100)
-                ->label('Auth Token')
+                ->label('Bearer Token')
                 ->suffixAction(
                     Action::make('RegenerateAuthToken')
                         ->icon('heroicon-s-key')
@@ -50,12 +60,14 @@ class AppResource extends Resource
                 ->default(static function (): string {
                     return App::newAuthToken();
                 }),
-            Forms\Components\Toggle::make('isActive')->label('Active?')
+            Forms\Components\Toggle::make('isActive')->label('Is Active')
+                ->helperText('Enable/Disable App.')
                 ->required()->default(true),
             Forms\Components\Select::make('services')
+                ->helperText('List of APIs allowed to be used by this app.')
                 ->multiple()
                 ->relationship(name: 'apis', titleAttribute: 'name',modifyQueryUsing: fn (Builder $query) => $query->where('isActive',true))
-                ->preload()
+                // ->preload()
                 ->searchable(['name', 'description'])
                 ->loadingMessage('Loading...')->live()
         ])->columns(1);

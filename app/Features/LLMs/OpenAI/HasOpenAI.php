@@ -279,6 +279,9 @@ We generally recommend altering this or top_p but not both.",
 }
 }
 EOT;
+        $this->usage['promptTokens'] += $promptTokens;
+        $this->usage['completionTokens'] += $completionTokens;
+        $this->usage['totalTokens'] += $totalTokens;
         return json_decode($jsonResponse);
     }
 
@@ -316,6 +319,10 @@ EOT;
                 )
             );
         }
+        $this->usage['promptTokens'] += $response->usage->promptTokens;
+        $this->usage['completionTokens'] += $response->usage->completionTokens;
+        $this->usage['totalTokens'] += $response->usage->totalTokens;
+
         $this->debug('sendMessageToLLM()', ['ChatCompletionOptions' => $ChatCompletionOptions, '$messages'=>$messages, '$response'=>$response]);
         return $response;
     }

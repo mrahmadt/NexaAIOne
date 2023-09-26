@@ -15,6 +15,9 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Set;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Support\Enums\FontWeight;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Hidden;
+use Illuminate\Support\HtmlString;
 
 class CollectionResource extends Resource
 {
@@ -26,14 +29,31 @@ class CollectionResource extends Resource
     protected static ?int $navigationSort = 1;
     public static function form(Form $form): Form
     {
+        if($form->getOperation() == 'create'){
+            $introDescription = Placeholder::make('')->content(new HtmlString("A Collection serves as a structured data store for text-based <b>documents</b>. You can populate this Collection either via the Collection API endpoint or through the Admin Portal.
+            <br><br>
+            The primary function of a Collection is to extend the knowledge base accessible by an AI service. When creating an API, you can specify which Collection the AI should reference for its responses. This allows you to tailor the AI's behavior and the information it draws upon, depending on the context in which it's used.
+            <br><br>
+            <b>Example Use Case:</b>
+            Suppose you have a chatbot aimed at handling HR-related queries (HRChatBot). You can create a Collection named 'HR_Policies' and upload all relevant HR documents into it. When a user asks a question to your 'HR ChatBot' or your 'ERP', the backend can be configured to call the API, which will then consult the 'HR_Policies' Collection to retrieve and generate a response based on the information it contains.
+            <br><br>
+            <b>Technical Note:</b>
+            This mechanism utilizes a method known as Retrieval-Augmented Generation (RAG). RAG empowers the AI to scan the Collection and identify the most relevant information to construct its responses."))->columnSpanFull();
+        }else{
+            $introDescription = Placeholder::make('')->content('')->columnSpanFull();
+        }
         return $form
         ->schema([
+            $introDescription,
             Forms\Components\TextInput::make('name')
                 ->required()
                 ->maxLength(40),
             Forms\Components\TextInput::make('description')
                 ->maxLength(255),
             Forms\Components\TextInput::make('authToken')
+            ->helperText('Bearer authentication tokens that you can use to access this Collection via the Collection APIs.')
+            ->label('Bearer Token')
+
                 ->required()
                 ->minLength(50)
                 ->maxLength(100)
@@ -58,20 +78,27 @@ class CollectionResource extends Resource
                 6 => '6 Documents',
                 7 => '7 Documents',
             ])
-            ->label('Max Documents to inject in LLM requests?')
+            ->label('Max Documents to share with AI service for each API call?')
             ->required()
             ->default(3),
             Forms\Components\Select::make('loader_id')
+                ->label('Documents Loader')
+                ->helperText('Document loader provides a "load/download" and "extract text" method for any specified URL or file (will work only when using Collection API).')
                 ->relationship(name: 'loader', titleAttribute: 'name')
                 ->preload()
                 ->searchable(['name', 'description'])
                 ->loadingMessage('Loading...')->live(),
             Forms\Components\Select::make('splitter_id')
+                ->label('Text Splitter')
+                ->helperText('Often times you want to split large text into smaller chunks to better work with language models. TextSplitters are responsible for splitting up large text into smaller documents  (will work only when using Collection API).')
                 ->relationship(name: 'splitter', titleAttribute: 'name')
                 ->preload()
                 ->searchable(['name', 'description'])
                 ->loadingMessage('Loading...')->live(),
             Forms\Components\Select::make('embedder_id')
+            ->label('Embedder')
+            ->helperText('Embeddings create a vector representation of a document to do things like semantic search where we look for pieces of text that are most similar to an API query.')
+
                 ->relationship(name: 'embedder', titleAttribute: 'name')
                 ->preload()
                 ->searchable(['name', 'description'])

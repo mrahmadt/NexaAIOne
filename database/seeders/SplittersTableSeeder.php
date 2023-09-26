@@ -12,21 +12,19 @@ class SplittersTableSeeder extends Seeder
      * Run the database seeds.
      */
 
-    /*
-    https://js.langchain.com/docs/modules/data_connection/document_transformers/text_splitters/contextual_chunk_headers
-    https://python.langchain.com/docs/modules/data_connection/document_transformers/text_splitters/split_by_token
-    
-    */
     public function run(): void
     {
         DB::table('splitters')->insert([
             'name' => 'Recursively split by character',
             'description' => 'This text splitter is the recommended one for generic text. It is parameterized by a list of characters. It tries to split on them in order until the chunks are small enough.',
-            'className' => 'RecursivelySplitByCharacter',
+            'className' => 'RecursiveCharacterTextSplitter',
             'options' => json_encode([
-                'separator' => "\n\n",
-                'chunk_size' => 1000,
-                'chunk_overlap'  => 200,    
+                'separators' => ["\n\n", "\n", " ", ""],
+                'chunk_size' => 4000,
+                'chunk_overlap'  => 200,
+                'keep_separator'  => 0,
+                'strip_whitespace'  => 1,
+                'is_separator_regex'  => 0,
             ]),
             'created_at' => now(),
             'updated_at' => now()
@@ -34,11 +32,14 @@ class SplittersTableSeeder extends Seeder
         DB::table('splitters')->insert([
             'name' => 'Split by character',
             'description' => 'This is the simplest method. This splits based on characters (by default "\n\n") and measure chunk length by number of characters.',
-            'className' => 'SplitByCharacter',
+            'className' => 'CharacterTextSplitter',
             'options' => json_encode([
                 'separator' => "\n\n",
-                'chunk_size' => 1000,
-                'chunk_overlap'  => 200,    
+                'chunk_size' => 4000,
+                'chunk_overlap'  => 200,
+                'keep_separator'  => 0,
+                'strip_whitespace'  => 1,
+                'is_separator_regex'  => 0,
             ]),
             'created_at' => now(),
             'updated_at' => now()
@@ -46,11 +47,12 @@ class SplittersTableSeeder extends Seeder
         DB::table('splitters')->insert([
             'name' => 'Split by tokens',
             'description' => 'Language models have a token limit. You should not exceed the token limit. When you split your text into chunks it is therefore a good idea to count the number of tokens',
-            'className' => 'SplitByTokens',
+            'className' => 'TokenTextSplitter',
             'options' => json_encode([
-                'separator' => "\n\n",
+                'encoding_name' => "p50k_base",
                 'chunk_size' => 500,
-                'chunk_overlap'  => 0,    
+                'chunk_overlap'  => 60,
+                'strip_whitespace'  => 1,
             ]),
             'created_at' => now(),
             'updated_at' => now()

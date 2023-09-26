@@ -8,6 +8,12 @@ use App\Models\Service as ServiceModel;
 
 abstract class BaseService{
     use HasDebug;
+
+    protected $usage = [
+        'promptTokens'=>0,
+        'completionTokens'=>0,
+        'totalTokens'=>0,
+    ];
     /**
      * An array of extra responses for the service.
      *

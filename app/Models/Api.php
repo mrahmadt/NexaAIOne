@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class Api extends Model
 {
@@ -42,6 +43,13 @@ class Api extends Model
         'options' => 'array',
         'isActive' => 'boolean',
     ];
+
+    protected static function boot() {
+        parent::boot();
+        static::updating(function ($record) {
+            Cache::forget('apiModel:'.$record->id);
+        });
+    }
 
     /**
      * Get the AIModels associated with this API.

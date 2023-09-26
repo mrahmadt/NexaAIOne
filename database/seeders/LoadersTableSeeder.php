@@ -13,11 +13,11 @@ class LoadersTableSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('embedders')->insert([
-            'name' => 'unstructured',
-            'description' => 'The unstructured library aims to simplify and streamline the preprocessing of structured and unstructured documents for downstream tasks',
-            'className' => 'unstructured',
-            'options' => json_encode(['chunking_strategy'=>true]),
+        DB::table('loaders')->insert([
+            'name' => 'Generic Text',
+            'description' => 'Generic Text Loader to load text from URL or file',
+            'className' => 'GenericText',
+            'options' => json_encode(['headers'=>['User-Agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/117.0']]),
             'created_at' => now(),
             'updated_at' => now()
         ]);

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class App extends Model
 {
@@ -42,7 +43,12 @@ class App extends Model
         return bin2hex(openssl_random_pseudo_bytes(16)). bin2hex(random_bytes(16));
     }
 
-
+    protected static function boot() {
+        parent::boot();
+        static::updating(function ($record) {
+            Cache::forget('appId:'.$record->id);
+        });
+    }
     /**
     * Get the APIs associated with this App.
     */

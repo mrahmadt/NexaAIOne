@@ -75,7 +75,10 @@ class OpenAIChatCompletionService extends BaseService
                 'content'=> $serviceResponse->choices[0]->message->content, 
             ];
         }
-        return $this->responseMessage(['status' => true, 'message' => $serviceResponseMessage, 'serviceResponse' => $serviceResponse]);
+        
+
+        $this->usage['api_id'] = $this->api_id;
+        return $this->responseMessage(['status' => true, 'message' => $serviceResponseMessage, 'serviceResponse' => $serviceResponse, 'usage' => $this->usage]);
     }
 
 }

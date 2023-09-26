@@ -20,13 +20,16 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::prefix('v1')->group(function () {
-    Route::post('/call/{id}/{name?}', [APIController::class, 'execute']);
+    Route::post('/app/{appId}/{apiId}/{name?}', [APIController::class, 'execute']);
 
-    Route::post('/collections/documents/create', [DocumentController::class, 'create']);
-    Route::delete('/collections/document/delete/{document_id}', [DocumentController::class, 'delete']);
-    Route::get('/collections/document/get/{document_id}', [DocumentController::class, 'getDocument']);
-    Route::get('/collections/documents/list/{collection_id}', [DocumentController::class, 'listDocuments']);
-    Route::get('/collections/documents/status/{jobID}', [DocumentController::class, 'documentCreationStatus']);
+    Route::prefix('collections')->group(function () {
+        Route::post('/documents/create', [DocumentController::class, 'create']);
+        Route::put('/document/update/{document_id}', [DocumentController::class, 'update']);
+        Route::delete('/document/delete/{document_id}', [DocumentController::class, 'delete']);
+        Route::get('/document/get/{document_id}', [DocumentController::class, 'getDocument']);
+        Route::get('/documents/list/{collection_id}', [DocumentController::class, 'listDocuments']);
+        Route::get('/documents/status/{jobID}', [DocumentController::class, 'documentStatus']);
+    });
 });
 
 Route::prefix('test')->group(function () {

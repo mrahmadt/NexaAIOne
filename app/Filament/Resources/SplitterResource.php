@@ -34,7 +34,7 @@ class SplitterResource extends Resource
                 Forms\Components\TextInput::make('className')
                     ->required()
                     ->maxLength(100),
-                Forms\Components\KeyValue::make('options'),
+                    \InvadersXX\FilamentJsoneditor\Forms\JSONEditor::make('options'),
             ])->columns(1);
     }
 

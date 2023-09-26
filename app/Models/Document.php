@@ -35,36 +35,32 @@ class Document extends Model
         'embeds',
     ];
 
+    protected static function embeddings($record) {
+        $record->content = 'Saved by embeddings';
+        $collection = Collection::where(['id'=>$record->collection_id])->first();
+        if($collection->embedder_id){
+            $embedder = Embedder::where(['id'=> $collection->embedder_id])->first();
+            $className = '\App\Embedders\\' . $embedder->className;
+            $EmbedderClass = new $className($embedder->options);
+            $embeds = $EmbedderClass->execute($record->content);
+            if($embeds && isset($embeds->embeddings[0]->embedding)){
+                $record->embeds = $embeds->embeddings[0]->embedding;
+                $record->content_tokens = $embeds->usage->totalTokens;
+            }
+        }
+        return $record;
+    }
+
     protected static function boot() {
         parent::boot();
         static::creating(function ($record) {
             if(!isset($record->embeds) && isset($record->content)){
-                $collection = Collection::where(['id'=>$record->collection_id])->first();
-                if($collection->embedder_id){
-                    $embedder = Embedder::where(['id'=> $collection->embedder_id])->first();
-                    $className = '\App\Embedders\\' . $embedder->className;
-                    $EmbedderClass = new $className($embedder->options);
-                    $embeds = $EmbedderClass->execute($record->content);
-                    if($embeds && isset($embeds->embeddings[0]->embedding)){
-                        $record->embeds = $embeds->embeddings[0]->embedding;
-                        $record->content_tokens = $embeds->usage->totalTokens;
-                    }
-                }
+                $record = self::embeddings($record);
             }
         });
         static::updating(function ($record) {
-            if(!isset($record->embeds) && isset($record->content)){
-                $collection = Collection::where(['id'=>$record->collection_id])->first();
-                if($collection->embedder_id){
-                    $embedder = Embedder::where(['id'=> $collection->embedder_id])->first();
-                    $className = '\App\Embedders\\' . $embedder->className;
-                    $EmbedderClass = new $className($embedder->options);
-                    $embeds = $EmbedderClass->execute($record->content);
-                    if($embeds && isset($embeds->embeddings[0]->embedding)){
-                        $record->embeds = $embeds->embeddings[0]->embedding;
-                        $record->content_tokens = $embeds->usage->totalTokens;
-                    }
-                }
+            if(!isset($record->embeds) && $record->content != $record->original['content']){
+                $record = self::embeddings($record);
             }
         });
     }

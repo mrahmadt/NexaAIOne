@@ -48,6 +48,19 @@ trait HasDebug
 
     }
 
+    private function replaceSensitiveKeys(&$array) {
+        foreach ($array as $key => &$value) {
+            if (is_array($value)) {
+                // Recurse into the array
+                $this->replaceSensitiveKeys($value);
+            } else {
+                // Check if the key is 'abc' or 'xyz'
+                if ($key === 'openaiApiKey' || $key === 'Authorization') {
+                    $value = '***';
+                }
+            }
+        }
+    }
     /**
      * Saves the debug information to the database and a log file.
      *
@@ -64,6 +77,8 @@ trait HasDebug
             'output' => $this->debug['output'] ?? null,
             'backtrace' => $this->debug['backtrace'] ?? null,
         ];
+        $this->replaceSensitiveKeys($debug['input']);
+        $this->replaceSensitiveKeys($debug['backtrace']);
         Debug::create($debug);
         file_put_contents(storage_path('logs/'.time().'.json'), json_encode($debug, JSON_PRETTY_PRINT) . "\n");
         //filter keys and short messages?

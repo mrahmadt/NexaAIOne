@@ -23,6 +23,7 @@ class LoaderResource extends Resource
     protected static ?string $navigationGroup = 'Settings';
     protected static ?int $navigationSort = 6;
 
+
     public static function form(Form $form): Form
     {
         return $form
@@ -35,7 +36,7 @@ class LoaderResource extends Resource
             Forms\Components\TextInput::make('className')
                 ->required()
                 ->maxLength(100),
-            Forms\Components\KeyValue::make('options'),
+            \InvadersXX\FilamentJsoneditor\Forms\JSONEditor::make('options'),
         ])->columns(1);
     }
 

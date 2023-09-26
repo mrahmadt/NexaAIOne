@@ -15,6 +15,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\KeyValue;
 use App\Filament\Resources\CollectionResource\RelationManagers\DocumentsRelationManager;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Forms\Components\Placeholder;
+use Illuminate\Support\HtmlString;
 
 class DocumentResource extends Resource
 {
@@ -27,8 +29,16 @@ class DocumentResource extends Resource
     // protected static bool $shouldRegisterNavigation = false;
     public static function form(Form $form): Form
     {
+        if($form->getOperation() == 'create'){
+            $introDescription = Placeholder::make('')->content(new HtmlString('Use this form to upload documents to any collection. You can also use the Collection APIs to integrate with other systems.
+            <br><br>We will not use Text Splitter for documents created via this page.'))->columnSpanFull();
+        }else{
+            $introDescription = Placeholder::make('')->content('')->columnSpanFull();
+        }
+
         return $form
             ->schema([
+                $introDescription,
                 Forms\Components\Select::make('collection_id')
                 ->relationship(name: 'collection', titleAttribute: 'name')
                 ->preload()
@@ -37,11 +47,15 @@ class DocumentResource extends Resource
                 ->required()
                 ->hiddenOn(DocumentsRelationManager::class),
                 Forms\Components\Textarea::make('content')
-                    ->required()
-                    ->rows(8)
-                    ->columnSpanFull(),
+                ->label('Document Content')
+                ->helperText(new HtmlString('<b>- Make sure you don\'t have any sensitive information in the document.<br>- Consider the LLM token limits that can be processed in a single interaction (System message + Document(s) + History + User Question).</b>'))
+                ->required()
+                ->rows(8)
+                ->columnSpanFull(),
 
                 Forms\Components\KeyValue::make('meta')
+                    ->label('Meta Data')
+                    ->helperText('Specify any metadata you would like to associate with this document (will be returned in the API response).')
                     ->addActionLabel('Add property'),
             ])->columns(1);
     }

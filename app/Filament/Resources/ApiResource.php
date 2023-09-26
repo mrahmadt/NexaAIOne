@@ -43,12 +43,16 @@ class ApiResource extends Resource
     public static function form(Form $form): Form
     {
         if($form->getOperation() == 'create'){
+            $introDescription = Placeholder::make('')->content('Create an API for an AI service and define the API options & configuration. API creation will help you specify which service configurations can be changeable through an API call (API option) and which configurations are predefined (can not be changed in an API call).')->columnSpanFull();
+
             $serviceInput = Forms\Components\Select::make('service_id')
             ->relationship(name: 'service', titleAttribute: 'name',modifyQueryUsing: fn (Builder $query) => $query->where('isActive',true))
             ->live()
             ->required()
             ->preload()
             ->columnSpanFull()
+            ->helperText('Which Service would you like to create an API for it?')
+            ->label('Service')
             ->afterStateUpdated(function (Set $set, Get $get, string $operation) {
                 if($get('service_id')){
                     $serviceModel = Service::where(['id'=>$get('service_id'), 'isActive'=>true])->first();
@@ -66,6 +70,7 @@ class ApiResource extends Resource
                 }
             });
         }else{
+            $introDescription = Placeholder::make('')->content('')->columnSpanFull();
             $serviceInput = Placeholder::make('Service')->content(function (API $record, Set $set){ 
                 return $record->service()->value('name');
             });
@@ -73,16 +78,28 @@ class ApiResource extends Resource
         }
         return $form
             ->schema([
-            Forms\Components\TextInput::make('name')->required()->maxLength(40)->columnSpanFull()->live(debounce: 500)->afterStateUpdated(function (Get $get, Set $set) { $set('endpoint', Str::slug($get('name'))); }),
+            $introDescription,
+            Forms\Components\TextInput::make('name')->required()->maxLength(40)->columnSpanFull()->live(debounce: 500)->afterStateUpdated(function (Get $get, Set $set) { $set('endpoint', Str::slug($get('name'))); })->helperText('Any name to help you identify this API.'),
             Forms\Components\TextInput::make('description')->maxLength(255)->columnSpanFull(),
-            Forms\Components\TextInput::make('endpoint')->required()->prefix('https://'.request()->getHost().'/api/../')->maxLength(100)->columnSpanFull()->live(onBlur: true)->afterStateUpdated(function (Get $get, Set $set) {$set('endpoint', Str::slug($get('endpoint')));}),
-            Forms\Components\Toggle::make('enableUsage')->label('Track Usage')->required()->default(true),
-            Forms\Components\Toggle::make('isActive')->label('Is Active?')->required()->default(true),
+            Forms\Components\TextInput::make('endpoint')->required()->prefix('https://'.request()->getHost().'/api/../')->maxLength(100)->columnSpanFull()->live(onBlur: true)->helperText(
+                function(Get $get){
+                    $url = '';
+                    if($get('endpoint')){
+                        $url = '(Example: <b>https://'.request()->getHost().'/api/xx/'.$get('endpoint').'</b>)';
+                    }
+                    $content = new HtmlString('API end point. '.$url);
+                    return $content;
+                }
+            )->afterStateUpdated(function (Get $get, Set $set) {$set('endpoint', Str::slug($get('endpoint')));}),
+            Forms\Components\Toggle::make('enableUsage')->label('Track Usage')->required()->default(true)->helperText('Track API usage in Admin Portal.'),
+            Forms\Components\Toggle::make('isActive')->label('Is Active')->required()->default(true)->helperText('Enable/Disable API.'),
             $serviceInput,
-            Forms\Components\Select::make('collection_id')->relationship(name: 'collection', titleAttribute: 'name')->disabled(fn (Get $get): bool => !$get('supportCollection') ?? true)->visible(fn (Get $get): bool => $get('supportCollection') ?? false)->columnSpanFull(),
+            Forms\Components\Select::make('collection_id')->relationship(name: 'collection', titleAttribute: 'name')->disabled(fn (Get $get): bool => !$get('supportCollection') ?? true)->visible(fn (Get $get): bool => $get('supportCollection') ?? false)->columnSpanFull()
+            ->helperText(new HtmlString('Should we use specific collections to help AI answer user questions? (this method is called RAG "<b>Retrieval Augmented Generation</b>").<br><b>What is RAG?</b> <a class="underline" href="https://research.ibm.com/blog/retrieval-augmented-generation-RAG" target=_blank>What is retrieval-augmented generation?</a>    <a class="underline" href="https://huggingface.co/docs/transformers/model_doc/rag" target=_blank>RAG Overview</a>' )),
+
             Grid::make()
                 ->schema(
-                    function (Get $get, Set $set, string $operation, API $record){
+                    function (Get $get, Set $set, string $operation, API $record = null){
                         if($operation != 'create' && !$get('initiated')){
                             $serviceModel = Service::where(['id'=>$record->service_id, 'isActive'=>true])->first();
                             $set('supportCollection', $serviceModel->supportCollection);            
@@ -91,7 +108,9 @@ class ApiResource extends Resource
                             $set('initiated', true);
                         }
                         $groups = $get('optionGroups') ?? [];
-                        $sections = [];
+                        $sections = [
+                            Placeholder::make('')->content('Specify which service configurations can be changeable through an API call (API option) and which configurations are predefined (can not be changed in an API call).')->columnSpanFull()->visible(fn (Get $get): bool => (bool) $get('optionGroups') ?? false),
+                        ];
                         foreach($groups as $group){
                             $sections[] =Section::make($group)
                             ->schema(
@@ -118,7 +137,7 @@ class ApiResource extends Resource
                                             }),
                                             TextInput::make('default')->label('Value'),
                                         ])->extraAttributes([
-                                            'class' => 'shadow-xl bg-slate-500',
+                                            // 'class' => 'shadow-xl bg-slate-500',
                                             // 'style' => 'li.border-width: 1px;li.border-color: red;'
                                         ])
                                         // ->extraInputAttributes

@@ -22,12 +22,14 @@ Introducing **NexaAIOne**, the next-generation open-source AI management platfor
 - **Memory Management**: Enhance your LLM requests with contextual memory, leveraging strategies from truncating old messages to embedding and summarizing conversations.
 - **Usage Dashboard**: Gain insights into API requests, token usage per application, and more.
 - **Caching Management**: Improve response times and conserve tokens with efficient caching mechanisms.
-- **Ready AI Services**: Engage with AI for chats, audio, images, document/media chat, and a repository for resources.
+- **Ready AI Services**: Engage with AI for chats, audio, images, document chat.
+- **Collections (Retrieval-augmented generation (RAG))**: 
 - **Debug Mode**: Activate to monitor and inspect all your API requests for a smoother troubleshooting experience.
 - **Fake LLM**: Develop and test your applications without incurring LLM-associated costs.
 - **Application Authentication Management**: Secure your applications with robust authentication processes.
 - **Custom APIs**: Design bespoke APIs tailored to each AI service.
 - **Auto-Documentation**: Seamlessly generates comprehensive documentation for all APIs, ensuring clarity and ease of use for developers at every skill level.
 
+### Use Case Examples
 
 ## Documentation & Getting Started:

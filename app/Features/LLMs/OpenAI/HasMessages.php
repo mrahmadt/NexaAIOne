@@ -149,10 +149,13 @@ trait HasMessages
             }
 
         }else{
-            foreach ($this->options as $key => $value) {
-                $this->options['systemMessage'] = str_replace('{{'.$key.'}}', $value, $this->options['systemMessage']);
-            }
             if($this->options['systemMessage']){
+                // foreach ($this->options as $key => $value) {
+                //     $this->options['systemMessage'] = str_replace('{{'.$key.'}}', $value, $this->options['systemMessage']);
+                // }
+                $this->options['systemMessage'] = strtr($this->options['systemMessage'], array_map(function($key) {
+                    return "{{{$key}}}";
+                }, array_keys($this->options)), $this->options);
                 $this->addMessage(['role' => 'system', 'content' => $this->options['systemMessage']]);
             }
         }

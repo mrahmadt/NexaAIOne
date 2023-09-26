@@ -66,8 +66,12 @@ class AppResource extends Resource
             Forms\Components\Select::make('services')
                 ->helperText('List of APIs allowed to be used by this app.')
                 ->multiple()
-                ->relationship(name: 'apis', titleAttribute: 'name',modifyQueryUsing: fn (Builder $query) => $query->where('isActive',true))
-                // ->preload()
+                ->relationship(name: 'apis', titleAttribute: 'name',modifyQueryUsing: function (Builder $query){ 
+                    $query
+                    ->distinct() // Ensure that results are unique when fetching options.
+                    ->select('apis.id','apis.name','apis.description')->orderBy('apis.id')->where('apis.isActive',true);
+                })
+                ->preload()
                 ->searchable(['name', 'description'])
                 ->loadingMessage('Loading...')->live()
         ])->columns(1);

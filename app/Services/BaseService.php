@@ -54,9 +54,12 @@ abstract class BaseService{
             'message' => null,
             'serviceResponse' => null,
         ];
+        if(isset($this->options['debug'])) {
+            $this->debug('output', $response);
+            $debug = $this->saveDebug();
+            $defaultResponse['debug'] = $debug;
+        }
         $response = array_merge($defaultResponse, $this->extraResponses , $response);
-        $this->debug('output', $response);
-        $this->saveDebug();
         return $response;
     }
 

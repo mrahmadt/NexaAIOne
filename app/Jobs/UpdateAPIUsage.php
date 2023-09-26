@@ -8,9 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Throwable;
-use App\Models\Document;
-use Illuminate\Support\Facades\Cache;
+use App\Models\Usage;
 
 class UpdateAPIUsage implements ShouldQueue
 {
@@ -58,17 +56,31 @@ class UpdateAPIUsage implements ShouldQueue
         
         /*
             date
-            counter total hits by api
-            counter total hits by by app
+            counter total hits 
         */
         $this->usage = $usage;
     }
 
     public function handle(): void
     {
-        //Usage create
-        // or Update all vars + hits by api  + hits by by app
-        // index date, api_id, app_id
+        $usage = Usage::where(
+            ['app_id' => $this->usage['app_id'], 'api_id' => $this->usage['api_id'] , 'date' => now()->toDateString()]
+        )->first();
+        if($usage){
+            $usage->hints++;
+            $usage->save();
+        }else{
+            $data = [
+                'app_id' => $this->usage['app_id'],
+                'api_id' => $this->usage['api_id'],
+                'hits' => 1,
+                'promptTokens' => $this->usage['promptTokens'],
+                'completionTokens' => $this->usage['completionTokens'],
+                'totalTokens' => $this->usage['totalTokens'],
+                'date' => now()->toDateString(),
+            ];
+            Usage::create($data);
+        }
     }
 
 }

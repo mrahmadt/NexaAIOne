@@ -10,10 +10,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Support\Enums\FontWeight;
-use Filament\Forms\Components\KeyValue;
 
 class LoaderResource extends Resource
 {
@@ -69,6 +66,10 @@ class LoaderResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                \Filament\Tables\Actions\ReplicateAction::make()->before(function (\Filament\Tables\Actions\ReplicateAction $action, Loader $record) {
+                    unset($record->id);
+                    $record->name = $record->name . ' (copy)';
+                }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -91,5 +92,5 @@ class LoaderResource extends Resource
             'create' => Pages\CreateLoader::route('/create'),
             'edit' => Pages\EditLoader::route('/{record}/edit'),
         ];
-    }    
+    }
 }

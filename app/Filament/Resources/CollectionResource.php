@@ -98,7 +98,6 @@ class CollectionResource extends Resource
             Forms\Components\Select::make('embedder_id')
             ->label('Embedder')
             ->helperText('Embeddings create a vector representation of a document to do things like semantic search where we look for pieces of text that are most similar to an API query.')
-
                 ->relationship(name: 'embedder', titleAttribute: 'name')
                 ->preload()
                 ->searchable(['name', 'description'])

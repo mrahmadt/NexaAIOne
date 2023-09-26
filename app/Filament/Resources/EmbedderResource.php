@@ -68,6 +68,10 @@ class EmbedderResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                \Filament\Tables\Actions\ReplicateAction::make()->before(function (\Filament\Tables\Actions\ReplicateAction $action, Embedder $record) {
+                    unset($record->id);
+                    $record->name = $record->name . ' (copy)';
+                }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

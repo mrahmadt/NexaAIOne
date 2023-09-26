@@ -62,7 +62,7 @@ trait HasDebug
         }
     }
     /**
-     * Saves the debug information to the database and a log file.
+     * return the debug information.
      *
      * @return void
      */
@@ -79,8 +79,8 @@ trait HasDebug
         ];
         $this->replaceSensitiveKeys($debug['input']);
         $this->replaceSensitiveKeys($debug['backtrace']);
-        Debug::create($debug);
-        file_put_contents(storage_path('logs/'.time().'.json'), json_encode($debug, JSON_PRETTY_PRINT) . "\n");
-        //filter keys and short messages?
+        return $debug;
+        // Debug::create($debug);
+        // file_put_contents(storage_path('logs/'.time().'.json'), json_encode($debug, JSON_PRETTY_PRINT) . "\n");
     }
 }

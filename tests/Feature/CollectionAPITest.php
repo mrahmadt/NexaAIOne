@@ -49,7 +49,7 @@ class CollectionAPITest extends TestCase
         'Authorization' => 'Bearer ' . $this->collection->authToken,
         ])->post('api/v1/collections/documents/create',[
           'collection_id' => $this->collection->id,
-          'url' => 'Hello Content1',
+          'url' => 'https://raw.githubusercontent.com/mrahmadt/NexaAIOne/main/public/examples/document.txt',
           'splitter_id' => 0,
           'loader_id' => 0,
         ]);
@@ -73,14 +73,20 @@ class CollectionAPITest extends TestCase
         $response->assertStatus(200);
         $this->assertTrue($response['status']);
 
+        // content with meta
         $response->assertJsonPath('documents.0.id', 1);
         $response->assertJsonPath('documents.0.content', 'Hello Content');
         $response->assertJsonPath('documents.0.meta', '{"hello":"Hello Meta"}');
 
+        // content without meta
         $response->assertJsonPath('documents.1.id', 2);
         $response->assertJsonPath('documents.1.content', 'Hello Content1');
         $response->assertJsonPath('documents.1.meta', null);
 
+        // url
+        $response->assertJsonPath('documents.2.id', 2);
+        $response->assertJsonPath('documents.2.content', 'Hello Content1');
+        $response->assertJsonPath('documents.2.meta', null);
     }
 
     public function __test_document_invalid_create(){

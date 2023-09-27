@@ -14,13 +14,6 @@ class DocumentController extends Controller
 {
     public function documentStatus($jobID, Request $request)
     {
-        // Validation for incoming request
-        $validator = Validator::make($request->all(), [
-            'jobID' => 'required|string'
-        ]);
-        if ($validator->fails()) {
-            return response()->json(['message' => $validator->errors(), 'status' => false],404);
-        }
         try {
             // Fetch the status of the job from the cache
             $jobStatus = Cache::get($jobID);
@@ -79,14 +72,9 @@ class DocumentController extends Controller
     {
         // Validation for incoming request
         $validator = Validator::make($request->all(), [
-            'collection_id' => 'required|numeric|exists:collections,id',
             'per_page' => 'nullable|numeric|min:1|max:50',
             'page' => 'nullable|numeric|min:1'
         ]);
-    
-        if ($validator->fails()) {
-            return response()->json(['message' => $validator->errors(), 'status' => false],404);
-        }
     
         // Check Authorization token
         $collection = $this->checkAuthToken($collection_id, $request);
@@ -102,7 +90,7 @@ class DocumentController extends Controller
             $documents = Document::where('collection_id', $collection_id)
                 ->select('id', 'content', 'meta', 'created_at', 'updated_at')
                 ->paginate($perPage);
-    
+            
             // Add pagination info to the response
             $response = [
                 'documents' => $documents->items(),

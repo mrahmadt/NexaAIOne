@@ -36,7 +36,6 @@ class Document extends Model
     ];
 
     protected static function embeddings($record) {
-        $record->content = 'Saved by embeddings';
         $collection = Collection::where(['id'=>$record->collection_id])->first();
         if($collection->embedder_id){
             $embedder = Embedder::where(['id'=> $collection->embedder_id])->first();

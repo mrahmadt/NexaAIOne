@@ -85,7 +85,7 @@ class CollectionAPITest extends TestCase
 
         // url
         $response->assertJsonPath('documents.2.id', 2);
-        $response->assertJsonPath('documents.2.content', 'Hello Content1');
+        $response->assertJsonPath('documents.2.content', 'In principle');
         $response->assertJsonPath('documents.2.meta', null);
     }
 

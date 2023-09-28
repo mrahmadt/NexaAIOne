@@ -60,6 +60,7 @@ class DocumentCreateOrUpdateJob implements ShouldQueue
 
     public function handle(): void
     {
+
         if (isset($this->args['jobID'])) Cache::put($this->args['jobID'], 'Document Create/Update: In progress', 3600);
         if (isset($this->args['document_id'])) {
             $document = Document::where(['id' => $this->args['document_id']])->first();

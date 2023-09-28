@@ -30,13 +30,6 @@ class DocumentController extends Controller
     
     public function getDocument($document_id, Request $request)
     {
-        // Validation for incoming request
-        $validator = Validator::make($request->all(), [
-            'document_id' => 'required|numeric|exists:documents,id'
-        ]);
-        if ($validator->fails()) {
-            return response()->json(['message' => $validator->errors(), 'status' => false], 404);
-        }
         try {
             // Fetch the Document by ID
             $document = Document::find($document_id);
@@ -89,6 +82,7 @@ class DocumentController extends Controller
             // Fetch documents and apply pagination
             $documents = Document::where('collection_id', $collection_id)
                 ->select('id', 'content', 'meta', 'created_at', 'updated_at')
+                ->orderBy('id', 'asc')
                 ->paginate($perPage);
             
             // Add pagination info to the response
@@ -157,20 +151,19 @@ class DocumentController extends Controller
     public function update($document_id, Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'document_id' => 'required|numeric|exists:documents,id',
             'collection_id' => 'required|numeric|exists:collections,id',
             'content' => 'required_without_all:url,file,meta',
             'url' => 'required_without_all:content,file,meta|url',
-            'file' => 'required_without_all:content,url,meta|mimes:txt,doc,docx,md,ppt,pptx,pdf,xls,xlsx,csv,html,json,msg,xml,eml,jpeg,png,jpg,odt,epub,tsv,rst,rtf',
-            'meta' => 'required_without_all:content|json',
-            // 'embeds' => 'nullable|json',
-            'splitter_id' => 'nullable|numeric'
+            'file' => 'required_without_all:content,url,meta|mimes:txt,md',
+            'meta' => 'required_without_all:content,url,file|json',
+            'splitter_id' => 'nullable|numeric',
+            'loader_id' => 'nullable|numeric',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['message' => $validator->errors(), 'status' => false], 404);
         }
-        return $this->createOrUpdate($request);
+        return $this->createOrUpdate($request, $document_id);
     }
     public function create(Request $request)
     {
@@ -178,9 +171,8 @@ class DocumentController extends Controller
             'collection_id' => 'required|numeric|exists:collections,id',
             'content' => 'required_without_all:url,file',
             'url' => 'required_without_all:content,file|url',
-            'file' => 'required_without_all:content,url|mimes:txt,doc,docx,md,ppt,pptx,pdf,xls,xlsx,csv,html,json,msg,xml,eml,jpeg,png,jpg,odt,epub,tsv,rst,rtf',
+            'file' => 'required_without_all:content,url|mimes:txt,md',
             'meta' => 'nullable|json',
-            // 'embeds' => 'nullable|json',
             'splitter_id' => 'nullable|numeric',
             'loader_id' => 'nullable|numeric',
         ]);
@@ -221,8 +213,7 @@ class DocumentController extends Controller
             $loader_id = 1;
         }
 
-        // Dispatch the job
-        DocumentLoaderJob::dispatch([
+        $data = [
             'jobID' => $jobID,
             'document_id' => $document_id, // or null
             'collection_id' => $request->collection_id,
@@ -232,7 +223,10 @@ class DocumentController extends Controller
             'meta' => $meta, // or null
             'splitter_id' => $splitter_id, // false, number or null
             'loader_id' => $loader_id, // number
-        ]);
+        ];
+
+        // Dispatch the job
+        DocumentLoaderJob::dispatch($data);
 
         return response()->json(['jobID' => $jobID, 'status' => true]);
     }

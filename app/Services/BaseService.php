@@ -54,7 +54,7 @@ abstract class BaseService{
             'message' => null,
             'serviceResponse' => null,
         ];
-        if(isset($this->options['debug'])) {
+        if(isset($this->options['debug']) && $this->options['debug']) {
             $this->debug('output', $response);
             $debug = $this->saveDebug();
             $defaultResponse['debug'] = $debug;

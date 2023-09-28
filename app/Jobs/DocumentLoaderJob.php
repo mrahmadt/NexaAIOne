@@ -61,6 +61,18 @@ class DocumentLoaderJob implements ShouldQueue
         */
         $this->args = $args;
         if (isset($this->args['jobID'])) Cache::put($this->args['jobID'], 'Loading Document: Queed', 3600);
+        if( isset($this->args['file'])){
+            $filearg = $this->args['file'];
+            $data = file_get_contents($filearg);
+            unset($this->args['file']);
+            $tempFile = tempnam(sys_get_temp_dir(), 'docloader_');
+            if ($tempFile !== false) {
+                $extension = pathinfo($filearg, PATHINFO_EXTENSION);
+                $tempFile .= '.' . $extension;
+                file_put_contents($tempFile, $data);
+                $this->args['file'] = $tempFile;
+            }
+        }
     }
 
     public function handle(): void
@@ -96,15 +108,13 @@ class DocumentLoaderJob implements ShouldQueue
                 'content' => $content,
                 'meta' => $this->args['meta'] ?? null,
             ];
-
-            if($content){
-                if (isset($this->args['document_id']) || !isset($this->args['splitter_id']) || $this->args['splitter_id'] === false || $this->args['splitter_id'] === null) {
-                    $jobArgs['document_id'] = $this->args['document_id'] ?? null;
-                    DocumentCreateOrUpdateJob::dispatch($jobArgs);
-                }else{
-                    $jobArgs['splitter_id'] = $this->args['splitter_id'];
-                    DocumentSplitterJob::dispatch($jobArgs);
-                }
+            
+            if (isset($this->args['document_id']) || !isset($this->args['splitter_id']) || $this->args['splitter_id'] === false || $this->args['splitter_id'] === null) {
+                $jobArgs['document_id'] = $this->args['document_id'] ?? null;
+                DocumentCreateOrUpdateJob::dispatch($jobArgs);
+            }else{
+                $jobArgs['splitter_id'] = $this->args['splitter_id'];
+                DocumentSplitterJob::dispatch($jobArgs);
             }
     }
 

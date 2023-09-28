@@ -251,7 +251,7 @@ We generally recommend altering this or top_p but not both.",
             $faker = Factory::create();
             $responseMessageContent = $faker->sentence(20);
         }
-        $promptTokens = $this->messagesMeta['all']['totalTokens'];
+        $promptTokens = $this->messagesMeta['all']['totalTokens'] ?? 0;
         $completionTokens = $this->countTokens($responseMessageContent);
         $totalTokens = $promptTokens + $completionTokens;
 
@@ -260,6 +260,7 @@ We generally recommend altering this or top_p but not both.",
         $jsonResponse = <<<EOT
 {
 "id": "{$responseID}",
+"fakeLLM": true,
 "object": "chat.completion",
 "created": {$responseCreated},
 "model": "{$ChatCompletionOptions['model']}",

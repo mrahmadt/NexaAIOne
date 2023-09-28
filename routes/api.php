@@ -22,7 +22,6 @@ use App\Http\Controllers\DocumentController;
 
 Route::prefix('v1')->group(function () {
     Route::post('/app/{appId}/{apiId}/{name?}', [APIController::class, 'execute']);
-
     Route::prefix('collections')->group(function () {
         Route::post('/documents/create', [DocumentController::class, 'create']);
         Route::put('/document/update/{document_id}', [DocumentController::class, 'update']);

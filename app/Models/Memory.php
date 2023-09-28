@@ -22,16 +22,11 @@ class Memory extends Model
      */
     protected $fillable = [
         'uuid',
+        'app_id',
         'api_id',
         'sessionHash',
         'messages',
         'messagesMeta'
-    ];
-
-    protected $casts = [
-        'input' => 'json',
-        'output' => 'json',
-        'backtrace' => 'json',
     ];
 
     public function api()

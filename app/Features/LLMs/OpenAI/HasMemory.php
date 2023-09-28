@@ -55,7 +55,7 @@ trait HasMemory
             "type" => "select",
             "required" => false,
             "desc" => "Do you want to enable conversation tracking? Turning this on will retain a record of past conversations. (Embeddings always saved in Database)",
-            "default" => 'disabled',
+            "default" => 'noOptimization',
             "isApiOption" => false,
             "options"=>[
                 'noOptimization' => 'No memory optimization',
@@ -82,6 +82,15 @@ trait HasMemory
             "desc" => "Defines the threshold, as a percentage of the LLM Model's max tokens, at which memory optimization will be triggered. When memory token usage reaches this specified percentage, optimization measures specified in the memoryOptimization variable will be enacted.",
             "default" => 50,
             "isApiOption" => false,
+            "_group" => 'Memory',
+        ],
+        'returnMemory' => [
+            "name" => "returnMemory",
+            "type" => "boolean",
+            "required" => false,
+            "desc" => "Return full memory messages.",
+            "isApiOption" => true,
+            "default" => 0,
             "_group" => 'Memory',
         ],
         'clearMemory' => [
@@ -150,7 +159,6 @@ trait HasMemory
 
     private function optimizeMemoryEmbeddings($memoryMaxTokens){
         $this->extraResponses['memoryOptimization'] = 'Embeddings';
-
     }
 
     private function optimizeMemoryTruncate($memoryMaxTokens)
@@ -231,7 +239,7 @@ trait HasMemory
         }
         if($this->options['enableMemory'] == 'longMemory'){
             Memory::updateOrCreate(
-                ['api_id'=>$this->api_id, 'sessionHash'=>$this->sessionHash],
+                ['app_id'=>$this->app_id, 'api_id'=>$this->api_id, 'sessionHash'=>$this->sessionHash],
                 ['messages' => $this->messages, 'messagesMeta' => $this->messagesMeta]
             );
         }else{
@@ -276,15 +284,15 @@ trait HasMemory
      */
     private function __memoryInit()
     {
-        if ($this->options['enableMemory'] == 'disabled') {
+        if ($this->options['enableMemory'] == 'disabled' || ( $this->options['enableMemory'] != 'longMemory' && $this->options['enableMemory'] != 'shortMemory')) {
             return false;
         }
         if($this->memoryKey) {
             return true;
         }
         $this->sessionHash = md5($this->options['session']);
-        $this->memoryKey = 'memory:'. $this->api_id. ':'. $this->sessionHash;
-        $this->memoryMetakey = 'memoryMeta:' . $this->api_id. ':'. $this->sessionHash;
+        $this->memoryKey = 'memory:'. $this->app_id . ':' . $this->api_id.  ':'. $this->sessionHash;
+        $this->memoryMetakey = 'memoryMeta:'.$this->app_id .':' . $this->api_id. ':'. $this->sessionHash;
 
         $this->debug('__memoryInit()', ['memoryKey' => $this->memoryKey, 'memoryMetakey' => $this->memoryMetakey]);
         return true;
@@ -310,7 +318,7 @@ trait HasMemory
         if (!$this->__memoryInit()) { return false; }
 
         if($this->options['enableMemory'] == 'longMemory'){
-            $memory = Memory::where(['api_id'=>$this->api_id, 'sessionHash'=>$this->sessionHash])->first();
+            $memory = Memory::where(['app_id'=>$this->app_id,'api_id'=>$this->api_id, 'sessionHash'=>$this->sessionHash])->first();
             if($memory){
                 $memoryKey_value = $memory->messages;
                 $memoryMetakey_value = $memory->messagesMeta;

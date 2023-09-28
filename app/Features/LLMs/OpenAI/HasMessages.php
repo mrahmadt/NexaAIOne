@@ -52,9 +52,9 @@ trait HasMessages
             "name" => "messages",
             "type" => "json",
             "required" => false,
-            "desc" => "A list of messages comprising the conversation so far. check https://platform.openai.com/docs/api-reference/chat/create#messages",
+            "desc" => "A list of messages comprising the conversation so far. check https://platform.openai.com/docs/api-reference/chat/create#messages (Memory will be disabled when using this option)",
             "isApiOption" => false,
-            "default" => null,
+            "default" => false,
             "_group" => 'Messages',
         ],
     ];
@@ -137,25 +137,44 @@ trait HasMessages
     */
     private function prepareMessages(){
         if($this->options['messages']) {
-            $this->messages = $this->options['messages'];
+            $this->messages = json_decode($this->options['messages'], true);
             $this->options['userMessage'] = false;
             return true;
+        }else{
+            $this->getMessagesFromMemory();
         }
-        $this->getMessagesFromMemory();
 
         if($this->messages){
             if($this->options['updateSystemMessage']){
+                foreach ($this->options as $key => $value) {
+                    $this->options['updateSystemMessage'] = str_replace('{{'.$key.'}}', $value, $this->options['updateSystemMessage']);
+                }
+                $this->options['updateSystemMessage'] = str_replace(
+                    ['[current_date]', '[current_time]', '[current_datetime]'], 
+                    [
+                        date('j/M/Y'),  // Current date in format like 1/Sept/2022
+                        date('g:ia'),  // Current time in format like 10:26pm
+                        date('j/M/Y g:ia')  // Current datetime in format like 1/Sept/2022 10:26pm
+                    ], 
+                    $this->options['updateSystemMessage']
+                );
                 $this->addMessage(['role' => 'system', 'content' => $this->options['updateSystemMessage']]);
             }
 
         }else{
             if($this->options['systemMessage']){
-                // foreach ($this->options as $key => $value) {
-                //     $this->options['systemMessage'] = str_replace('{{'.$key.'}}', $value, $this->options['systemMessage']);
-                // }
-                $this->options['systemMessage'] = strtr($this->options['systemMessage'], array_map(function($key) {
-                    return "{{{$key}}}";
-                }, array_keys($this->options)), $this->options);
+                foreach ($this->options as $key => $value) {
+                    $this->options['systemMessage'] = str_replace('{{'.$key.'}}', $value, $this->options['systemMessage']);
+                }
+                $this->options['systemMessage'] = str_replace(
+                    ['[current_date]', '[current_time]', '[current_datetime]'], 
+                    [
+                        date('j/M/Y'),  // Current date in format like 1/Sept/2022
+                        date('g:ia'),  // Current time in format like 10:26pm
+                        date('j/M/Y g:ia')  // Current datetime in format like 1/Sept/2022 10:26pm
+                    ], 
+                    $this->options['systemMessage']
+                );
                 $this->addMessage(['role' => 'system', 'content' => $this->options['systemMessage']]);
             }
         }

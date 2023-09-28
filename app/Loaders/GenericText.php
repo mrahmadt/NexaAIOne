@@ -1,4 +1,5 @@
 <?php
+namespace App\Loaders;
 
 use Illuminate\Support\Facades\Http;
 
@@ -51,7 +52,7 @@ class GenericText {
     }
 
     protected function isTextContent($content) {
-        $finfo = new finfo(FILEINFO_MIME);
+        $finfo = new \finfo(FILEINFO_MIME);
         $mimeType = $finfo->buffer($content);
     
         // Check if MIME type begins with 'text'

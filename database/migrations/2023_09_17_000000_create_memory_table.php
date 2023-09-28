@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('memories', function (Blueprint $table) {
             $table->id(); // Using the id() method to create an auto-incremented primary key
+            $table->unsignedBigInteger('app_id');
             $table->unsignedBigInteger('api_id');
             // Uncomment the next line if you wish to add a foreign key constraint.
             // $table->foreign('api_id')->references('id')->on('apis');
@@ -20,8 +21,7 @@ return new class extends Migration
             $table->json('messages')->nullable(); //JSON array of messages
             $table->json('messagesMeta')->nullable(); //JSON array of messages meta
             $table->timestamps();
-
-            $table->unique(['api_id', 'sessionHash']);
+            $table->unique(['app_id', 'api_id', 'sessionHash']);
         });
     }
 

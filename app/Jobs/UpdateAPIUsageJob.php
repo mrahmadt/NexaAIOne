@@ -10,7 +10,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Usage;
 
-class UpdateAPIUsage implements ShouldQueue
+class UpdateAPIUsageJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     /**
@@ -67,16 +67,19 @@ class UpdateAPIUsage implements ShouldQueue
             ['app_id' => $this->usage['app_id'], 'api_id' => $this->usage['api_id'] , 'date' => now()->toDateString()]
         )->first();
         if($usage){
-            $usage->hints++;
+            $usage->hits++;
+            $usage->promptTokens += $this->usage['promptTokens'] ?? 0;
+            $usage->completionTokens += $this->usage['completionTokens'] ?? 0;
+            $usage->totalTokens += $this->usage['totalTokens'] ?? 0;
             $usage->save();
         }else{
             $data = [
                 'app_id' => $this->usage['app_id'],
                 'api_id' => $this->usage['api_id'],
                 'hits' => 1,
-                'promptTokens' => $this->usage['promptTokens'],
-                'completionTokens' => $this->usage['completionTokens'],
-                'totalTokens' => $this->usage['totalTokens'],
+                'promptTokens' => $this->usage['promptTokens'] ?? 0,
+                'completionTokens' => $this->usage['completionTokens'] ?? 0,
+                'totalTokens' => $this->usage['totalTokens'] ?? 0,
                 'date' => now()->toDateString(),
             ];
             Usage::create($data);

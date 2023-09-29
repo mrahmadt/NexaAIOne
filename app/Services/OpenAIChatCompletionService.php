@@ -32,6 +32,7 @@ class OpenAIChatCompletionService extends BaseService
     public function __construct($userOptions = [], $ApiModel = null, $httpRequest = null, $app = null){
         if($userOptions) {
             $this->ApiModel = $ApiModel;
+            dd($this->ApiModel->collection_id);
             $this->api_id = $ApiModel->id;
             $this->app_id = $app->id ?? 0;
             $debug = [
@@ -47,7 +48,6 @@ class OpenAIChatCompletionService extends BaseService
     public function execute(){
         $clearCache = false;
         $clearMemory = false;
-        
 
         if($this->options['clearCache']) $clearCache = $this->clearCache();
         if($this->options['clearMemory']) $clearMemory = $this->clearMemory();

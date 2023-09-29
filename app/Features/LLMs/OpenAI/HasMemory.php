@@ -131,6 +131,8 @@ trait HasMemory
         $debugData['$messagesMeta'] = $this->messagesMeta;
         $debugData['$messages'] = $this->messages;
 
+        // dd($this->messagesMeta['all']['totalTokens'],$memoryMaxTokens, $this->options['_model_maxTokens'], $this->options['model']);
+
         if ($this->messagesMeta['all']['totalTokens'] >= $memoryMaxTokens) {
             $lastMessage = array_pop($this->messages);
             $lastMessageMeta = array_pop($this->messagesMeta);
@@ -211,13 +213,15 @@ trait HasMemory
                 $tokensCounted += $this->messagesMeta[$index]['tokens'];
             }
         }
-        $prompt_user = [ 'role'=> 'user', 'content'=> $conversationToSummary ];
-        $ChatCompletionOptions = [];
-        $ChatCompletionOptions['model'] = config('openai.memory_summarization_model') ?? $ChatCompletionOptions['model'];
-        $response = $this->sendMessageToLLM([$prompt_system, $prompt_user], $ChatCompletionOptions, true);
+        if($conversationToSummary){
+            $prompt_user = [ 'role'=> 'user', 'content'=> $conversationToSummary ];
+            $ChatCompletionOptions = [];
+            $ChatCompletionOptions['model'] = config('openai.memory_summarization_model') ?? $this->ChatCompletionOptions['model'];
+            $response = $this->sendMessageToLLM([$prompt_system, $prompt_user], $ChatCompletionOptions, true);
 
-        $messagesToKeep[] = ['role'=>'system', 'content'=> 'Previous context:'. $response->choices[0]->message->content];
-        $messagesMetaToKeep[] = [ 'tokens'=> $response->usage->completionTokens + 3];
+            $messagesToKeep[] = ['role'=>'system', 'content'=> 'Previous context:'. $response->choices[0]->message->content];
+            $messagesMetaToKeep[] = [ 'tokens'=> $response->usage->completionTokens + 3];
+        }
         $this->messages = $messagesToKeep;
         $this->messagesMeta = $messagesMetaToKeep;
     }
@@ -240,7 +244,7 @@ trait HasMemory
         if($this->options['enableMemory'] == 'longMemory'){
             Memory::updateOrCreate(
                 ['app_id'=>$this->app_id, 'api_id'=>$this->api_id, 'sessionHash'=>$this->sessionHash],
-                ['messages' => $this->messages, 'messagesMeta' => $this->messagesMeta]
+                ['messages' => json_encode($this->messages), 'messagesMeta' => json_encode($this->messagesMeta)]
             );
         }else{
             $seconds = $this->options['memoryPeriod'] * 60;
@@ -267,7 +271,7 @@ trait HasMemory
             return false;
         }
         if($this->options['enableMemory'] == 'longMemory'){
-            Memory::where(['api_id'=>$this->api_id, 'sessionHash'=>$this->sessionHash])->delete();
+            Memory::where(['app_id'=>$this->app_id, 'api_id'=>$this->api_id, 'sessionHash'=>$this->sessionHash])->delete();
         }else{
             Cache::forget($this->memoryKey);
             Cache::forget($this->memoryMetakey);
@@ -318,10 +322,10 @@ trait HasMemory
         if (!$this->__memoryInit()) { return false; }
 
         if($this->options['enableMemory'] == 'longMemory'){
-            $memory = Memory::where(['app_id'=>$this->app_id,'api_id'=>$this->api_id, 'sessionHash'=>$this->sessionHash])->first();
+            $memory = Memory::where(['app_id'=>$this->app_id, 'api_id'=>$this->api_id, 'sessionHash'=>$this->sessionHash])->first();
             if($memory){
-                $memoryKey_value = $memory->messages;
-                $memoryMetakey_value = $memory->messagesMeta;
+                $memoryKey_value = json_decode($memory->messages, true);
+                $memoryMetakey_value = json_decode($memory->messagesMeta, true);
             }
         }else{
             $seconds = $this->options['memoryPeriod'] * 60;

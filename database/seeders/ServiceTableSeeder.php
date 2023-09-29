@@ -20,6 +20,7 @@ class ServiceTableSeeder extends Seeder
             'reference'=>'https://platform.openai.com/docs/api-reference/audio/createTranscription',
             'supportMemory' => false,
             'supportCaching' => true,
+            'supportCollection' => false,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -31,6 +32,7 @@ class ServiceTableSeeder extends Seeder
             'reference'=>'https://platform.openai.com/docs/api-reference/audio/createTranslation',
             'supportMemory' => false,
             'supportCaching' => true,
+            'supportCollection' => false,
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -42,6 +44,7 @@ class ServiceTableSeeder extends Seeder
             'className' => 'OpenAIChatCompletionService',
             'supportMemory' => true,
             'supportCaching' => true,
+            'supportCollection' => true,
             'created_at' => now(),
             'updated_at' => now()
         ]);

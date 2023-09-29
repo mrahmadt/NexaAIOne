@@ -105,12 +105,11 @@ abstract class BaseService{
         if(isset($this->options['model']) && $this->verifyOption($this->options['model'], $sysOptions['model']['options']) == false){
             reset($sysOptions['model']['options']);
             $this->options['model'] = key($sysOptions['model']['options']);
-            if (isset($sysOptions['model']['maxTokens'][$this->options['model']])) {
-                $this->options['_model_maxTokens'] = $sysOptions['model']['maxTokens'][$this->options['model']];
-            } else {
-                $this->options['_model_maxTokens'] = 4097;
-            }
-    
+        }
+        if (isset($sysOptions['model']['maxTokens'][$this->options['model']])) {
+            $this->options['_model_maxTokens'] = $sysOptions['model']['maxTokens'][$this->options['model']];
+        } else {
+            $this->options['_model_maxTokens'] = 4097;
         }
         $this->debug('initOptions()', ['options' => $this->options]);
     }

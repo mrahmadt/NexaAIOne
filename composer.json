@@ -18,6 +18,9 @@
         "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.8",
         "openai-php/client": "^0.7.3",
+        "phpoffice/phpspreadsheet": "^1.29",
+        "smalot/pdfparser": "^2.7",
+        "spatie/pdf-to-text": "^1.52",
         "yethee/tiktoken": "^0.1.2"
     },
     "require-dev": {

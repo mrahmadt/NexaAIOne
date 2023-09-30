@@ -154,7 +154,7 @@ class DocumentController extends Controller
             'collection_id' => 'required|numeric|exists:collections,id',
             'content' => 'required_without_all:url,file,meta',
             'url' => 'required_without_all:content,file,meta|url',
-            'file' => 'required_without_all:content,url,meta|mimes:txt,md',
+            'file' => 'required_without_all:content,url,meta|mimes:txt,md,xlsx,xls,csv,pdf',
             'meta' => 'required_without_all:content,url,file|json',
             'splitter_id' => 'nullable|numeric',
             'loader_id' => 'nullable|numeric',
@@ -171,7 +171,7 @@ class DocumentController extends Controller
             'collection_id' => 'required|numeric|exists:collections,id',
             'content' => 'required_without_all:url,file',
             'url' => 'required_without_all:content,file|url',
-            'file' => 'required_without_all:content,url|mimes:txt,md',
+            'file' => 'required_without_all:content,url|mimes:txt,md,xlsx,xls,csv,pdf',
             'meta' => 'nullable|json',
             'splitter_id' => 'nullable|numeric',
             'loader_id' => 'nullable|numeric',
@@ -192,11 +192,10 @@ class DocumentController extends Controller
 
         $jobID = (string) Str::uuid();
 
-        $content = $request->content;
         $url = $request->url;
-        $file = $request->file('file');
+        $file = null;
 
-        $meta = $request->meta ?? null;
+        $meta = $request->meta ?? [];
 
         if($request->splitter_id === 0){
             $splitter_id = false;
@@ -206,6 +205,7 @@ class DocumentController extends Controller
             $splitter_id = $collection->splitter_id;
         }
 
+        
         $loader_id = $collection->loader_id;
         if($request->loader_id){
             $loader_id = $request->loader_id; 
@@ -213,11 +213,22 @@ class DocumentController extends Controller
             $loader_id = 1;
         }
 
+        if(!is_null($request->content)){
+            //write $content to temp .txt file and assign the path to $content
+            $tempFile = tempnam(sys_get_temp_dir(), 'docloader_');
+            $tempFile .= '.txt';
+            file_put_contents($tempFile, $request->content);
+            $file = $tempFile;
+        }elseif ($request->file('file')->isValid()) {
+            // $file = $request->file->storeAs('images', 'filename.jpg');
+            $meta['meta']['__file'] = $request->file('file')->getClientOriginalName();
+            $file = $request->file->path();
+        }
+
         $data = [
             'jobID' => $jobID,
             'document_id' => $document_id, // or null
             'collection_id' => $request->collection_id,
-            'content' => $content, //or null
             'url' => $url, //or null
             'file' => $file, //or null
             'meta' => $meta, // or null

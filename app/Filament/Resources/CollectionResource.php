@@ -83,16 +83,18 @@ class CollectionResource extends Resource
             ->default(3),
             Forms\Components\Select::make('loader_id')
                 ->label('Documents Loader')
-                ->helperText('Document loader provides a "load/download" and "extract text" method for any specified URL or file (will work only when using Collection API).')
+                ->helperText('Document loader provides a "load/download" and "extract text" method for any specified URL or file.')
                 ->relationship(name: 'loader', titleAttribute: 'name')
                 ->preload()
+                ->default(1)
                 ->searchable(['name', 'description'])
                 ->loadingMessage('Loading...')->live(),
             Forms\Components\Select::make('splitter_id')
                 ->label('Text Splitter')
-                ->helperText('Often times you want to split large text into smaller chunks to better work with language models. TextSplitters are responsible for splitting up large text into smaller documents  (will work only when using Collection API).')
+                ->helperText('Often times you want to split large text into smaller chunks to better work with language models. TextSplitters are responsible for splitting up large text into smaller documents.')
                 ->relationship(name: 'splitter', titleAttribute: 'name')
                 ->preload()
+                ->default(1)
                 ->searchable(['name', 'description'])
                 ->loadingMessage('Loading...')->live(),
             Forms\Components\Select::make('embedder_id')
@@ -100,6 +102,8 @@ class CollectionResource extends Resource
             ->helperText('Embeddings create a vector representation of a document to do things like semantic search where we look for pieces of text that are most similar to an API query.')
                 ->relationship(name: 'embedder', titleAttribute: 'name')
                 ->preload()
+                ->required()
+                ->default(1)
                 ->searchable(['name', 'description'])
                 ->loadingMessage('Loading...')->live(),
         ])->columns(1);

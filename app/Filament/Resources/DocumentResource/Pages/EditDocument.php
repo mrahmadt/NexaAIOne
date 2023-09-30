@@ -16,4 +16,5 @@ class EditDocument extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+
 }

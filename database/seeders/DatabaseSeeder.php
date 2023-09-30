@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             EmbeddersTableSeeder::class,
             LoadersTableSeeder::class,
             SplittersTableSeeder::class,
+            CollectionsTableSeeder::class,
         ]);
     }
 }

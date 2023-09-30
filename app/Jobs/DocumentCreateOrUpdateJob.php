@@ -51,7 +51,8 @@ class DocumentCreateOrUpdateJob implements ShouldQueue
         'jobID' => $jobID, or null 
         'document_id' => $document_id, // or null
         'collection_id' => $request->collection_id,
-        'content' => $content, //or null
+        'content' => //or null
+        'contentFile' => //or null
         'meta' => $meta, // or null
         */
         $this->args = $args;
@@ -65,15 +66,27 @@ class DocumentCreateOrUpdateJob implements ShouldQueue
         if (isset($this->args['document_id'])) {
             $document = Document::where(['id' => $this->args['document_id']])->first();
             if ($document) {
-                if (isset($this->args['content'])) $document->content = $this->args['content'];
+                
+                if (isset($this->args['content']) && $this->args['content'] != ''){
+                    $document->content = $this->args['content'];
+                }elseif (isset($this->args['contentFile']) && $this->args['contentFile'] != ''){
+                    $document->content = file_get_contents($this->args['contentFile']);
+                }
+
                 if (isset($this->args['meta'])) $document->meta = $this->args['meta'];
                 $document->save();
             }
-        }elseif(isset($this->args['content'])){
+        }else{
             $data = [ 
                 'collection_id' => $this->args['collection_id'],
-                'content' => $this->args['content'],
             ];
+
+            if(isset($this->args['content']) && $this->args['content'] != ''){
+                $data['content'] = $this->args['content'];
+            }elseif (isset($this->args['contentFile']) && $this->args['contentFile'] != ''){
+                $data['content'] = file_get_contents($this->args['contentFile']);
+            }
+
             if (isset($this->args['meta'])) $data['meta'] = $this->args['meta'];
             $document = Document::create($data);
         }

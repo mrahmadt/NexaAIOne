@@ -23,12 +23,9 @@ return new class extends Migration
             $table->timestamps();
             $table->foreign('collection_id')->references('id')->on('collections');
         });
-        // This is a Postgres-specific index that allows us to do fast nearest-neighbor searches
-        // when there are a lot of high-dimensional embeddings in the database.
-        DB::statement('CREATE INDEX my_index ON documents USING ivfflat (embeds vector_l2_ops) WITH (lists = 100)');
-        // or
-        // DB::statement('CREATE INDEX my_index ON chunks USING hnsw (embeds vector_l2_ops)');
-        //Use vector_ip_ops for inner product and vector_cosine_ops for cosine distance
+
+        // https://github.com/pgvector/pgvector#query-options
+        DB::statement('CREATE INDEX ON documents USING hnsw (embeds vector_cosine_ops)');
     }
 
     /**

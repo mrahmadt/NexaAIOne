@@ -90,6 +90,15 @@ trait HasMessages
      */
     private function saveMessages()
     {
+        //get orginalContent back
+        foreach ($this->messagesMeta as $key => $messagesMeta) {
+            if(isset($messagesMeta['orginalContent'])){
+                $this->messages[$key]['content'] = $messagesMeta['orginalContent'];
+                $this->messagesMeta[$key]['tokens'] = $this->messagesMeta[$key]['orginalToken'];
+                unset($this->messagesMeta[$key]['orginalContent']);
+                unset($this->messagesMeta[$key]['orginalToken']);
+            }
+        }
         return $this->saveMessagesToMemory();
     }
 
@@ -178,7 +187,24 @@ trait HasMessages
                 $this->addMessage(['role' => 'system', 'content' => $this->options['systemMessage']]);
             }
         }
-        $this->addMessage(['role' => 'user', 'content' => isset($this->options['userMessage']) ? $this->options['userMessage'] : "Say Hello"]);
+
+        //orginalContent
+        $content = isset($this->options['userMessage']) ? $this->options['userMessage'] : "Say Hello";
+        $myMessage = [
+            'role' => 'user',
+        ];
+
+        if($this->ApiModel->collection_id) {
+            // Embedding user message in the prompt
+            // Lookup DB for chunks
+            // Add chunks with user question? 
+            $myMessage['orginalContent'] = $content;
+        }else{
+            $myMessage['content'] = $content;
+        }
+        
+
+        $this->addMessage($myMessage);
 
         $this->optimizeMemory();
         return true;
@@ -208,15 +234,24 @@ trait HasMessages
      */
     private function addMessage($message, $tokens = false)
     {
-        if ($this->options['enableMemory'] != 'disable' && $this->options['enableMemory'] != 'noOptimization'){
+        if ($this->options['enableMemory'] != 'disabled' && $this->options['memoryOptimization'] != 'noOptimization'){
             if(!$tokens){
                 $tokens = $this->countTokens($message['content']);
             }
-            $this->messagesMeta[]['tokens'] = $tokens;
+            $messagesMeta = [
+                'tokens' => $tokens,
+            ];
+            if(isset($message['orginalContent'])){
+                $messagesMeta['orginalContent'] = $message['orginalContent'];
+                $messagesMeta['orginalToken'] = $this->countTokens($message['orginalContent']);
+                unset($message['orginalContent']);
+            }
+            $this->messagesMeta[] = $messagesMeta;
             $this->messages[] = $message;
             if(!isset($this->messagesMeta['all']['totalTokens'])) $this->messagesMeta['all']['totalTokens'] = 0;
             $this->messagesMeta['all']['totalTokens']+= $tokens;
         }else{
+            if(isset($message['orginalContent'])){ unset($message['orginalContent']); }
             $this->messages[] = $message;
             $this->messagesMeta[] = [];
         }

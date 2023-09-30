@@ -51,7 +51,7 @@ class DocumentSplitterJob implements ShouldQueue
         /*
         'jobID' => $jobID, or null 
         'collection_id' => $request->collection_id,
-        'content' => $content, //or null
+        'contentFile' => $contentFile, //or null
         'meta' => $meta, // or null
         'splitter_id' => $splitter_id // number
         */
@@ -61,12 +61,21 @@ class DocumentSplitterJob implements ShouldQueue
 
     public function handle(): void {
         if (isset($this->args['jobID'])) Cache::put($this->args['jobID'], 'Text Splitter: In progress', 3600);
+
+        if(!$this->args['contentFile'] && $this->args['contentFile'] != '') return;
+
+        $content = file_get_contents($this->args['contentFile']);
+        if(!$content && $content != '') return;
+
         $splitter = Splitter::where(['id'=>$this->args['splitter_id']])->first();
         if(!$splitter) throw new \Exception('No Splitter found.');
         $className = '\App\Splitters\\' . $splitter->className;
         $splitterService = new $className($splitter->options);
-        $response = $splitterService->splitText($this->args['content']);
+        
+        $response = $splitterService->splitText($content);
+
         $chunks = $response['content'] ?? [];
+
         $index = 0;
         foreach($chunks as $chunk){
             $index++;

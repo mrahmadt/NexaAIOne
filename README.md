@@ -1,8 +1,19 @@
 # Not Ready Yet, you are welcome to join us
 
+### What is **NexaAIOne**?
+You want to use AI in your application but:
+- Too many new technologies and terminologies and no time to learn?
+- Too many choices for simple task (just search “vector databases” and you will get lost with many options)
+- You want to continue with your favor programming language and many libraries designed for different languages?
+- You feel many libraries are good for research but not ready for production use?
+
+**Continue to read**
+
+
+
 ### Introduction:
 
-Introducing **NexaAIOne**, the next-generation open-source AI management platform designed for enterprises, startups, and developers alike. Experience a centralized AI REST API management platform with advanced features to empower your applications. Offers an intuitive yet powerful AI API management solution for every user, from novice developers to AI experts.
+Introducing **NexaAIOne**, the next-generation open-source AI management platform designed for **developers**. Experience a centralized AI REST API management platform with advanced features to empower your applications. Offers an intuitive yet powerful AI API management solution for every developer, from novice to AI experts.
 
 
 ### Why you should use **NexaAIOne**:
@@ -19,16 +30,19 @@ Introducing **NexaAIOne**, the next-generation open-source AI management platfor
 
 ### Features:
 
+- **Ready API**:
 - **Memory Management**: Enhance your LLM requests with contextual memory, leveraging strategies from truncating old messages to embedding and summarizing conversations.
 - **Usage Dashboard**: Gain insights into API requests, token usage per application, and more.
 - **Caching Management**: Improve response times and conserve tokens with efficient caching mechanisms.
 - **Ready AI Services**: Engage with AI for chats, audio, images, document chat.
-- **Collections (Retrieval-augmented generation (RAG))**: 
-- **Debug Mode**: Activate to monitor and inspect all your API requests for a smoother troubleshooting experience.
+- **Collections (Retrieval-augmented generation (RAG))**: create your own AI chat that answers from your own enterprise documents.
+- **Debug Mode**: Monitor and inspect all your API requests for a smoother troubleshooting experience.
 - **Fake LLM**: Develop and test your applications without incurring LLM-associated costs.
 - **Application Authentication Management**: Secure your applications with robust authentication processes.
 - **Custom APIs**: Design bespoke APIs tailored to each AI service.
-- **Auto-Documentation**: Seamlessly generates comprehensive documentation for all APIs, ensuring clarity and ease of use for developers at every skill level.
+- **Auto-API-Documentation**: Seamlessly generates comprehensive documentation for all APIs, ensuring clarity and ease of use for developers at every skill level.
+
+### Supported AI Services
 
 ### Use Case Examples
 

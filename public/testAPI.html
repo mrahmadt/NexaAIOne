@@ -1,0 +1,107 @@
+<html>
+<head>
+    <title>Test API</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-white">
+    <nav class="bg-gray-800">
+        <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+          <div class="relative flex h-16 items-center justify-between">
+            <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+              <div class="flex flex-shrink-0 items-center text-white font-bold italic" title="Version {{App Version}}">{{App Name}}</div>
+              <div class="hidden sm:ml-6 sm:block">
+                <div class="flex space-x-4">
+                  <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
+                  <a href="#" class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" aria-current="page">Create Transcription</a>
+                  <a href="#" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Team</a>
+                  <a href="#" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Projects</a>
+                  <a href="#" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Calendar</a>
+                </div>
+              </div>
+            </div>
+            <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 text-white text-xs">{{App Owner}}<br>{{App Version}}</div>
+          </div>
+        </div>
+      
+        <!-- Mobile menu, show/hide based on menu state. -->
+        <div class="sm:hidden" id="mobile-menu">
+          <div class="space-y-1 px-2 pb-3 pt-2">
+            <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
+            <a href="#" class="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" aria-current="page">Create Transcription</a>
+            <a href="#" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Team</a>
+            <a href="#" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Projects</a>
+            <a href="#" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Calendar</a>
+          </div>
+        </div>
+      </nav>
+      <main>
+        <div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
+            <h1 class="font-bold text-2xl">Create Transcription</h1>
+            <div class="mt-2">OpenAI Creates a model response for the given chat conversation</div>
+            <div class="text-sm m-5 inline-flex items-center rounded-md bg-gray-50 px-2 py-1 font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">POST https://api.openai.com/v1/chat/completions</div>
+            
+            <div class="grid grid-cols-2" x-data="{ showMe: true }">
+<div>
+    <h2 class="font-bold text-xl" x-on:click="showMe = !showMe">API Options</h2>
+    <div  x-show="showMe">
+        <div class="mt-2">The following options are available for the API</div>
+        <div class="mt-4 p-4 text-sm border-b">
+            <div><span class="text-base font-bold">model</span> <span class="text-gray-500">string</span> <span class="text-gray-500">Optional</span></div>
+            <div class="text-gray-500">ID of the model to use. See the model endpoint compatibility table for details on which models work with the Chat API.</div>
+        </div>
+        <div class="mt-4 p-4 text-sm border-b">
+            <div><span class="text-base font-bold">messages</span> <span class="text-gray-500">array</span> <span class="text-red-500">Required</span></div>
+            <div class="text-gray-500">A list of messages comprising the conversation so far. Example Python code.</div>
+        </div>
+    </div>
+</div>
+<div x-show="showMe">
+<div class="rounded-lg bg-gray-800 "><pre class="font-mono text-white text-sm m-2"><code class="language-bash">
+curl https://api.openai.com/v1/chat/completions \
+    -H <span class="text-green-600">"Content-Type: application/json"</span> \
+    -H <span class="text-green-600">"Authorization: Bearer</span> <span class="text-red-500">$OPENAI_API_KEY"</span> \
+    -d <span class="text-green-600">'{
+        "model": "gpt-3.5-turbo",
+        "messages": [
+        {
+            "role": "system",
+            "content": "You are a helpful assistant."
+        },
+        {
+            "role": "user",
+            "content": "Hello!"
+        }
+        ]
+    }'</span>
+</code></pre></div>
+</div>
+        </div>
+        
+        <h2 class="mt-5 font-bold text-xl">Test API</h2>
+
+        <div x-data="{}">
+        <ul class="mt-5 flex flex-wrap text-sm font-bold text-center text-gray-700 border-b border-gray-200">
+            <li class="mr-2">
+                <a href="#" aria-current="page" class="inline-block shadow-inner p-4 text-blue-800 border rounded-t-lg">API Options</a>
+            </li>
+            <li class="mr-2">
+                <a href="#" class="inline-block p-4 text-blue-800 border rounded-t-lg">API Response</a>
+            </li>
+        </ul>
+        </div>
+        
+        </div>
+      </main>
+
+</html>

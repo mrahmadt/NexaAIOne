@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Spatie\PdfToText\Pdf;
+use Illuminate\Support\Facades\DB;
 
 class test extends Command
 {
@@ -26,6 +27,19 @@ class test extends Command
      */
     public function handle()
     {
+
+        $documents =DB::table('documents')->get();
+        $seedData = [];
+        foreach ($documents as $key => $document) {
+            unset($document->id);
+            unset($document->created_at);
+            unset($document->updated_at);
+            $seedData[] = (array) $document;
+        }
+        file_put_contents(database_path('seeders/documentsTableSeederData.json'), json_encode($seedData, JSON_PRETTY_PRINT));
+        exit;
+
+
         $file = public_path('/examples/HR/1.pdf');
 
         $content = file_get_contents($file);

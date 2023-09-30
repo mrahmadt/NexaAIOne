@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             LoadersTableSeeder::class,
             SplittersTableSeeder::class,
             CollectionsTableSeeder::class,
+            DocumentsTableSeeder::class,
         ]);
     }
 }

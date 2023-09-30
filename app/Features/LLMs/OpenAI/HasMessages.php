@@ -155,35 +155,13 @@ trait HasMessages
 
         if($this->messages){
             if($this->options['updateSystemMessage']){
-                foreach ($this->options as $key => $value) {
-                    $this->options['updateSystemMessage'] = str_replace('{{'.$key.'}}', $value, $this->options['updateSystemMessage']);
-                }
-                $this->options['updateSystemMessage'] = str_replace(
-                    ['[current_date]', '[current_time]', '[current_datetime]'], 
-                    [
-                        date('j/M/Y'),  // Current date in format like 1/Sept/2022
-                        date('g:ia'),  // Current time in format like 10:26pm
-                        date('j/M/Y g:ia')  // Current datetime in format like 1/Sept/2022 10:26pm
-                    ], 
-                    $this->options['updateSystemMessage']
-                );
+                $this->options['updateSystemMessage'] = $this->promptTemplate($this->options['updateSystemMessage']);
                 $this->addMessage(['role' => 'system', 'content' => $this->options['updateSystemMessage']]);
             }
 
         }else{
             if($this->options['systemMessage']){
-                foreach ($this->options as $key => $value) {
-                    $this->options['systemMessage'] = str_replace('{{'.$key.'}}', $value, $this->options['systemMessage']);
-                }
-                $this->options['systemMessage'] = str_replace(
-                    ['[current_date]', '[current_time]', '[current_datetime]'], 
-                    [
-                        date('j/M/Y'),  // Current date in format like 1/Sept/2022
-                        date('g:ia'),  // Current time in format like 10:26pm
-                        date('j/M/Y g:ia')  // Current datetime in format like 1/Sept/2022 10:26pm
-                    ], 
-                    $this->options['systemMessage']
-                );
+                $this->options['systemMessage'] = $this->promptTemplate($this->options['systemMessage']);
                 $this->addMessage(['role' => 'system', 'content' => $this->options['systemMessage']]);
             }
         }
@@ -195,9 +173,15 @@ trait HasMessages
         ];
 
         if($this->ApiModel->collection_id) {
+            // need embedding_id from collection
+            // need to make sure collection is cached
+            // need to make sure collection has embedder_id or use 1
             // Embedding user message in the prompt
             // Lookup DB for chunks
+            // What if we got chunks with large tokens?
+            // what if we don't have chunks?
             // Add chunks with user question? 
+            // What if we have chunks but no answer from openAI
             $myMessage['orginalContent'] = $content;
         }else{
             $myMessage['content'] = $content;
@@ -210,6 +194,23 @@ trait HasMessages
         return true;
     }
 
+    protected function promptTemplate($message){
+        foreach ($this->options as $key => $value) {
+            $message = str_replace('{{'.$key.'}}', $value, $message);
+        }
+        $message = str_replace(
+            ['[current_date]', '[current_time]', '[current_datetime]'], 
+            [
+                date('j/M/Y'),  // Current date in format like 1/Sept/2022
+                date('g:ia'),  // Current time in format like 10:26pm
+                date('j/M/Y g:ia')  // Current datetime in format like 1/Sept/2022 10:26pm
+            ], 
+            $message
+        );
+        // Remove any remaining {{variable}} that were not replaced
+        $message = preg_replace('/\{\{.*?\}\}/', '', $message);
+        return $message;
+    }
     /**
      * Count the number of tokens in a given string.
      *

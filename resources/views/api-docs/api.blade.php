@@ -91,19 +91,6 @@
                                 </div>
                             @endforeach
                         @endforeach
-                        <div class="mt-4 p-4 text-sm border-b">
-                            <div><span class="text-base font-bold">model</span> <span
-                                    class="text-gray-500">string</span> <span class="text-gray-500">Optional</span>
-                            </div>
-                            <div class="text-gray-500">ID of the model to use. See the model endpoint compatibility
-                                table for details on which models work with the Chat API.</div>
-                        </div>
-                        <div class="mt-4 p-4 text-sm border-b">
-                            <div><span class="text-base font-bold">messages</span> <span
-                                    class="text-gray-500">array</span> <span class="text-red-500">Required</span></div>
-                            <div class="text-gray-500">A list of messages comprising the conversation so far. Example
-                                Python code.</div>
-                        </div>
                     </div>
                 </div>
                 <div x-show="showMe">

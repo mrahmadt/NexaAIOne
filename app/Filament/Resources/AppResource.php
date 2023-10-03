@@ -106,7 +106,8 @@ class AppResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\Action::make('Docs')
+                Tables\Actions\Action::make('APIs Docs')
+                ->label('APIs Docs')
                 ->icon('heroicon-s-code-bracket-square')
                 ->url(fn (App $record) => route('api-docs.app', ['appDocToken'=>$record->docToken])),
                 Tables\Actions\EditAction::make(),

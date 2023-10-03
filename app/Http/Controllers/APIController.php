@@ -23,7 +23,6 @@ class APIController extends Controller
             'apiId' => $apiId, 
             'request' => $request->all(),
             'authToken' => $authToken, 
-
         ], 200);
         // dd($authToken, $appId, $apiId, $request->all());
 

@@ -124,26 +124,20 @@ class DocumentController extends Controller
         try {
             // Fetch the Document by ID
             $document = Document::find($document_id);
-    
             if (!$document) {
                 return response()->json(['message' => 'Document not found', 'status' => false], 404);
             }
-
             $collection = $this->checkAuthToken($document->collection_id, $request);
             if (!$collection) {
                 return response()->json(['message' => 'Invalid token', 'status' => false], 403);
             }
-
             // Check if the Document belongs to the Collection
             if ($document->collection_id !== $collection->id) {
                 return response()->json(['message' => 'Document does not belong to this collection', 'status' => false], 403);
             }
-    
             // Delete the Document
             $document->delete();
-    
             return response()->json(['message' => 'Document deleted successfully', 'status' => true], 200);
-    
         } catch (\Exception $e) {
             return response()->json(['message' => 'An error occurred: ' . $e->getMessage(), 'status' => false], 500);
         }

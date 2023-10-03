@@ -58,7 +58,13 @@ class AdminPanelProvider extends PanelProvider
                     ->url('/horizon/dashboard', shouldOpenInNewTab: true)
                     ->icon('heroicon-o-queue-list')
                     ->group('Reports')
-                    ->sort(3)])
+                    ->sort(3),
+                NavigationItem::make('Collections APIs')
+                    ->url('/api-docs/collection/document/create', shouldOpenInNewTab: true)
+                    ->icon('heroicon-s-code-bracket-square')
+                    ->group('My Data')
+                    ->sort(3)
+                    ])
             ->authMiddleware([
                 Authenticate::class,
             ]);

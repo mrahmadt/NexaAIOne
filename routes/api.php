@@ -23,12 +23,12 @@ use App\Http\Controllers\DocumentController;
 Route::prefix('v1')->group(function () {
     Route::post('app/{appId}/{apiId}/{name?}', [APIController::class, 'execute'])->name('api.execute');
     Route::prefix('collections')->group(function () {
-        Route::post('documents/create', [DocumentController::class, 'create']);
-        Route::put('document/update/{document_id}', [DocumentController::class, 'update']);
-        Route::delete('document/delete/{document_id}', [DocumentController::class, 'delete']);
-        Route::get('document/get/{document_id}', [DocumentController::class, 'getDocument']);
-        Route::get('documents/list/{collection_id}', [DocumentController::class, 'listDocuments']);
-        Route::get('documents/status/{jobID}', [DocumentController::class, 'documentStatus']);
+        Route::post('documents/create', [DocumentController::class, 'create'])->name('api.document.create');
+        Route::put('document/update/{document_id}', [DocumentController::class, 'update'])->name('api.document.update');
+        Route::delete('document/delete/{document_id}', [DocumentController::class, 'delete'])->name('api.document.delete');
+        Route::get('document/get/{document_id}', [DocumentController::class, 'getDocument'])->name('api.document.get');
+        Route::get('documents/list/{collection_id}', [DocumentController::class, 'listDocuments'])->name('api.documents.list');
+        Route::get('documents/status/{jobID}', [DocumentController::class, 'documentStatus'])->name('api.document.status');
     });
 });
 

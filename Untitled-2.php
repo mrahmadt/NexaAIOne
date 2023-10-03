@@ -1,26 +1,24 @@
 
-I need you to build a full API documentation for documents/create API
+I need you to build a full API documentation for returning the document creation status API
 
-- Build as html/blade page
 - Use below information
 - API url and http method (get,post..)
-- Include API options in the document with description, is it required or optional
-- make sure to write request & response examples using highlightjs package in different languages (curl, nodejs, php, python)
+- Include API options in the document with API option name, description, is it required or optional, any default value, data type
+- make sure to write request & response examples using highlightjs package in different languages (nodejs, php, python) each one in different html pre code tag
 
 
 -----------------
 # What is Collection
 A Collection serves as a structured data store for text-based documents. You can populate this Collection either via the Collection API endpoint
-
 The primary function of a Collection is to extend the knowledge base accessible by an AI service. When creating an API, you can specify which Collection the AI should reference for its responses. This allows you to tailor the AI's behavior and the information it draws upon, depending on the context in which it's used.
 
 -----------------
 
-# API http routes (e.g. http://localhost/api/v1/collections/documents/create)
+# API http routes {{route('api.documents.list')}} to API and also in example, make sure to include any required parameters in the url
 
 Route::prefix('v1')->group(function () {
     Route::prefix('collections')->group(function () {
-        Route::post('documents/create', [DocumentController::class, 'create']);
+        Route::get('documents/status/{jobID}', [DocumentController::class, 'documentStatus'])->name('api.document.status');
     });
 });
 
@@ -28,69 +26,70 @@ Route::prefix('v1')->group(function () {
 
 # API Controller
 
-class DocumentController extends Controller
-{
-    public function create(Request $request)
+public function documentStatus($jobID, Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'collection_id' => 'required|numeric|exists:collections,id',
-            'content' => 'required_without_all:url,file',
-            'url' => 'required_without_all:content,file|url',
-            'file' => 'required_without_all:content,url|mimes:txt,md,xlsx,xls,csv,pdf',
-            'meta' => 'nullable|json',
-            'splitter_id' => 'nullable|numeric',
-            'loader_id' => 'nullable|numeric',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['message' => $validator->errors(), 'status' => false], 404);
+        try {
+            // Fetch the status of the job from the cache
+            $jobStatus = Cache::get($jobID);
+            if (!$jobStatus) {
+                // Job ID not found in cache. This means the document was either created or the jobID is invalid
+                return response()->json(['message' => 'The document has been created or the job ID is invalid', 'status' => true], 200);
+            }
+            return response()->json(['jobStatus' => $jobStatus, 'status' => true], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'An error occurred: ' . $e->getMessage(), 'status' => false], 500);
         }
-        return $this->createOrUpdate($request);
     }
-
-}
 
 -----------------
 
 # Similar html/blade to use for building the documentation
 
-<body class="bg-white">
-    <main>
+<main>
         <div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
-            <h1 class="font-bold text-2xl">{{$api->name}}</h1>
-            <div class="mt-2">{{$api->description}}</div>
+            <h1 class="font-bold text-2xl">API for Creating Documents in Collection</h1>
+            <div class="mt-2">A Collection serves as a structured data store for text-based documents. This API allows you to create a document in a specified collection.</div>
+            
             <div
                 class="text-sm m-5 inline-flex items-center rounded-md bg-gray-50 px-2 py-1 font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
-                POST {{route('api.execute', ['appId'=>$app->id,'apiId'=>$api->id,'name'=>$api->endpoint])}}</div>
-
-            <div class="grid grid-cols-2" x-data="{ showMe: true }">
+                POST {!!str_replace('%20','',route('api.document.update',['document_id'=>" "]))!!}<div class="text-red-700">[document_id]</div>
+            </div>
+            <div class="grid grid-cols-2">
                 <div>
-                    <h2 class="font-bold text-xl" x-on:click="showMe = !showMe">API Options</h2>
-                    <div x-show="showMe">
-                        <div class="mt-2">The following options are available for the API</div>
-                        <div class="mt-4 p-4 text-sm border-b">
-                            <div><span class="text-base font-bold">model</span> <span
-                                    class="text-gray-500">string</span> <span class="text-gray-500">Optional</span>
-                            </div>
-                            <div class="text-gray-500">ID of the model to use. See the model endpoint compatibility
-                                table for details on which models work with the Chat API.</div>
-                        </div>
-                        <div class="mt-4 p-4 text-sm border-b">
-                            <div><span class="text-base font-bold">messages</span> <span
-                                    class="text-gray-500">array</span> <span class="text-red-500">Required</span></div>
-                            <div class="text-gray-500">A list of messages comprising the conversation so far. Example
-                                Python code.</div>
-                        </div>
-                    </div>
-                </div>
-                <div x-show="showMe">
-                    <div class="rounded-lg bg-gray-800 ">
-<div class="code text-white text-sm px-4 py-4 language-bash">curl {{route('api.execute', ['appId'=>$app->id,'apiId'=>$api->id,'name'=>$api->endpoint])}} \
-    -H <span class="text-green-600">"Content-Type: application/json"</span> \
-    -H <span class="text-green-600">"Authorization: Bearer</span> <span
-        class="text-red-500">$AUTH_TOKEN"</span> \
-    -d <span class="text-green-600 whitespace-pre-wrap">'{{json_encode($testAPIOptions, JSON_PRETTY_PRINT)}}'</div>
-</div>
+            <h2 class="font-bold text-xl mt-4">API Options</h2>
+            <div class="mt-2">The following options are available for this API:</div>
+            
+            <!-- collection_id -->
+            <div class="mt-4 p-4 text-sm border-b">
+                <span class="text-base font-bold">collection_id</span>
+                <span class="text-gray-500">numeric</span>
+                <span class="text-red-500">Required</span>
+                <div class="text-gray-500">
+                    The ID of the collection where the document will be stored.
                 </div>
             </div>
+            
+
+    <!-- content -->
+    <div class="mt-4 p-4 text-sm border-b">
+        <span class="text-base font-bold">content</span>
+        <span class="text-gray-500">string</span>
+        <span class="text-red-500">Required (unless url, file, or meta provided)</span>
+        <div class="text-gray-500">
+            The content of the document to be updated.
         </div>
+    </div>
+....
+</div>
+<div>
+    <h2 class="font-bold text-xl mt-4">Request Examples</h2>
+    <h3 class="mt-4 text-lg font-semibold">Node.js</h3>
+    <pre><code class="language-javascript"></code></pre>
+    <h3 class="mt-4 text-lg font-semibold">PHP</h3>
+    <pre><code class="language-php"></code></pre>
+    <h3 class="mt-4 text-lg font-semibold">Python</h3>
+    <pre><code class="language-python"></code></pre>
+    
+        </div>
+    </div>
+    </main>

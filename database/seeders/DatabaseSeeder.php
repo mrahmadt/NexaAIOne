@@ -21,6 +21,8 @@ class DatabaseSeeder extends Seeder
             SplittersTableSeeder::class,
             CollectionsTableSeeder::class,
             DocumentsTableSeeder::class,
+            APIsTableSeeder::class,
+            AppsTableSeeder::class,
         ]);
     }
 }

@@ -32,7 +32,6 @@ class DocumentsTableSeeder extends Seeder
             $document->created_at = now();
             $document->updated_at = now();
             DB::table('documents')->insert((array) $document);
-            exit;
         }
     }
 }

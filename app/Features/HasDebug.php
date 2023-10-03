@@ -25,6 +25,7 @@ trait HasDebug
             "required" => false,
             "desc" => "Retains all request and response data, facilitating issue troubleshooting and prompt optimization",
             "default" => 0,
+            "isApiOption" => false,
             "_group" => 'Debugging',
         ],
     ];

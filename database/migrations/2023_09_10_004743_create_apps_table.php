@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('description', 255)->nullable();
             $table->string('owner', 60)->nullable();
             $table->string('authToken', 100);
+            $table->string('docToken', 100);
             $table->boolean('isActive')->default(true);
             $table->timestamps();
         });

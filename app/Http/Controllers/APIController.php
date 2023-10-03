@@ -16,6 +16,17 @@ class APIController extends Controller
 
     public function execute(string $appId, string $apiId, Request $request) : JsonResponse{
         $authToken = $request->header('Authorization');
+        
+        // dd($authToken);
+        return response()->json([
+            'appId' => $appId, 
+            'apiId' => $apiId, 
+            'request' => $request->all(),
+            'authToken' => $authToken, 
+
+        ], 200);
+        // dd($authToken, $appId, $apiId, $request->all());
+
         $token = str_replace('Bearer ', '', $authToken);
         if($token == '') return $this->responseMessage(['message'=>'No Token'], 403);
 

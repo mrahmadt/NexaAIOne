@@ -42,7 +42,7 @@ trait HasMemory
             "required" => false,
             "desc" => "Do you want to enable conversation tracking? Turning this on will retain a record of past conversations. (Short memory will be saved in Memory, Long memory will be saved in Database)",
             "default" => 'disabled',
-            "isApiOption" => false,
+            "isApiOption" => true,
             "options"=>[
                 'disabled' => 'Disabled',
                 'shortMemory' => 'Short Memory',
@@ -56,7 +56,7 @@ trait HasMemory
             "required" => false,
             "desc" => "Do you want to enable conversation tracking? Turning this on will retain a record of past conversations. (Embeddings always saved in Database)",
             "default" => 'noOptimization',
-            "isApiOption" => false,
+            "isApiOption" => true,
             "options"=>[
                 'noOptimization' => 'No memory optimization',
                 'truncate' => 'Truncate',
@@ -72,7 +72,7 @@ trait HasMemory
             "required" => false,
             "desc" => "How long, in minutes, should the conversation be retained in memory? If no new messages are received within this duration, the conversation history will be cleared (ignored for Long Memory)",
             "default" => 60,
-            "isApiOption" => false,
+            "isApiOption" => true,
             "_group" => 'Memory',
         ],
         'memoryMaxTokenPercentage' => [
@@ -81,7 +81,7 @@ trait HasMemory
             "required" => false,
             "desc" => "Defines the threshold, as a percentage of the LLM Model's max tokens, at which memory optimization will be triggered. When memory token usage reaches this specified percentage, optimization measures specified in the memoryOptimization variable will be enacted.",
             "default" => 50,
-            "isApiOption" => false,
+            "isApiOption" => true,
             "_group" => 'Memory',
         ],
         'returnMemory' => [

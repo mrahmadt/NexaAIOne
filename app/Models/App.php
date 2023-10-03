@@ -26,10 +26,11 @@ class App extends Model
         'name', 
         'description',
         'owner',
-        'authToken'
+        'authToken',
+        'docToken',
     ];
 
-
+    
     /**
      * The attributes that should be cast.
      *
@@ -45,7 +46,11 @@ class App extends Model
 
     protected static function boot() {
         parent::boot();
+        static::creating(function ($record) {
+            $record->docToken = self::newAuthToken();
+        });
         static::updating(function ($record) {
+            // $record->docToken = self::newAuthToken();
             Cache::forget('appId:'.$record->id);
         });
     }

@@ -47,7 +47,7 @@ class AppResource extends Resource
             Forms\Components\TextInput::make('authToken')
                 ->helperText(new HtmlString('Bearer authentication tokens that you can use to access any of the associate APIs. <a href="https://swagger.io/docs/specification/authentication/bearer-authentication/">Bearer Authentication</a>'))
                 ->required()
-                ->minLength(50)
+                ->minLength(20)
                 ->maxLength(100)
                 ->label('Bearer Token')
                 ->suffixAction(
@@ -106,6 +106,9 @@ class AppResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\Action::make('Docs')
+                ->icon('heroicon-s-code-bracket-square')
+                ->url(fn (App $record) => route('api-docs.app', ['appDocToken'=>$record->docToken])),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([

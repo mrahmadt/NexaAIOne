@@ -15,8 +15,8 @@ class CollectionsTableSeeder extends Seeder
     public function run(): void
     {
         DB::table('collections')->insert([
-            'name' => 'Recursively split by character',
-            'description' => 'This text splitter is the recommended one for generic text. It is parameterized by a list of characters. It tries to split on them in order until the chunks are small enough.',
+            'name' => 'HR Policies',
+            'description' => 'Example of HR Policies.',
             'authToken' => bin2hex(openssl_random_pseudo_bytes(16)). bin2hex(random_bytes(5)),
             'defaultTotalReturnDocuments' => 2,
             'loader_id' => 1,

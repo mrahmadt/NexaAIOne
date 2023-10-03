@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ApiResource\Pages;
-use App\Filament\Resources\ApiResource\RelationManagers;
 use App\Models\Api;
 use App\Models\Service;
 use Filament\Forms;
@@ -12,7 +11,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Support\Enums\FontWeight;
 use Filament\Forms\Set;
 use Filament\Forms\Get;
@@ -21,13 +19,12 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Grid;
 use Illuminate\Support\HtmlString;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Hidden;
+
 class ApiResource extends Resource
 {
     protected static ?string $model = Api::class;   
@@ -115,32 +112,33 @@ class ApiResource extends Resource
                             $sections[] =Section::make($group)
                             ->schema(
                                 function (Get $get) use($group) {
+                                        
                                     return [
                                         Repeater::make('options.'.$group)->schema([
-                                            Hidden::make('_allowApiOption')->default(1),
+                                            Hidden::make('_allowApiOption')->default(1), // allow to force disable isApiOption by Feature
                                             Hidden::make('_group')->default(1),
                                             Hidden::make('name'),
                                             Hidden::make('type')->default('Any'),
-                                            Hidden::make('options'),
+                                            Hidden::make('options'), //hack to save options in API db
                                             Hidden::make('desc'),
 
                                             Placeholder::make('')->label('Type')->content(fn (Get $get): string => $get('type') ?? '')->dehydrated(true),
+
                                             Toggle::make('isApiOption')->label('Enable as API option?')
                                             ->default(true)
                                             ->hidden(function (Get $get) { return (!is_null($get('_allowApiOption')) ) ? (!$get('_allowApiOption')) : false; })->dehydrated(true),
-                                            Placeholder::make('')->label('Description')->content(function (Get $get){
-                                                $content = $get('desc') ?? ''; 
-                                                if($get('options')){
-                                                    $content .= "\n\n<br><br><b>Options:</b> " . implode(', ',array_keys($get('options')));
-                                                }
-                                                return new HtmlString($content);
-                                            }),
+                                            TextInput::make('desc')->label('Description'),
                                             TextInput::make('default')->label('Value'),
-                                        ])->extraAttributes([
-                                            // 'class' => 'shadow-xl bg-slate-500',
-                                            // 'style' => 'li.border-width: 1px;li.border-color: red;'
+
+                                                Placeholder::make('')->content(function (Get $get){
+                                                    $content = $get('desc') ?? ''; 
+                                                    if($get('options')){
+                                                        $content .= "\n\n<br><br><b>Options:</b> " . implode(', ',array_keys($get('options')));
+                                                    }
+                                                    return new HtmlString($content);
+                                                })->columnSpan(1),
+
                                         ])
-                                        // ->extraInputAttributes
                                         ->collapsed()->label(false)->addable(false)->columns(2)->columnSpanFull()->deletable(false)->reorderable(false)->reorderableWithDragAndDrop(false)->collapsible()
                                         ->itemLabel(fn (array $state) => new HtmlString('<b>'. ($state['name']??null) .'</b>'))
                                         ->live(debounce: 500),
@@ -194,6 +192,10 @@ class ApiResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                \Filament\Tables\Actions\ReplicateAction::make()->before(function (\Filament\Tables\Actions\ReplicateAction $action, Api $record) {
+                    unset($record->id);
+                    $record->name = $record->name . ' (copy)';
+                }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

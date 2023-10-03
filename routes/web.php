@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\APIDocsController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -16,3 +18,7 @@ use Illuminate\Support\Facades\Route;
 // Route::get('/', function () {
 //     return view('welcome');
 // });
+
+
+
+Route::get('api-docs/app/{appDocToken}/{apiID?}', [APIDocsController::class, 'viewApp'])->name('api-docs.app');

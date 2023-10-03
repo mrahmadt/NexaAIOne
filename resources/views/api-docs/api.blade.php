@@ -1,7 +1,7 @@
 <html>
 
 <head>
-    <title>{{apiName}}</title>
+    <title>{{$app->name}} - {{$api->name}}</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -26,49 +26,71 @@
             <div class="relative flex h-16 items-center justify-between">
                 <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                     <div class="flex flex-shrink-0 items-center text-white font-bold italic"
-                        title="Version {{appVersion}}">{{appName}}</div>
+                        title="Version {{$app->updated_at}}">{{$app->name}}</div>
                     <div class="hidden sm:ml-6 sm:block">
                         <div class="flex space-x-4">
-                            <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-                            <a href="#" class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" aria-current="page">{{apiName}}</a>
-                            <a href="#" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">{{apiNameLinks}}</a>
+                            @foreach ($apis as $oneapi)
+                                @if($oneapi->id == $api->id)
+                                    <a href="../{{$app->docToken}}/{{$oneapi->id}}" class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium">{{$oneapi->name}}</a>
+                                @else
+                                    <a href="../{{$app->docToken}}/{{$oneapi->id}}" class="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">{{$oneapi->name}}</a>
+                                @endif
+                            @endforeach
                         </div>
                     </div>
                 </div>
                 <div
-                    class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 text-white text-xs">
-                    {{appOwner}}<br>{{App Version}}</div>
+                    class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 text-white text-xs">{{$app->owner}}<br>{{$app->updated_at}}</div>
             </div>
         </div>
-
-        <!-- Mobile menu, show/hide based on menu state. -->
         <div class="sm:hidden" id="mobile-menu">
             <div class="space-y-1 px-2 pb-3 pt-2">
-                <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-                <a href="#" class="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium"
-                    aria-current="page">Create Transcription</a>
-                <a href="#"
-                    class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Team</a>
-                <a href="#"
-                    class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Projects</a>
-                <a href="#"
-                    class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Calendar</a>
+                @foreach ($apis as $oneapi)
+                    @if($oneapi->id == $api->id)
+                        <a href="../{{$app->docToken}}/{{$oneapi->id}}" class="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium">{{$oneapi->name}}</a>
+                    @else
+                        <a href="../{{$app->docToken}}/{{$oneapi->id}}" class="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">{{$oneapi->name}}</a>
+                    @endif
+                @endforeach
             </div>
         </div>
     </nav>
     <main>
         <div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
-            <h1 class="font-bold text-2xl">Create Transcription</h1>
-            <div class="mt-2">OpenAI Creates a model response for the given chat conversation</div>
+            <h1 class="font-bold text-2xl">{{$api->name}}</h1>
+            <div class="mt-2">{{$api->description}}</div>
             <div
                 class="text-sm m-5 inline-flex items-center rounded-md bg-gray-50 px-2 py-1 font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
-                POST https://api.openai.com/v1/chat/completions</div>
+                POST {{route('api.execute', ['appId'=>$app->id,'apiId'=>$api->id,'name'=>$api->endpoint])}}</div>
 
             <div class="grid grid-cols-2" x-data="{ showMe: true }">
                 <div>
                     <h2 class="font-bold text-xl" x-on:click="showMe = !showMe">API Options</h2>
                     <div x-show="showMe">
                         <div class="mt-2">The following options are available for the API</div>
+                        @foreach($api->options as $group => $groupOptions)
+                            @foreach($groupOptions as $option)
+                                @if(!$option['isApiOption'])
+                                    @continue
+                                @endif
+                                <div class="mt-4 p-4 text-sm border-b">
+                                    <div><span class="text-base font-bold">{{$option['name']}}</span>
+                                        <span class="ps-2 text-gray-400">{{$option['type']}}</span>
+                                        <span class="ps-2 {{$option['required'] ? 'text-red-500' : 'text-green-500'}}">{{$option['required'] ? 'Required' : 'Optional'}}</span>
+                                    </div>
+                                    <div class="text-gray-500">{{$option['desc']}}</div>
+                                    @if(isset($option['default']) && $option['default'])
+                                        <div class="text-gray-500 pt-2"><b>Default:</b> {{$option['default']}}</div>
+                                    @endif
+                                    @if(isset($option['options']) && $option['options'])
+                                        <div class="text-gray-500 pt-2"><b>Options:</b><br>
+                                            <div class="ps-2">{!!implode('<br>',array_keys($option['options']))!!}</div>
+                                        </div>
+                                    @endif
+
+                                </div>
+                            @endforeach
+                        @endforeach
                         <div class="mt-4 p-4 text-sm border-b">
                             <div><span class="text-base font-bold">model</span> <span
                                     class="text-gray-500">string</span> <span class="text-gray-500">Optional</span>
@@ -86,30 +108,18 @@
                 </div>
                 <div x-show="showMe">
                     <div class="rounded-lg bg-gray-800 ">
-<div class="code text-white text-sm px-4 py-4 language-bash">curl
-    https://api.openai.com/v1/chat/completions \
+<div class="code text-white text-sm px-4 py-4 language-bash">curl {{route('api.execute', ['appId'=>$app->id,'apiId'=>$api->id,'name'=>$api->endpoint])}} \
     -H <span class="text-green-600">"Content-Type: application/json"</span> \
     -H <span class="text-green-600">"Authorization: Bearer</span> <span
-        class="text-red-500">$OPENAI_API_KEY"</span> \
-    -d <span class="text-green-600">'{
-        "model": "gpt-3.5-turbo",
-        "messages": [
-            {
-            "role": "system",
-            "content": "You are a helpful assistant."
-            },
-            {
-            "role": "user",
-            "content": "Hello!"
-            }
-        ]
-    }'</div>
+        class="text-red-500">$AUTH_TOKEN"</span> \
+    -d <span class="text-green-600 whitespace-pre-wrap">'{{json_encode($testAPIOptions, JSON_PRETTY_PRINT)}}'</div>
 </div>
                 </div>
             </div>
         </div>
         <div class="p-2 ">
             <div class="mx-20 p-0 border-t"></div>
+
         <h2 class="pt-4 px-4 font-bold text-xl">Test API</h2>
 
         <div x-data="init()">
@@ -183,8 +193,10 @@
                         },
                     }
                 }
+                let contentJson = {!!$testAPIOptionsJson!!};
                 let content = {
-                    text: "{\n\"greeting\": \"Hello asdsad\"\n}"
+                    text: JSON.stringify(contentJson, null, 2)
+                    // text: "{\n\"response\": \"null\"\n}"
                 }
                 let apiResponseContent = {
                                 text: "{\n\"response\": \"null\"\n}"
@@ -217,7 +229,7 @@
                             :disabled="formLoading" x-text="submitText">Submit</button>
                     </div>
                 </div>
-                <div id="apiOptionsDiv" class="p-2 h-96"></div>
+                <div id="apiOptionsDiv" class="p-2 h-96" data-gramm="false" data-gramm_editor="false" data-enable-grammarly="false"></div>
             </div>
             <div id="tabResponse" x-show="showTab=='response'"><button class="sm:hidden" id="setContent">Set content</button>
                     <div id="apiResponse" class="h-96 p-2"></div>
@@ -245,7 +257,7 @@
             const editorResponse = new JSONEditor({
                 target: document.getElementById('apiResponse'),
                 props: {
-                    content,
+                    apiResponseContent,
                     onRenderMenu: (items, context) => { return items.filter(v => v.text !== "table" && v.type === "button"); },
                     mode: 'text',
                     navigationBar: false,

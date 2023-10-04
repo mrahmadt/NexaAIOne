@@ -30,24 +30,65 @@ class test extends Command
 
     private function llm($messages, $temperature = null, $top_p = null)
     {
-        // // $openaiApiKey = null;
-        // $ChatCompletionOptions['model'] = 'gpt-3.5-turbo';
-        // if($temperature) $ChatCompletionOptions['temperature'] = 0;
-        // if($top_p) $ChatCompletionOptions['top_p'] = 0;
-        // // $LLMclient = OpenAI::factory()->withApiKey($openaiApiKey);
-        // // $LLMclient = $LLMclient->make();
+        $openaiApiKey = config('openai.api_key');
 
-        // $response = $LLMclient->chat()->create(
-        //     array_merge(
-        //         $ChatCompletionOptions,
-        //         ['messages' => $messages ]
-        //     )
-        // );
-        // return $response;
+        $ChatCompletionOptions['model'] = 'gpt-3.5-turbo';
+        if($temperature) $ChatCompletionOptions['temperature'] = 0;
+        if($top_p) $ChatCompletionOptions['top_p'] = 0;
+        $LLMclient = OpenAI::factory()->withApiKey($openaiApiKey)->make();
+        $response = $LLMclient->chat()->create(
+            array_merge(
+                $ChatCompletionOptions,
+                ['messages' => $messages ]
+            )
+        );
+        return $response;
     }
-
+    private function stream($messages, $temperature = null, $top_p = null)
+    {
+        $openaiApiKey = config('openai.api_key');
+        $ChatCompletionOptions['model'] = 'gpt-3.5-turbo';
+        if($temperature) $ChatCompletionOptions['temperature'] = 0;
+        if($top_p) $ChatCompletionOptions['top_p'] = 0;
+        $LLMclient = OpenAI::factory()->withApiKey($openaiApiKey)->make();
+        $response = $LLMclient->chat()->createStreamed(
+            array_merge(
+                $ChatCompletionOptions,
+                ['messages' => $messages ]
+            )
+        );
+        return $response;
+    }
     
     public function handle(){
+        $messages = [
+            ['role' => 'user', 'content' => 'Hello!'],
+        ];
+        $stream = $this->stream($messages);
+
+        $message = [ 
+            'role'=> 'assistant',
+            'content'=> '', 
+        ];
+
+        foreach($stream as $response){
+            if (connection_aborted()) {
+                break;
+            }
+            if(isset($response->choices[0])){
+                $message['content'] .= $response->choices[0]->delta->content;
+                print_r(json_encode($response->choices[0]));
+                print "\n";
+            }
+            // print_r($response);
+            // print_r($response->choices[0]->toArray());
+        }
+foreach($stream as $response) {
+    print "dasda";
+}
+        print_r($message);
+
+        exit;
         $question = 'what are the working hours?';
         // $question = 'what are the business hours?'; // I don't know
         // $question = 'How far the moon from earth?';

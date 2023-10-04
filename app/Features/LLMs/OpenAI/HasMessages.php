@@ -117,6 +117,7 @@ trait HasMessages
         $response = $this->sendMessageToLLM(
             $messages,
             $ChatCompletionOptions,
+            true,
         );
         if($addToMessages){
             if(count($response->choices)>1){

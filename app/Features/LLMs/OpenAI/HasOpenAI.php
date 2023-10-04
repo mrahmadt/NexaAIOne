@@ -14,13 +14,6 @@ trait HasOpenAI
     protected $LLMclient;
 
     /**
-     * An instance of the OpenAI API client without the stream feature.
-     *
-     * @var Client
-     */
-    protected $LLMclientNoSteam;
-
-    /**
      * A boolean that indicates whether the OpenAI API client is ready to use.
      *
      * @var bool
@@ -228,16 +221,6 @@ We generally recommend altering this or top_p but not both.",
         
         $this->debug('setupLLM()', ['ChatCompletionOptions' => $this->ChatCompletionOptions]);
 
-        $this->LLMclientNoSteam = $this->LLMclient->make();
-
-        if($this->options['stream']) {
-            //TODO: stram
-            // $this->LLMclient = $this->LLMclient->withStreamHandler(fn (RequestInterface $request): ResponseInterface => $client->send($request, [
-            // 'stream' => true // Allows to provide a custom stream handler for the http client.
-            // ]));
-            //
-        }
-        
         $this->LLMclient = $this->LLMclient->make();
     }
 
@@ -309,7 +292,6 @@ EOT;
         if(!$this->LLMReady) {
             $this->setupLLM();
         }
-        $LLMclient = ($noStreamClient) ? $this->LLMclientNoSteam : $this->LLMclient;
 
         if($ChatCompletionOptions) {
             $ChatCompletionOptions = array_merge($this->ChatCompletionOptions, $ChatCompletionOptions);
@@ -323,16 +305,40 @@ EOT;
         if(isset($this->options['fakeLLM']) && $this->options['fakeLLM']) {
             $response = $this->sendMessageToFakeLLM($ChatCompletionOptions);
         } else {
-            $response = $LLMclient->chat()->create(
-                array_merge(
-                    $ChatCompletionOptions,
-                    ['messages' => $messages ]
-                )
-            );
+            if($this->options['stream'] && $noStreamClient == false) {
+                $messages = [
+                    ['role' => 'user', 'content' => 'Hello!'],
+                ];
+                $stream = $this->stream($messages);
+                $stream = $this->LLMclient->chat()->createStreamed(
+                    array_merge(
+                        $ChatCompletionOptions,
+                        ['messages' => $messages ]
+                    )
+                );
+                $newMessage = [ 'role'=> 'assistant', 'content'=> ''];
+                foreach($stream as $response){
+                    if (connection_aborted()) {
+                        break;
+                    }
+                    if(isset($response->choices[0])){
+                        $newMessage['content'] .= $response->choices[0]->delta->content;
+                        print(json_encode($response->choices[0]));
+                    }
+                }
+                $response = ['stream' => $newMessage];
+            }else{
+                $response = $this->LLMclient->chat()->create(
+                    array_merge(
+                        $ChatCompletionOptions,
+                        ['messages' => $messages ]
+                    )
+                );
+            }
         }
-        $this->usage['promptTokens'] += $response->usage->promptTokens;
-        $this->usage['completionTokens'] += $response->usage->completionTokens;
-        $this->usage['totalTokens'] += $response->usage->totalTokens;
+        if(isset($response->usage->promptTokens)) $this->usage['promptTokens'] += $response->usage->promptTokens;
+        if(isset($response->usage->completionTokens)) $this->usage['completionTokens'] += $response->usage->completionTokens;
+        if(isset($response->usage->totalTokens)) $this->usage['totalTokens'] += $response->usage->totalTokens;
 
         $this->debug('sendMessageToLLM()', ['ChatCompletionOptions' => $ChatCompletionOptions, '$messages'=>$messages, '$response'=>$response]);
         return $response;

@@ -30,20 +30,20 @@ class test extends Command
 
     private function llm($messages, $temperature = null, $top_p = null)
     {
-        // $openaiApiKey = null;
-        $ChatCompletionOptions['model'] = 'gpt-3.5-turbo';
-        if($temperature) $ChatCompletionOptions['temperature'] = 0;
-        if($top_p) $ChatCompletionOptions['top_p'] = 0;
-        // $LLMclient = OpenAI::factory()->withApiKey($openaiApiKey);
-        // $LLMclient = $LLMclient->make();
+        // // $openaiApiKey = null;
+        // $ChatCompletionOptions['model'] = 'gpt-3.5-turbo';
+        // if($temperature) $ChatCompletionOptions['temperature'] = 0;
+        // if($top_p) $ChatCompletionOptions['top_p'] = 0;
+        // // $LLMclient = OpenAI::factory()->withApiKey($openaiApiKey);
+        // // $LLMclient = $LLMclient->make();
 
-        $response = $LLMclient->chat()->create(
-            array_merge(
-                $ChatCompletionOptions,
-                ['messages' => $messages ]
-            )
-        );
-        return $response;
+        // $response = $LLMclient->chat()->create(
+        //     array_merge(
+        //         $ChatCompletionOptions,
+        //         ['messages' => $messages ]
+        //     )
+        // );
+        // return $response;
     }
 
     

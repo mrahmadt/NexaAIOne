@@ -53,7 +53,6 @@ class CollectionResource extends Resource
             Forms\Components\TextInput::make('authToken')
             ->helperText('Bearer authentication tokens that you can use to access this Collection via the Collection APIs.')
             ->label('Bearer Token')
-
                 ->required()
                 ->minLength(50)
                 ->maxLength(100)
@@ -68,6 +67,9 @@ class CollectionResource extends Resource
                 ->default(static function (): string {
                     return Collection::newAuthToken();
                 }),
+            Forms\Components\TextInput::make('context_prompt')
+            ->default("Answer the following Question based on the Context only. Only answer from the Context. When you want to refer to the context provided, call it 'HR Policy' not just 'context'. Try to provide a reference to the HR Policy number. If you don't know the answer, If you don't know the answer, mention that you couldn't find the answer in the HR Policy")
+                ->maxLength(255),
             Forms\Components\Select::make('defaultTotalReturnDocuments')
             ->options([
                 1 => 'One',

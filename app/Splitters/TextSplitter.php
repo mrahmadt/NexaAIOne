@@ -8,6 +8,7 @@ abstract class TextSplitter
     protected $keep_separator;
     protected $strip_whitespace;
     protected $extraMetadata = [];
+    protected $options = [];
 
     public function __construct($options = [])
     {
@@ -15,13 +16,17 @@ abstract class TextSplitter
             'chunk_size' => 4000,
             'chunk_overlap' => 200,
             'keep_separator' => false,
-            'strip_whitespace' => true
+            'strip_whitespace' => true,
+            'clean_text' => true,
+            'optimize_text' => true,
+            'transliterate_to_ASCII_representation' => false,
         ];
         $options = array_merge($defaults, $options);
         $this->chunk_size = $options['chunk_size'];
         $this->chunk_overlap = $options['chunk_overlap'];
         $this->keep_separator = $options['keep_separator'];
         $this->strip_whitespace = $options['strip_whitespace'];
+        $this->options = $options;
         if ($this->chunk_overlap > $this->chunk_size) {
             throw new \InvalidArgumentException(
                 "Got a larger chunk overlap ({$this->chunk_overlap}) than chunk size " .
@@ -32,6 +37,35 @@ abstract class TextSplitter
 
     abstract public function splitText($text);
 
+    protected function cleanText($text) {
+        // Remove hidden or non-printable characters except tab, new line, and carriage return
+        $text = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x80-\x9F]/u', '', $text);
+        // Remove all multiple spaces and replace them with one space
+        $text = preg_replace("/[ ]+/", " ", $text);
+
+        // Transliterate to closest ASCII representation
+        if($this->options['transliterate_to_ASCII_representation']){
+            $text = iconv("UTF-8", "ASCII//TRANSLIT", $text);
+        }
+
+        return $text;
+    }
+
+    protected function optimizeText($text) {
+        // Remove all tabs and replace them with one space
+        $text = str_replace("\t", ' ', $text);
+
+        // Remove all multiple new lines (even if they contain spaces) and replace them with one new line
+        $text = preg_replace("/[ ]*[\r\n][ ]*/", "\n", $text);
+     
+        // Remove multiple empty lines and replace them with one empty line
+        $text = preg_replace("/[\r\n]+/", "\n", $text);
+
+        // Remove all multiple spaces and replace them with one space
+        $text = preg_replace("/[ ]+/", " ", $text);
+
+        return $text;
+    }
 
     protected function joinDocs($docs, $separator)
     {

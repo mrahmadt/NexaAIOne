@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Pgvector\Laravel\Vector;
 
-use function PHPSTORM_META\map;
-
 class Document extends Model
 {
     use HasFactory;

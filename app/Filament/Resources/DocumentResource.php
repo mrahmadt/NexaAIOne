@@ -95,7 +95,7 @@ class DocumentResource extends Resource
                 ->hiddenOn(DocumentsRelationManager::class)->columnSpanFull(),
                 $textArea,
                 $fileUpload,
-                Placeholder::make('')->content(new HtmlString('<b>Make sure you don\'t have any sensitive information in the document and consider the LLM token limits that can be processed in a single interaction (System message + Document(s) + History + User Question).</b>'))->columnSpanFull(),
+                Placeholder::make('')->content(new HtmlString('<b>Make sure you don\'t have any sensitive information in the document and consider the LLM token limits that can be processed in a single LLM interaction (System message + Document(s) + History + User Message).</b>'))->columnSpanFull(),
                 $loaderForm,
                 $splitterForm,
 
@@ -120,13 +120,14 @@ class DocumentResource extends Resource
                 ->hiddenOn(DocumentsRelationManager::class),
                 Tables\Columns\TextColumn::make('meta')
                 ->toggleable(isToggledHiddenByDefault: true)
-                // ->searchable()
                 ->searchable(
                     query: function(Builder $query, string $search): Builder {
                         return $query->where('meta', 'LIKE', "%{$search}%");
                     }
                 )
                 ,
+                Tables\Columns\TextColumn::make('content_tokens')
+                ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                 ->dateTime()
                 ->sortable()

@@ -5,6 +5,12 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Spatie\PdfToText\Pdf;
 use Illuminate\Support\Facades\DB;
+use App\Models\Collection;
+use App\Models\Embedder;
+use OpenAI;
+
+use Pgvector\Vector;
+// use Pgvector\Laravel\Vector;
 
 class test extends Command
 {
@@ -22,73 +28,114 @@ class test extends Command
      */
     protected $description = 'Command description';
 
-    /**
-     * Execute the console command.
-     */
-    public function handle()
+    private function llm($messages, $temperature = null, $top_p = null)
     {
+        // $openaiApiKey = null;
+        $ChatCompletionOptions['model'] = 'gpt-3.5-turbo';
+        if($temperature) $ChatCompletionOptions['temperature'] = 0;
+        if($top_p) $ChatCompletionOptions['top_p'] = 0;
+        // $LLMclient = OpenAI::factory()->withApiKey($openaiApiKey);
+        // $LLMclient = $LLMclient->make();
 
-        $documents =DB::table('documents')->get();
-        $seedData = [];
-        foreach ($documents as $key => $document) {
-            unset($document->id);
-            unset($document->created_at);
-            unset($document->updated_at);
-            $seedData[] = (array) $document;
-        }
-        file_put_contents(database_path('seeders/documentsTableSeederData.json'), json_encode($seedData, JSON_PRETTY_PRINT));
-        exit;
+        $response = $LLMclient->chat()->create(
+            array_merge(
+                $ChatCompletionOptions,
+                ['messages' => $messages ]
+            )
+        );
+        return $response;
+    }
 
+    
+    public function handle(){
+        $question = 'what are the working hours?';
+        // $question = 'what are the business hours?'; // I don't know
+        // $question = 'How far the moon from earth?';
 
-        $file = public_path('/examples/HR/1.pdf');
+        // $question = 'How many vacation days I can carry over?';
+        //          +content: "According to the Leave Policy (HR P002) mentioned in the context, employees may accumulate up to a maximum of 25 days of leave. Any leave in excess of this limit at the end of the financial year will be forfeited, unless it is a result of the employer preventing the employee from taking leave and the leave has been applied for and refused in writing by the employer. (Reference: Leave Policy – HR P002, last saved on 22/7/2019, HRSimplified Online Customer Solutions staff)."
 
-        $content = file_get_contents($file);
-        $finfo = new \finfo(FILEINFO_MIME);
-        $mimeType = $finfo->buffer($content);
-        dd($mimeType);
+        $response = $this->process($question);
+        dd($response);
+    }
+    public function process($question, $limit=5, $temperature = null, $top_p = null)
+    {
+            // need embedding_id from collection
+            // need to make sure collection is cached
+            // need to make sure collection has embedder_id or use 1
+            // Embedding user message in the prompt
+            // Lookup DB for chunks
+            // What if we got chunks with large tokens?
+            // what if we don't have chunks?
+            // Add chunks with user question? 
+            // What if we have chunks but no answer from openAI
+            $collection_id = 1;
 
-        $parser = new \Smalot\PdfParser\Parser();
-        $pdf = $parser->parseFile($file);
-        $text = $pdf->getText();
-        dd($text);
-
-        $output = Pdf::getText($file);
-        dd($output);
-        // $file = public_path('examples/Book1.xlsx');
-        // $file = public_path('examples/Book1.txt');
-
-        $content = file_get_contents($file);
-        $finfo = new \finfo(FILEINFO_MIME);
-        $mimeType = $finfo->buffer($content);
-        dd($mimeType);
-
-        print "File: $file\n-------------------\n";
-        $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReaderForFile($file);
-        $reader->setReadDataOnly(true);
-        $spreadsheet = $reader->load($file);
-
-        $sheetCount = $spreadsheet->getSheetCount();
-        print $spreadsheet->getSheetCount() . " worksheet" . ($spreadsheet->getSheetCount() == 1 ? '' : 's') . "\n------------------\n";
-
-        for($i = 0; $i< $sheetCount; $i++){
-            $dataArray = $spreadsheet->getSheet($i)->toArray(
-            NULL,        // Value that should be returned for empty cells
-            TRUE,        // Should formulas be calculated (the equivalent of getCalculatedValue() for each cell)
-            FALSE,        // Should values be formatted (the equivalent of getFormattedValue() for each cell)
-            FALSE,         // Should the array be indexed by cell row and cell column
-            FALSE         // Return values for rows/columns even if they are defined as hidden.
-            );
-            // $cellValue = $spreadsheet->getActiveSheet()->getCell('A1')->getFormattedValue();
-            // $cellValue = $spreadsheet->getActiveSheet()->getCellByColumnAndRow(1, 1)->getCalculatedValue();
-            // print_r($dataArray);
-            $content = null;
-            foreach ($dataArray as $innerArray) {
-                $line = implode(' ', $innerArray);
-                $content .= $line . PHP_EOL;
+            $collection = Collection::where(['id'=>$collection_id])->first();
+            $embedder = Embedder::where(['id'=> $collection->embedder_id])->first();
+            $className = '\App\Embedders\\' . $embedder->className;
+            $EmbedderClass = new $className($embedder->options);
+            $embeds = $EmbedderClass->execute($question);
+            if($embeds && isset($embeds->embeddings[0]->embedding)){
+                // dd($embeds->usage->totalTokens);
+                $embedding = $embeds->embeddings[0]->embedding;
+                $content_tokens = $embeds->usage->totalTokens;
+            }else{
+                dd('erorr', $embeds);
             }
 
-            dd($content);
-        }
+            $embeddingVector = new Vector($embedding);
+            $documents = DB::table('documents')
+            ->select('id', 'content', 'meta', 'content_tokens')
+            ->whereRaw("collection_id=?", [$collection_id])
+            ->orderByRaw("embeds <=> ?", [$embeddingVector])
+            ->limit($limit)
+            ->get();
+
+            $total_tokens = 0;
+            $context = null;
+            foreach($documents as $document){
+                $context .= "\n" . $document->content;
+                $total_tokens += $document->content_tokens;
+            }
+
+            $messages = [
+                [
+                    'role' => 'system',
+                    'content' => "You are an HR representative for a company that sells electronics online.",
+                ],
+                [
+                    'role' => 'user',
+                    'content' => "Answer the following Question based on the Context only. Only answer from the Context. When you want to refer to the context provided, call it 'HR Policy' not just 'context'. Try to provide a reference to the HR Policy number. If you don't know the answer, mention that you couldn't find the answer in the HR Policy.\nCONTEXT: " . $context . "\n\nQuestion:".$question,
+                ]
+            ];
+            // dd($messages);
+            $response = $this->llm($messages, $temperature, $top_p);
+            // return ['total_tokens' => $total_tokens, 'response'=> $response, '$context'=>$context];
+            return ['total_tokens' => $total_tokens, 'response'=> $response];
+            
+            /*
+
+                Get the nearest neighbors to a vector
+                SELECT * FROM items ORDER BY embedding <-> '[3,1,2]' LIMIT 5;
+
+                Get the nearest neighbors to a row
+                SELECT * FROM items WHERE id != 1 ORDER BY embedding <-> (SELECT embedding FROM items WHERE id = 1) LIMIT 5;
+
+                Get rows within a certain distance
+                SELECT * FROM items WHERE embedding <-> '[3,1,2]' < 5;
+                Note: Combine with ORDER BY and LIMIT to use an index
+
+                Get the distance
+                SELECT embedding <-> '[3,1,2]' AS distance FROM items;
+
+                For inner product, multiply by -1 (since <#> returns the negative inner product)
+                SELECT (embedding <#> '[3,1,2]') * -1 AS inner_product FROM items;
+
+                For cosine similarity, use 1 - cosine distance
+                SELECT 1 - (embedding <=> '[3,1,2]') AS cosine_similarity FROM items;
+            */
+
 
     }
 }

@@ -23,7 +23,14 @@ class RecursiveCharacterTextSplitter extends TextSplitter
     }
 
     public function splitText($text){
-        return ['content'=>$this->splitTextWithSeparator($text, $this->separators), 'extraMetadata' => $this->extraMetadata];
+        if ($this->options['clean_text']) {
+            $text = $this->cleanText($text);
+        }
+        $content = $this->splitTextWithSeparator($text, $this->separators);
+        if ($this->options['optimize_text']) {
+            $content = $this->optimizeText($content);
+        }
+        return ['content'=>$content, 'extraMetadata' => $this->extraMetadata];
     }
 
     public function splitTextWithSeparator($text, $separators)

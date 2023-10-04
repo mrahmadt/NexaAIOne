@@ -24,10 +24,20 @@ class CharacterTextSplitter extends TextSplitter
 
     public function splitText($text)
     {
+        if ($this->options['clean_text']) {
+            $text = $this->cleanText($text);
+        }
+        
+
         $separator = $this->is_separator_regex ? $this->separator : preg_quote($this->separator, '/');
         $splits = $this->splitTextWithRegex($text, $separator, $this->keep_separator);
         $separator = $this->keep_separator ? "" : $this->separator;
-        return ['content'=>$this->mergeSplits($splits, $separator), 'extraMetadata' => $this->extraMetadata];
+        
+        $content = $this->mergeSplits($splits, $separator);
+        if ($this->options['optimize_text']) {
+            $content = $this->optimizeText($content);
+        }
+        return ['content'=>$content, 'extraMetadata' => $this->extraMetadata];
     }
 
 }

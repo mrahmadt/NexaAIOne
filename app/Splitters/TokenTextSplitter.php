@@ -12,7 +12,7 @@ class TokenTextSplitter extends TextSplitter
     public function __construct(array $options = []) {
         $defaults = [
             'encoding_name' => 'p50k_base',
-            'model_name' => null
+            'model_name' => null,
         ];
         $options = array_merge($defaults, $options);
         parent::__construct($options);
@@ -42,6 +42,12 @@ class TokenTextSplitter extends TextSplitter
     }
 
     public function splitText($text) {
+        if ($this->options['clean_text']) {
+            $text = $this->cleanText($text);
+        }
+        if ($this->options['optimize_text']) {
+            $text = $this->optimizeText($text);
+        }
         return ['content'=>$this->splitTextOnTokens($text), 'extraMetadata' => $this->extraMetadata];
     }
 }

@@ -18,6 +18,7 @@ class Collection extends Model
         'name',
         'description',
         'authToken',
+        'context_prompt',
         'defaultTotalReturnDocuments',
         'loader_id',
         'splitter_id',

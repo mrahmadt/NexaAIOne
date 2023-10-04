@@ -1,5 +1,5 @@
-# **NexaAIOne** - Not Ready Yet, you are welcome to join us
-Welcome to **NexaAIOne**, the open-source AI management platform that's not just for AI experts but also for every developer. **NexaAIOne** platform offers a centralized AI RESTful API management, bringing advanced features and customizability right to your fingertips.
+# **NexaAIOne**
+Welcome to **NexaAIOne**, the open-source RESTful API management platform for Artificial intelligence (AI). Designed for every developer. **NexaAIOne** platform offers a centralized AI API management that brings advanced features and customizability right to your fingertips.
 
 ### Why Choose **NexaAIOne**?
 Do you want to use AI services in your web/mobile application but overwhelmed by the plethora of AI services and libraries out there?
@@ -41,11 +41,8 @@ Do you want to use AI services in your web/mobile application but overwhelmed by
 - OpenAI ChatCompletion: Creates a model response for the given chat conversation.
 - OpenAI Transcription: Transcribes audio into the input language.
 - OpenAI Auto Translation: Translates audio into English.
-- OpenAI Text Translation: Translates text into English.
 - OpenAI DALL·E: an AI system that can create realistic images and art from a description in natural language.
-- OpenAI Text Summarizer: Summarize any text, condense articles, papers, or documents down to the key points instantly.
-- OpenAI Classification: Content-based classification uses the data itself for determining classification categories.
-
+- Microsoft Azure OpenAI
 
 ### Documentation & Getting Started:
 

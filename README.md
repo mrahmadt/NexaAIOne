@@ -3,12 +3,19 @@
 Welcome to **NexaAIOne**, the open-source RESTful API management platform for Artificial intelligence (AI). Designed for every developer. **NexaAIOne** platform offers a centralized AI API management that brings advanced features and customizability right to your fingertips.
 
 [Why Choose **NexaAIOne**?](https://github.com/mrahmadt/NexaAIOne#why-choose-nexaaione)
+
 [Why you should use **NexaAIOne**](https://github.com/mrahmadt/NexaAIOne#why-you-should-use-nexaaione)
+
 [Features](https://github.com/mrahmadt/NexaAIOne#features)
+
 [Supported AI Services](https://github.com/mrahmadt/NexaAIOne#supported-ai-services)
+
 [Documentation & Getting Started](https://github.com/mrahmadt/NexaAIOne#documentation--getting-started)
+
 [Installation](https://github.com/mrahmadt/NexaAIOne#installation)
+
 [Getting Started](https://github.com/mrahmadt/NexaAIOne#getting-started)
+
 [Use Case Examples](https://github.com/mrahmadt/NexaAIOne#use-case-examples)
 
 

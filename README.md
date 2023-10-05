@@ -52,31 +52,31 @@ Do you want to use AI services in your web/mobile application but overwhelmed by
 
 ## Documentation & Getting Started:
 
-# Installation
+### Installation
 Coming soon!
 
-# Getting Started
+### Getting Started
 Coming soon!
 
-## Use Case Examples
+#### Use Case Examples
 
-# Customer Support Chatbot
+### Customer Support Chatbot
 **Summary**: Implement a chatbot that can assist in customer queries, using your own Support knowledge base.
 **Benefits**: 24/7 support, reduced human error, and faster response times.
 
-# Human Resources (HR) Support Chatbot
+### Human Resources (HR) Support Chatbot
 **Summary**: Implement a chatbot that can assist in employee queries, using your own Support knowledge base.
 **Benefits**: 24/7 support, reduced human error, and faster response times.
 
-# Multi-Lingual Content Management
+### Multi-Lingual Content Management
 **Summary**: Use OpenAI Text and Auto Translation to offer your content in multiple languages.
 **Benefits**: Reach a broader audience without the complexity of managing multiple translations.
 
-# Content Summarization for News Platforms
+### Content Summarization for News Platforms
 **Summary**: Use OpenAI Text Summarizer to offer concise versions of long articles.
 **Benefits**: Higher reader engagement and improved user experience.
 
-# Content Classification for Digital Libraries
+### Content Classification for Digital Libraries
 **Summary**: Use OpenAI Classification to categorize digital assets in a library.
 **Benefits**: Improved searchability and content discovery.
 

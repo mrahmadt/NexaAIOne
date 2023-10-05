@@ -68,7 +68,7 @@ class CollectionResource extends Resource
                     return Collection::newAuthToken();
                 }),
             Forms\Components\Textarea::make('context_prompt')
-            ->default("Answer the following Question based on the Context only. Only answer from the Context. When you want to refer to the context provided, call it 'HR Policy' not just 'context'. Try to provide a reference to the HR Policy number. If you don't know the answer mention that you couldn't find the answer in the HR Policy\nCONTEXT: {{context}}\n\nnQuestion:{{UserMessage}}")
+            ->default("Answer the following Question based on the Context only. Only answer from the Context. When you want to refer to the context provided, call it 'HR Policy' not just 'context'. Try to provide a reference to the HR Policy number. If you don't know the answer mention that you couldn't find the answer in the HR Policy\nCONTEXT: {{context}}\n\nnQuestion:{{userMessage}}")
                 ->rows(4)
                 ->maxLength(255),
             Forms\Components\Select::make('defaultTotalReturnDocuments')
@@ -150,7 +150,7 @@ class CollectionResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])->persistSortInSession();
     }
     
     public static function getRelations(): array

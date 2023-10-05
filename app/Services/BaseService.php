@@ -52,7 +52,6 @@ abstract class BaseService{
         $defaultResponse = [
             'status' => false,
             'message' => null,
-            'serviceResponse' => null,
         ];
         if(isset($this->options['debug']) && $this->options['debug']) {
             $this->debug('output', $response);

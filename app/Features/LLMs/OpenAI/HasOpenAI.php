@@ -317,6 +317,8 @@ EOT;
                     )
                 );
                 $newMessage = [ 'role'=> 'assistant', 'content'=> ''];
+                ob_implicit_flush(1);
+                ob_end_flush();
                 foreach($stream as $response){
                     if (connection_aborted()) {
                         break;
@@ -326,7 +328,7 @@ EOT;
                         print(json_encode($response->choices[0]));
                     }
                 }
-                $response = ['stream' => $newMessage];
+                $response = ['StreamedMessage' => $newMessage];
             }else{
                 $response = $this->LLMclient->chat()->create(
                     array_merge(

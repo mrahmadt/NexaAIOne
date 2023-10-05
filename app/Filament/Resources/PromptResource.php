@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\EmbedderResource\Pages;
-use App\Filament\Resources\EmbedderResource\RelationManagers;
-use App\Models\Embedder;
+use App\Filament\Resources\PromptResource\Pages;
+use App\Filament\Resources\PromptResource\RelationManagers;
+use App\Models\Prompt;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -12,17 +12,14 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Support\Enums\FontWeight;
-use Filament\Forms\Components\KeyValue;
 
-class EmbedderResource extends Resource
+class PromptResource extends Resource
 {
-    protected static ?string $model = Embedder::class;
-    protected static ?string $modelLabel = 'Embedder';
+    protected static ?string $model = Prompt::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-variable';
-    protected static ?string $navigationGroup = 'Settings';
-    protected static ?int $navigationSort = 8;
+    protected static ?string $navigationIcon = 'heroicon-o-command-line';
+    protected static ?int $navigationSort = 3;
+
     public static function form(Form $form): Form
     {
         return $form
@@ -30,12 +27,13 @@ class EmbedderResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(40),
-                Forms\Components\TextInput::make('description')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('className')
+                Forms\Components\Textarea::make('prompt')
                     ->required()
-                    ->maxLength(100),
-                Forms\Components\KeyValue::make('options'),
+                    ->maxLength(255),
+                Forms\Components\Textarea::make('description')
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('service')
+                    ->maxLength(50),
             ])->columns(1);
     }
 
@@ -44,15 +42,13 @@ class EmbedderResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                ->icon('heroicon-o-variable')
-                ->searchable()
-                ->weight(FontWeight::Bold)
-                ->description(fn (Embedder $record): string => (string)$record->description)
-                ->wrap(),
-                Tables\Columns\TextColumn::make('description')
-                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
-                Tables\Columns\TextColumn::make('className')
+                Tables\Columns\TextColumn::make('description')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('service')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('prompt')
+                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -61,17 +57,18 @@ class EmbedderResource extends Resource
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: false),
             ])
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                \Filament\Tables\Actions\ReplicateAction::make()->before(function (\Filament\Tables\Actions\ReplicateAction $action, Embedder $record) {
+                \Filament\Tables\Actions\ReplicateAction::make()->before(function (\Filament\Tables\Actions\ReplicateAction $action, Prompt $record) {
                     unset($record->id);
                     $record->name = $record->name . ' (copy)';
                 }),
+
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -90,9 +87,9 @@ class EmbedderResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListEmbedders::route('/'),
-            'create' => Pages\CreateEmbedder::route('/create'),
-            'edit' => Pages\EditEmbedder::route('/{record}/edit'),
+            'index' => Pages\ListPrompts::route('/'),
+            'create' => Pages\CreatePrompt::route('/create'),
+            'edit' => Pages\EditPrompt::route('/{record}/edit'),
         ];
     }    
 }

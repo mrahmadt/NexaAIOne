@@ -111,14 +111,12 @@ foreach($stream as $response) {
             // Add chunks with user question? 
             // What if we have chunks but no answer from openAI
             $collection_id = 1;
-
             $collection = Collection::where(['id'=>$collection_id])->first();
             $embedder = Embedder::where(['id'=> $collection->embedder_id])->first();
             $className = '\App\Embedders\\' . $embedder->className;
             $EmbedderClass = new $className($embedder->options);
             $embeds = $EmbedderClass->execute($question);
             if($embeds && isset($embeds->embeddings[0]->embedding)){
-                // dd($embeds->usage->totalTokens);
                 $embedding = $embeds->embeddings[0]->embedding;
                 $content_tokens = $embeds->usage->totalTokens;
             }else{

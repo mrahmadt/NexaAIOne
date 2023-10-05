@@ -1,9 +1,12 @@
 <?php
 
 namespace App\Features\LLMs\OpenAI;
-
 use Yethee\Tiktoken\EncoderProvider;
-
+use App\Models\Collection;
+use App\Models\Embedder;
+use Pgvector\Vector;
+// use Pgvector\Laravel\Vector;
+use Illuminate\Support\Facades\DB;
 
 trait HasMessages
 {
@@ -120,7 +123,9 @@ trait HasMessages
             true,
         );
         if($addToMessages){
-            if(count($response->choices)>1){
+            if(isset($response['StreamedMessage'])) {
+                $this->addMessage($response['StreamedMessage']);
+            }elseif(count($response->choices)>1){
                 foreach ($response->choices as $result) {
                     $message = [ 
                         'role'=> $result->message->role,
@@ -168,29 +173,64 @@ trait HasMessages
         }
 
         //orginalContent
-        $content = isset($this->options['userMessage']) ? $this->options['userMessage'] : "Say Hello";
+        $userMessage = isset($this->options['userMessage']) ? $this->options['userMessage'] : "Say Hello";
         $myMessage = [
             'role' => 'user',
         ];
 
         if($this->ApiModel->collection_id) {
-            // need embedding_id from collection
+            $myMessage['orginalContent'] = $userMessage;
+
             // need to make sure collection is cached
+
+            // we need this to help with memory optimization
+            $totalMessageTokens = 0;
+
+            // need embedding_id from collection
+            $collection = Collection::where(['id'=>$this->ApiModel->collection_id])->first();
+
             // need to make sure collection has embedder_id or use 1
-            // Embedding user message in the prompt
-            // Lookup DB for chunks
-            // What if we got chunks with large tokens?
-            // what if we don't have chunks?
-            // Add chunks with user question? 
-            // What if we have chunks but no answer from openAI
-            $myMessage['orginalContent'] = $content;
+            $embedder_id = $collection->embedder_id ?? 1;
+            $embedder = Embedder::where(['id'=> $embedder_id])->first();
+            $className = '\App\Embedders\\' . $embedder->className;
+            $EmbedderClass = new $className($embedder->options);
+            $embeds = $EmbedderClass->execute($this->options['userMessage']);
+            
+            if($embeds && isset($embeds->embeddings[0]->embedding)){
+                $embedding = $embeds->embeddings[0]->embedding;
+                $totalMessageTokens += $embeds->usage->totalTokens;
+                // Lookup DB for chunks
+                // What if we got chunks with large tokens? developer issue
+                // what if we don't have chunks? developer issue
+                $embeddingVector = new Vector($embedding);
+                $documents = DB::table('documents')
+                ->select('id', 'content', 'meta', 'content_tokens')
+                ->whereRaw("collection_id=?", [$collection->id])
+                ->orderByRaw("embeds <=> ?", [$embeddingVector])
+                ->limit($collection->defaultTotalReturnDocuments)
+                ->get();
+                $context = null;
+                $this->extraResponses['documents'] = [];
+                foreach($documents as $document){
+                    $context .= "\n" . $document->content;
+                    $totalMessageTokens += $document->content_tokens;
+                    $this->extraResponses['documents'][]= [
+                        'id' => $document->id,
+                        'meta' => $document->meta,
+                        // 'content' => $document->content,
+                    ];
+                }
+                // Embedding user message in the prompt
+                $totalMessageTokens += $this->countTokens($collection->context_prompt);
+                $myMessage['content'] = str_replace(['{{userMessage}}', '{{context}}'], [$userMessage, $context], $collection->context_prompt);
+            }else{
+                throw new \Exception('Error in Embedding user message in the prompt');
+            }
+            $this->addMessage($myMessage, $totalMessageTokens);
         }else{
-            $myMessage['content'] = $content;
+            $myMessage['content'] = $userMessage;
+            $this->addMessage($myMessage);
         }
-        
-
-        $this->addMessage($myMessage);
-
         $this->optimizeMemory();
         return true;
     }

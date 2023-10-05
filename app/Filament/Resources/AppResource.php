@@ -116,7 +116,7 @@ class AppResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])->persistSortInSession();
     }
     
     public static function getRelations(): array

@@ -43,6 +43,12 @@ Do you want to use AI services in your web/mobile application but overwhelmed by
 - OpenAI Auto Translation: Translates audio into English.
 - OpenAI DALL·E: an AI system that can create realistic images and art from a description in natural language.
 - Microsoft Azure OpenAI
+- TranslateGPT
+- Support Agent
+- Text Classification
+- Summarize Text
+- Sentiment analysis
+- HR Support Agent
 
 ### Documentation & Getting Started:
 

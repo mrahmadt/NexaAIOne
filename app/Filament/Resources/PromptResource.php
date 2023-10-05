@@ -26,14 +26,13 @@ class PromptResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->required()
-                    ->maxLength(40),
+                    ->maxLength(150),
                 Forms\Components\Textarea::make('prompt')
                     ->required()
-                    ->maxLength(255),
+                    ->rows(10),
                 Forms\Components\Textarea::make('description')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('service')
-                    ->maxLength(50),
             ])->columns(1);
     }
 

@@ -79,7 +79,7 @@ class ApiResource extends Resource
             ->schema([
                 
             $introDescription,
-            Forms\Components\TextInput::make('name')->required()->maxLength(40)->columnSpanFull()->live(debounce: 500)->afterStateUpdated(function (Get $get, Set $set) { $set('endpoint', Str::slug($get('name'))); })->helperText('Any name to help you identify this API.'),
+            Forms\Components\TextInput::make('name')->required()->maxLength(150)->columnSpanFull()->live(debounce: 500)->afterStateUpdated(function (Get $get, Set $set) { $set('endpoint', Str::slug($get('name'))); })->helperText('Any name to help you identify this API.'),
             Forms\Components\TextInput::make('description')->maxLength(255)->columnSpanFull(),
             Forms\Components\TextInput::make('endpoint')->required()->prefix('https://'.request()->getHost().'/api/../')->maxLength(100)->columnSpanFull()->live(onBlur: true)->helperText(
                 function(Get $get){

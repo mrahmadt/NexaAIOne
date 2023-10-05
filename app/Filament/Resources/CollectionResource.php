@@ -47,7 +47,7 @@ class CollectionResource extends Resource
             $introDescription,
             Forms\Components\TextInput::make('name')
                 ->required()
-                ->maxLength(40),
+                ->maxLength(150),
             Forms\Components\TextInput::make('description')
                 ->maxLength(255),
             Forms\Components\TextInput::make('authToken')

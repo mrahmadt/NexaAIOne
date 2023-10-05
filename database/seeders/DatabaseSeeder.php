@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             DocumentsTableSeeder::class,
             APIsTableSeeder::class,
             AppsTableSeeder::class,
+            PromptsTableSeeder::class,
         ]);
     }
 }

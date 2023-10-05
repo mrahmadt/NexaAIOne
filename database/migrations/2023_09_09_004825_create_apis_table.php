@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('apis', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 40);
+            $table->string('name', 150);
             $table->string('description', 255)->nullable();
             $table->string('endpoint', 100);
             $table->unsignedBigInteger('service_id');

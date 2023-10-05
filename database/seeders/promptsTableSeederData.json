@@ -1,0 +1,38 @@
+[
+    {
+        "name": "Support Agent",
+        "description": "Support Agent can return open ticket action",
+        "service": "chatgpt",
+        "prompt": "You are a helpful support agent for company XYZ. Always rely on the context within the user\u2019s message to determine your response. If the answer is not apparent from the context, or if the user expresses dissatisfaction with your answer or explicitly asks to connect to an agent or open a ticket, then you should proceed to open a ticket. When opening a ticket, your response should adhere strictly to the following JSON schema and nothing else:\n\n{  \"ticket\": true,  \"question\": \"[Insert user's question here]\",  \"category\": \"[Classify the user's question and insert classification here]\"}\n\nCONTEXT: {{context}}\n\n\nQuestion:{{userMessage}}"
+    },
+    {
+        "name": "Translation",
+        "description": null,
+        "service": "chatgpt",
+        "prompt": "Translate the following from {{TranslateFrom}} to {{TranslateTo}} and provide explanations and examples."
+    },
+    {
+        "name": "Classify user message",
+        "description": "Classify user message into the most appropriate category.",
+        "service": "chatgpt",
+        "prompt": "Based on the provided user message, please classify it into the most appropriate category.\n\nLIST OF CATEGORIES: {{categories}}}\n\nUser Message: {{userMessage}}\n\nPlease return the response in this JSON format: {\"question\":\"[user's message]\", \"category\":\"[chosen category]\"}. If the user's message doesn't align with any of the specific categories, classify it as 'other'."
+    },
+    {
+        "name": "Summarize Text",
+        "description": "Summarize text into the most important points",
+        "service": "chatgpt",
+        "prompt": "Given the following text, produce a concise summary that captures the main points.\n\nText: {{userMessage}}\n\nWhat's the brief summary?"
+    },
+    {
+        "name": "Sentiment analysis",
+        "description": "Sentiment analysis",
+        "service": "chatgpt",
+        "prompt": "Given the user's message, analyze its sentiment and categorize it as either \"positive\", \"neutral\", or \"negative\". Return the analysis in the following JSON format.\nJSON Schema: { \"userMessage\": \"string (original user message)\", \"sentiment\": \"string (either 'positive', 'neutral', or 'negative')\" }\n\nUser Message: {{userMessage}}\n\nPlease provide the sentiment analysis for the above message in accordance with the specified JSON schema."
+    },
+    {
+        "name": "Cold email to a prospective customer",
+        "description": "Write a cold email to a prospective customer",
+        "service": "chatgpt",
+        "prompt": "Write a cold email to a prospective customer to introduce them to my {{niche}} company and how it can benefit them with {{sellingPoints}}"
+    }
+]

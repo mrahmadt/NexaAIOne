@@ -39,7 +39,7 @@ class AppResource extends Resource
             Forms\Components\TextInput::make('name')
                 ->required()
                 ->helperText('Any name to help you identify this app.')
-                ->maxLength(40),
+                ->maxLength(150),
             Forms\Components\TextInput::make('description')
                 ->maxLength(255),
             Forms\Components\TextInput::make('owner')

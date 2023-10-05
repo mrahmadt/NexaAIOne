@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('prompts', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 40);
+            $table->string('name', 150);
             $table->string('description', 255)->nullable();
-            $table->string('service');
-            $table->string('prompt',50)->nullable();
+            $table->string('service',100)->nullable();
+            $table->text('prompt');
             $table->timestamps();
         });
     }

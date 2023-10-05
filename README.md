@@ -58,7 +58,8 @@ Coming soon!
 ### Getting Started
 Coming soon!
 
-#### Use Case Examples
+
+## Use Case Examples
 
 ### Customer Support Chatbot
 **Summary**: Implement a chatbot that can assist in customer queries, using your own Support knowledge base.

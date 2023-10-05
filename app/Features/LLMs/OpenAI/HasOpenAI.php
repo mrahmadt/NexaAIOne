@@ -124,6 +124,7 @@ We generally recommend altering this or top_p but not both.",
             "desc" => "How many chat completion choices to generate for each input message.",
             "default" => 1,
             "isApiOption" => false,
+            "_group" => 'OpenAI',
         ],
         'stop' => [
             "name" => "stop",

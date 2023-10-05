@@ -57,7 +57,7 @@ trait HasMessages
             "required" => false,
             "desc" => "A list of messages comprising the conversation so far. check https://platform.openai.com/docs/api-reference/chat/create#messages (Memory will be disabled when using this option)",
             "isApiOption" => false,
-            "default" => false,
+            "default" => 0,
             "_group" => 'Messages',
         ],
     ];

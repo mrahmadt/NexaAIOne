@@ -25,6 +25,8 @@ use Illuminate\Support\HtmlString;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Hidden;
 
+use App\Actions\ResetStars;
+
 class ApiResource extends Resource
 {
     protected static ?string $model = Api::class;   
@@ -75,6 +77,7 @@ class ApiResource extends Resource
         }
         return $form
             ->schema([
+                
             $introDescription,
             Forms\Components\TextInput::make('name')->required()->maxLength(40)->columnSpanFull()->live(debounce: 500)->afterStateUpdated(function (Get $get, Set $set) { $set('endpoint', Str::slug($get('name'))); })->helperText('Any name to help you identify this API.'),
             Forms\Components\TextInput::make('description')->maxLength(255)->columnSpanFull(),
@@ -91,6 +94,8 @@ class ApiResource extends Resource
             Forms\Components\Toggle::make('enableUsage')->label('Track Usage')->required()->default(true)->helperText('Track API usage in Admin Portal.'),
             Forms\Components\Toggle::make('isActive')->label('Is Active')->required()->default(true)->helperText('Enable/Disable API.'),
             $serviceInput,
+
+
             Forms\Components\Select::make('collection_id')->relationship(name: 'collection', titleAttribute: 'name')->disabled(fn (Get $get): bool => !$get('supportCollection') ?? true)->visible(fn (Get $get): bool => $get('supportCollection') ?? false)->columnSpanFull()
             ->helperText(new HtmlString('Should we use specific collections to help AI answer user questions? (this method is called RAG "<b>Retrieval Augmented Generation</b>").<br><b>What is RAG?</b> <a class="underline" href="https://research.ibm.com/blog/retrieval-augmented-generation-RAG" target=_blank>What is retrieval-augmented generation?</a>    <a class="underline" href="https://huggingface.co/docs/transformers/model_doc/rag" target=_blank>RAG Overview</a>' )),
 
@@ -112,43 +117,39 @@ class ApiResource extends Resource
                             $sections[] =Section::make($group)
                             ->schema(
                                 function (Get $get) use($group) {
-                                        
                                     return [
-                                        Repeater::make('options.'.$group)->schema([
-                                            Hidden::make('_allowApiOption')->default(1), // allow to force disable isApiOption by Feature
-                                            Hidden::make('_group')->default(1),
-                                            Hidden::make('name'),
-                                            Hidden::make('type')->default('Any'),
-                                            Hidden::make('options'), //hack to save options in API db
-                                            Hidden::make('desc'),
-
-                                            Placeholder::make('')->label('Type')->content(fn (Get $get): string => $get('type') ?? '')->dehydrated(true),
-
-                                            Toggle::make('isApiOption')->label('Enable as API option?')
-                                            ->default(true)
-                                            ->hidden(function (Get $get) { return (!is_null($get('_allowApiOption')) ) ? (!$get('_allowApiOption')) : false; })->dehydrated(true),
-                                            TextInput::make('desc')->label('Description'),
-                                            TextInput::make('default')->label('Value'),
-
-                                                Placeholder::make('')->content(function (Get $get){
-                                                    $content = $get('desc') ?? ''; 
-                                                    if($get('options')){
-                                                        $content .= "\n\n<br><br><b>Options:</b> " . implode(', ',array_keys($get('options')));
-                                                    }
-                                                    return new HtmlString($content);
-                                                })->columnSpan(1),
-
-                                        ])
+                                        Repeater::make('options.'.$group)->schema(function (Get $get) {
+                                            $form = [];
+                                            $form[] = Hidden::make('_allowApiOption')->default(1); // allow to force disable isApiOption by Feature
+                                            $form[] = Hidden::make('_group')->default(1);
+                                            $form[] = Hidden::make('name');
+                                            $form[] = Hidden::make('type')->default('Any');
+                                            $form[] = Hidden::make('options'); //hack to save options in API db
+                                            $form[] = Hidden::make('desc');
+                                            $form[] = Placeholder::make('')->label('Type')->content(fn (Get $get): string => $get('type') ?? '')->dehydrated(true);
+                                            $form[] = Toggle::make('isApiOption')->label('Enable as API option?')->default(true)->hidden(function (Get $get) { return (!is_null($get('_allowApiOption')) ) ? (!$get('_allowApiOption')) : false; })->dehydrated(true);
+                                            $form[] =  Forms\Components\Textarea::make('desc')->label('Description');
+                                            $form[] = Forms\Components\TextInput::make('default')->label('Value');
+                                            $form[] = Placeholder::make('')->content(function (Get $get){
+                                                $content = $get('desc') ?? ''; 
+                                                if($get('options')){
+                                                    $content .= "\n\n<br><br><b>Options:</b> " . implode(', ',array_keys($get('options')));
+                                                }
+                                                return new HtmlString($content);
+                                            })->columnSpan(1);
+                                            return $form;
+                                        })
                                         ->collapsed()->label(false)->addable(false)->columns(2)->columnSpanFull()->deletable(false)->reorderable(false)->reorderableWithDragAndDrop(false)->collapsible()
                                         ->itemLabel(fn (array $state) => new HtmlString('<b>'. ($state['name']??null) .'</b>'))
                                         ->live(debounce: 500),
-                                ];
+                                    ];
                                 }
-                            )->collapsible();
+                            )->collapsible()->collapsed();
                         }
                         return $sections;
                 }),
-            ])->columns(2);
+            ])
+            ->columns(2);
     }
 
     public static function table(Table $table): Table

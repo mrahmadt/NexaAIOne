@@ -1,8 +1,20 @@
 # **NexaAIOne**
+
 Welcome to **NexaAIOne**, the open-source RESTful API management platform for Artificial intelligence (AI). Designed for every developer. **NexaAIOne** platform offers a centralized AI API management that brings advanced features and customizability right to your fingertips.
 
-## Why Choose **NexaAIOne**?
+[[#Why Choose **NexaAIOne**?]]
+[[#Why you should use **NexaAIOne**]]
+[[#Features]]
+[[#Supported AI Services]]
+[[#Documentation & Getting Started]]
+[[#Installation]]
+[[#Getting Started]]
+
+
+# Why Choose **NexaAIOne**?
+
 Do you want to use AI services in your web/mobile application but overwhelmed by the plethora of AI services and libraries out there?
+
 - Too many new technologies and terminologies and no time to learn all of it?
 - Too many choices for simple task (just google “vector databases” and you will get lost with many options)
 - You want to continue coding with your existing programming language but many AI libraries designed for different programming languages?
@@ -11,7 +23,8 @@ Do you want to use AI services in your web/mobile application but overwhelmed by
 
 **NexaAIOne** is designed to cut through the noise and give you a singular platform for most common AI use cases.
 
-## Why you should use **NexaAIOne**:
+# Why you should use **NexaAIOne**:
+
 - **Language Agnostic** All AI services are configured to be consumed as RESTful API, this way you can use them in any application you want.
 - **Production Ready**: With minimum configuration, launch a platform that's secure, swift, and scalable, and built for performance.
 - **Developer-Friendly**: Designed with non-AI experts in mind, Offers hassle-free API integration, eliminating concerns about caching, memory management, and complex AI processes.
@@ -23,7 +36,7 @@ Do you want to use AI services in your web/mobile application but overwhelmed by
 - **Swift Deployment**: Enjoy compatibility across Linux, Windows, Mac OS, or deploy as a container.
 - **Versatile Deployment**: Opt for on-premises, cloud-based, or any deployment method you choose.
 
-## Features:
+# Features:
 
 - **RESTful API** All AI services are configured to be consumed as RESTful API, this way you can use them in any application you want.
 - **Memory Management**: Enhance your LLM requests with contextual memory, leveraging strategies from truncating old messages to embedding and summarizing conversations.
@@ -37,49 +50,49 @@ Do you want to use AI services in your web/mobile application but overwhelmed by
 - **Custom APIs**: Design bespoke APIs tailored to each AI service.
 - **Auto-API-Documentation**: Seamlessly generates comprehensive documentation for all APIs, ensuring clarity and ease of use for developers at every skill level.
 
-## Supported AI Services
+# Supported AI Services
+
 - OpenAI ChatCompletion: Creates a model response for the given chat conversation.
 - OpenAI Transcription: Transcribes audio into the input language.
 - OpenAI Auto Translation: Translates audio into English.
 - OpenAI DALL·E: an AI system that can create realistic images and art from a description in natural language.
 - Microsoft Azure OpenAI
 - TranslateGPT
-- Support Agent
 - Text Classification
 - Summarize Text
 - Sentiment analysis
+- Support Agent able to search knowledge base and suggest opening ticket if now answer found
 - Chat with your Documents (Create Chatbot Agent for Sales,Support,HR...etc)
 
-## Documentation & Getting Started:
+# Documentation & Getting Started:
 
-### Installation
+## Installation
+
 Coming soon!
 
-### Getting Started
-Coming soon!
+## Getting Started
 
+Coming soon!
 
 ## Use Case Examples
 
 ### Customer Support Chatbot
 **Summary**: Implement a chatbot that can assist in customer queries, using your own Support knowledge base.
 **Benefits**: 24/7 support, reduced human error, and faster response times.
-
 ### Human Resources (HR) Support Chatbot
 **Summary**: Implement a chatbot that can assist in employee queries, using your own Support knowledge base.
 **Benefits**: 24/7 support, reduced human error, and faster response times.
-
 ### Multi-Lingual Content Management
 **Summary**: Use OpenAI Text and Auto Translation to offer your content in multiple languages.
 **Benefits**: Reach a broader audience without the complexity of managing multiple translations.
-
 ### Content Summarization for News Platforms
 **Summary**: Use OpenAI Text Summarizer to offer concise versions of long articles.
 **Benefits**: Higher reader engagement and improved user experience.
-
 ### Content Classification for Digital Libraries
 **Summary**: Use OpenAI Classification to categorize digital assets in a library.
 **Benefits**: Improved searchability and content discovery.
 
+  
+  
 
 Feel free to contribute, suggest features, or join us on this journey to making AI accessible and efficient for all developers.

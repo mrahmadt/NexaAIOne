@@ -19,8 +19,7 @@
                             <div class="mt-4 p-4 text-sm border-b">
                                 <div><span class="text-base font-bold">{{ $option['name'] }}</span>
                                     <span class="ps-2 text-gray-400">{{ $option['type'] }}</span>
-                                    <span
-                                        class="ps-2 {{ $option['required'] ? 'text-red-500' : 'text-green-500' }}">{{ $option['required'] ? 'Required' : 'Optional' }}</span>
+                                    <span class="ps-2 {{ $option['required'] ? 'text-red-500' : 'text-green-500' }}">{{ $option['required'] ? 'Required' : 'Optional' }}</span>
                                 </div>
                                 <div class="text-gray-500">{{ $option['desc'] }}</div>
                                 @if (isset($option['default']) && $option['default'])

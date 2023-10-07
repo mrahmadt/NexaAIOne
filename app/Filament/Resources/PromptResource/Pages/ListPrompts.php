@@ -9,6 +9,9 @@ use Filament\Resources\Pages\ListRecords;
 class ListPrompts extends ListRecords
 {
     protected static string $resource = PromptResource::class;
+    public function getSubheading(): ?string {
+        return __('A place to store your prompts');
+    }
 
     protected function getHeaderActions(): array
     {

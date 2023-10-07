@@ -22,6 +22,7 @@ use App\Http\Controllers\APIDocsController;
 
 
 Route::get('api-docs/app/{appDocToken}/{apiID?}', [APIDocsController::class, 'viewApp'])->name('api-docs.app');
+Route::get('api-docs/appCollection/{appDocToken}/{contentView}', [APIDocsController::class, 'viewAppCollection'])->name('api-docs.appCollection');
 Route::get('api-docs/collection/document/create', [APIDocsController::class, 'collectionCreate'])->name('api-docs.collection.document.create');
 Route::get('api-docs/collection/document/update', [APIDocsController::class, 'collectionUpdate'])->name('api-docs.collection.document.update');
 Route::get('api-docs/collection/document/delete', [APIDocsController::class, 'collectionDelete'])->name('api-docs.collection.document.delete');

@@ -112,8 +112,13 @@ class DocumentController extends Controller
         $token = str_replace('Bearer ', '', $authToken);
         // Fetch the Collection associated with the authToken
         if(!isset($token)) return false;
-        $collection = Collection::where(['id'=>$collection_id, 'authToken'=> $token])->first();
-        if($collection){
+        
+        $collection = Cache::rememberForever('collection:'.$collection_id, function () use($collection_id) {
+            return Collection::where(['id'=>$collection_id])->first();
+        });
+        // $collection = Collection::where(['id'=>$collection_id, 'authToken'=> $token])->first();
+
+        if($collection && $collection->authToken == $token){
             return $collection;
         }else{
             return false;

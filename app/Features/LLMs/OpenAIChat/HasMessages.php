@@ -61,6 +61,15 @@ trait HasMessages
             "default" => 0,
             "_group" => 'Messages',
         ],
+        'collection_id' => [
+            "name" => "collection_id",
+            "type" => " numeric",
+            "required" => false,
+            "desc" => "The identifier for the App Collection. If provided, the API will search this collection and send the result to LLM to respond to the user's query. Specifying this will take precedence over any collection set in the API's configuration.",
+            "isApiOption" => false,
+            "default" => null,
+            "_group" => 'Messages',
+        ],
     ];
 
     /**
@@ -179,30 +188,38 @@ trait HasMessages
             'role' => 'user',
         ];
 
-        if($this->ApiModel->collection_id) {
+        if($this->ApiModel->collection_id || (isset($this->options['collection_id']) && $this->options['collection_id'])) {
+
+            $onlyAppCollection = false;
+            if(isset($this->options['collection_id']) && $this->options['collection_id']){
+                $collection_id = $this->options['collection_id'];
+                $onlyAppCollection = true;
+            }else{
+                $collection_id = $this->ApiModel->collection_id;
+            }
+
             $myMessage['orginalContent'] = $userMessage;
-
             // need to make sure collection is cached
-
             // we need this to help with memory optimization
             $totalMessageTokens = 0;
-
             // need embedding_id from collection
-            $collection_id = $this->ApiModel->collection_id;
+            
             $collection = Cache::rememberForever('collection:'.$collection_id, function () use($collection_id) {
                 return Collection::where(['id'=>$collection_id])->first();
             });
-    
+
+            if($onlyAppCollection && (!isset($collection) || $collection->app_id != $this->appId)){
+                throw new \Exception('Invalid collection_id. Permission Denied.');
+            }
+
             // need to make sure collection has embedder_id or use 1
             $embedder_id = $collection->embedder_id ?? 1;
             $embedder = Cache::rememberForever('Embedder:'.$embedder_id, function () use($embedder_id) {
                 return Embedder::where(['id'=> $embedder_id])->first();
             });
-
             $className = '\App\Embedders\\' . $embedder->className;
             $EmbedderClass = new $className($embedder->options);
             $embeds = $EmbedderClass->execute($this->options['userMessage']);
-            
             if($embeds && isset($embeds->embeddings[0]->embedding)){
                 $embedding = $embeds->embeddings[0]->embedding;
                 $totalMessageTokens += $embeds->usage->totalTokens;

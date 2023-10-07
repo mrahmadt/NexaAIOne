@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('authToken', 100);
             $table->string('docToken', 100);
             $table->boolean('isActive')->default(true);
+            $table->boolean('enableAppCollection')->default(true);
             $table->timestamps();
         });
     }

@@ -28,6 +28,8 @@ class App extends Model
         'owner',
         'authToken',
         'docToken',
+        'enableAppCollection',
+        'isActive',
     ];
 
     
@@ -38,6 +40,7 @@ class App extends Model
      */
     protected $casts = [
         'isActive' => 'boolean',
+        'enableAppCollection' => 'boolean',
     ];
 
     protected static function newAuthToken() {

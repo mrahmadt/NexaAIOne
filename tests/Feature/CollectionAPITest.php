@@ -8,6 +8,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 use App\Models\Collection;
+use Illuminate\Support\Facades\DB;
 
 class CollectionAPITest extends TestCase
 {
@@ -23,6 +24,60 @@ class CollectionAPITest extends TestCase
     public function tearDown(): void {
         parent::tearDown();
     }
+
+    public function test_app_collection_create_delete() {
+      $api = Api::where(['service_id'=>3])->first();
+      $app = DB::table('apps')->where(['id'=>1])->first();
+
+      $response = $this->withHeaders([
+          'Authorization' => 'Bearer ssss' . $app->authToken,
+      ])->post('/api/v1/appCollection/create', [
+          'name' => 'Test Name',
+          'app_id' => $app->id,
+      ]);
+      $response->assertStatus(403);
+      $response->assertJsonPath('status', false);
+
+      $response = $this->withHeaders([
+        'Authorization' => 'Bearer ' . $app->authToken,
+      ])->post('/api/v1/appCollection/create', [
+        'name' => 'Test Name',
+        'app_id' => 12221111,
+      ]);
+      $response->assertStatus(403);
+      $response->assertJsonPath('status', false);
+
+      $response = $this->withHeaders([
+        'Authorization' => 'Bearer ' . $app->authToken,
+      ])->post('/api/v1/appCollection/create', [
+        'app_id' => 12221111,
+      ]);
+      $response->assertStatus(404);
+      $response->assertJsonPath('status', false);
+
+      $response = $this->withHeaders([
+          'Authorization' => 'Bearer ' . $app->authToken,
+      ])->post('/api/v1/appCollection/create', [
+          'name' => 'Test Name',
+          'app_id' => $app->id,
+      ]);
+      $response->assertStatus(200);
+      $response->assertJsonPath('status', true);
+      $response->assertJsonPath('collection_id', 3);
+      $response->assertSeeText('authToken');
+
+      $responseData = $response->getOriginalContent();
+      $response = $this->withHeaders([
+        'Authorization' => 'Bearer ' . $app->authToken,
+      ])->delete('/api/v1/appCollection/delete', [
+          'app_id' => $app->id,
+          'collection_id' => $responseData['collection_id'],
+          'collection_authToken' => $responseData['authToken'],
+      ]);
+      $response->assertStatus(200);
+      $response->assertJsonPath('status', true);
+  }
+
 
     public function test_document_with_RecursiveCharacterTextSplitter(){
       $response = $this->withHeaders([

@@ -9,7 +9,10 @@ use Filament\Resources\Pages\ListRecords;
 class ListApps extends ListRecords
 {
     protected static string $resource = AppResource::class;
-
+    public function getSubheading(): ?string
+    {
+        return __('List of your apps that you can use to access APIs. Create an App and associate it with APIs so you can access them from your application');
+    }
     protected function getHeaderActions(): array
     {
         return [

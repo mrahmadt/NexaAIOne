@@ -12,19 +12,26 @@ use App\Jobs\UpdateAPIUsageJob;
 class APIController extends Controller
 {
     protected $ApiModel;
+    protected $appId;
     private $options = [];
 
     public function execute(string $appId, string $apiId, Request $request) : JsonResponse{
+        $this->appId = $appId;
         $authToken = $request->header('Authorization');
         $token = str_replace('Bearer ', '', $authToken);
         if($token == '') return $this->responseMessage(['message'=>'No Token'], 403);
 
-        $app = Cache::rememberForever('appId:'.$appId, function () use($appId, $token) {
-            return App::where(['id'=>$appId, 'authToken'=> $token])->select(['id'])->first();
+        $app = Cache::rememberForever('app:'.$appId, function () use($appId, $token) {
+            return App::where(['id'=>$appId])->first();
         });
-
         if(!$app){
-            return $this->responseMessage(['message'=>'Invalid token'], 403);
+            return response()->json(['message' => 'Invalid app', 'status' => false], 403);
+        }
+        if($app->authToken != $token){
+            return response()->json(['message' => 'Invalid token', 'status' => false], 403);
+        }
+        if(!$app->isActive){
+            return response()->json(['message' => 'App is not active', 'status' => false], 403);
         }
 
         $this->ApiModel = Cache::rememberForever('appId:'.$app->id.'apiModel:'.$apiId, function () use($app, $apiId) {

@@ -16,8 +16,10 @@ return new class extends Migration
             $table->string('name', 150);
             $table->string('description', 255)->nullable();
             $table->string('authToken', 100);
+            $table->string('collection_type', 100)->nullable(); // null , api, app, memory, ....etc
             $table->text('context_prompt')->nullable();
             $table->integer('defaultTotalReturnDocuments')->default(3);
+            $table->unsignedBigInteger('app_id')->nullable();
             $table->unsignedBigInteger('loader_id')->nullable();
             $table->unsignedBigInteger('splitter_id')->nullable();;
             $table->unsignedBigInteger('embedder_id')->nullable();;
@@ -27,6 +29,7 @@ return new class extends Migration
             $table->foreign('loader_id')->references('id')->on('loaders');
             $table->foreign('splitter_id')->references('id')->on('splitters');
             $table->foreign('embedder_id')->references('id')->on('embedders');
+            $table->foreign('app_id')->references('id')->on('apps');
         });
     }
 

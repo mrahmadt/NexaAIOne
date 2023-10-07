@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\APIController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\CollectionController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -22,6 +23,10 @@ use App\Http\Controllers\DocumentController;
 
 Route::prefix('v1')->group(function () {
     Route::post('app/{appId}/{apiId}/{name?}', [APIController::class, 'execute'])->name('api.execute');
+
+    Route::post('appCollection/create', [CollectionController::class, 'createAppCollection'])->name('api.app.collection.create');
+    Route::delete('appCollection/delete', [CollectionController::class, 'deleteAppCollection'])->name('api.app.collection.delete');
+
     Route::prefix('collections')->group(function () {
         Route::post('documents/create', [DocumentController::class, 'create'])->name('api.document.create');
         Route::put('document/update/{document_id}', [DocumentController::class, 'update'])->name('api.document.update');

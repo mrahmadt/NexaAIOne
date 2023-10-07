@@ -22,6 +22,7 @@ class AppsTableSeeder extends Seeder
             'authToken' => bin2hex(openssl_random_pseudo_bytes(16)). bin2hex(random_bytes(5)),
             'docToken' => bin2hex(openssl_random_pseudo_bytes(16)). bin2hex(random_bytes(5)),
             'isActive' => true,
+            'enableAppCollection' => true,
             'created_at' => now(),
             'updated_at' => now()
         ]);

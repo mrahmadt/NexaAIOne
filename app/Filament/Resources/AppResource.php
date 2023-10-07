@@ -63,6 +63,9 @@ class AppResource extends Resource
             Forms\Components\Toggle::make('isActive')->label('Is Active')
                 ->helperText('Enable/Disable App.')
                 ->required()->default(true),
+            Forms\Components\Toggle::make('enableAppCollection')->label('Manage app collections?')
+                ->helperText('Allow app to create and delete app collections via API?')
+                ->required()->default(true),
             Forms\Components\Select::make('services')
                 ->helperText('List of APIs allowed to be used by this app.')
                 ->multiple()

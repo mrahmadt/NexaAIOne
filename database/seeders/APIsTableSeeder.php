@@ -6,7 +6,8 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use App\Models\Service;
-
+use Illuminate\Support\Str;
+ 
 class APIsTableSeeder extends Seeder
 {
     /**
@@ -275,5 +276,59 @@ class APIsTableSeeder extends Seeder
             'updated_at' => now()
         ]);
 
+
+        //OpenAI Audio API
+        foreach([1,2] as $id){
+            $serviceModel = Service::where(['id'=>$id, 'isActive'=>true])->first();
+            $className = '\App\Services\\' . $serviceModel->className;
+            $service = new $className();
+            $options = $service->getOptionSchema($serviceModel);
+            $options['OpenAI']['model']['default'] = "whisper-1";
+            $options['OpenAI']['model']['isApiOption'] = false;
+            $options['Caching']['cachingPeriod']['default'] = 60;
+            $options['Caching']['cacheScope']['default'] = 'session';
+            $options['Caching']['clearCache']['isApiOption'] = true;
+            $options['Debugging']['debug']['isApiOption'] = false;
+            $options['General']['session']['default'] = 'session';
+            $options['General']['session']['isApiOption'] = true;
+            DB::table('apis')->insert([
+                'name' => $serviceModel->name,
+                'description' => $serviceModel->description,
+                'endpoint' => Str::slug($serviceModel->name),
+                'service_id' => $serviceModel->id,
+                'collection_id' => null,
+                'enableUsage' => true,
+                'isActive' => true,
+                'options' => json_encode($options),
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+        }
+        
+        //OpenAI Image API
+        foreach([4,5,6] as $id){
+            $serviceModel = Service::where(['id'=>$id, 'isActive'=>true])->first();
+            $className = '\App\Services\\' . $serviceModel->className;
+            $service = new $className();
+            $options = $service->getOptionSchema($serviceModel);
+            $options['Caching']['cachingPeriod']['default'] = 60;
+            $options['Caching']['cacheScope']['default'] = 'session';
+            $options['Caching']['clearCache']['isApiOption'] = true;
+            $options['Debugging']['debug']['isApiOption'] = false;
+            $options['General']['session']['default'] = 'session';
+            $options['General']['session']['isApiOption'] = true;
+            DB::table('apis')->insert([
+                'name' => $serviceModel->name,
+                'description' => $serviceModel->description,
+                'endpoint' => Str::slug($serviceModel->name),
+                'service_id' => $serviceModel->id,
+                'collection_id' => null,
+                'enableUsage' => true,
+                'isActive' => true,
+                'options' => json_encode($options),
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+        }
     }
 }

@@ -172,5 +172,27 @@ abstract class BaseService{
     private function verifyOption($optionValue, $options){
         return isset($options) && isset($options[$optionValue]);
     }
+
+    protected function getMeta($serviceResponse){
+        //if(isset($this->options['fakeLLM']) && $this->options['fakeLLM']) {
+        if (!is_array($serviceResponse) && method_exists($serviceResponse, 'meta')) {
+            $serviceMeta = $serviceResponse->meta();
+        } else {
+            $serviceMeta = [
+                'requestId' => uniqid(),
+                'requestLimit' => [
+                    'limit' => 3500,
+                    'remaining' => 3499,
+                    'reset' => '17ms',
+                ],
+                'tokenLimit' => [
+                    'limit' => 90000,
+                    'remaining' => 89980,
+                    'reset' => '12ms',
+                ],
+            ];
+        }
+        return $serviceMeta;
+    }
 }
 

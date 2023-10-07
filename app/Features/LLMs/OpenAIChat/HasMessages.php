@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Features\LLMs\OpenAI;
+namespace App\Features\LLMs\OpenAIChat;
 use Yethee\Tiktoken\EncoderProvider;
 use App\Models\Collection;
 use App\Models\Embedder;
 use Pgvector\Vector;
 // use Pgvector\Laravel\Vector;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 trait HasMessages
 {
@@ -123,7 +124,7 @@ trait HasMessages
             true,
         );
         if($addToMessages){
-            if(isset($response['StreamedMessage'])) {
+            if(is_array($response) && isset($response['StreamedMessage'])) {
                 $this->addMessage($response['StreamedMessage']);
             }elseif(count($response->choices)>1){
                 foreach ($response->choices as $result) {
@@ -187,11 +188,17 @@ trait HasMessages
             $totalMessageTokens = 0;
 
             // need embedding_id from collection
-            $collection = Collection::where(['id'=>$this->ApiModel->collection_id])->first();
-
+            $collection_id = $this->ApiModel->collection_id;
+            $collection = Cache::rememberForever('collection:'.$collection_id, function () use($collection_id) {
+                return Collection::where(['id'=>$collection_id])->first();
+            });
+    
             // need to make sure collection has embedder_id or use 1
             $embedder_id = $collection->embedder_id ?? 1;
-            $embedder = Embedder::where(['id'=> $embedder_id])->first();
+            $embedder = Cache::rememberForever('Embedder:'.$embedder_id, function () use($embedder_id) {
+                return Embedder::where(['id'=> $embedder_id])->first();
+            });
+
             $className = '\App\Embedders\\' . $embedder->className;
             $EmbedderClass = new $className($embedder->options);
             $embeds = $EmbedderClass->execute($this->options['userMessage']);

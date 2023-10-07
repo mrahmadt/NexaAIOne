@@ -2,56 +2,104 @@
 
 namespace App\Services;
 
+use App\Features\HasCaching;
+use App\Features\LLMs\OpenAIAudio\HasOpenAIAudio;
+use App\Features\HasDebug;
+use Illuminate\Support\Facades\Http;
 
 class OpenAITranscriptionService extends BaseService
 {
+    use HasCaching;
+    use HasOpenAIAudio;
+    use HasDebug;
 
-    protected static $REQUEST_SCHEMA = [
-        [
-            "name" => "cachingPeriod",
-            "type" => "number",
-            "required" => false,
-            "desc" => "How long should a file be cached, in minutes? If the same file is submitted again, it will be retrieved from the cache if available. Set to 0 to disable caching.",
-            "default" => 1440,
-            "isApiOption" => true,
-        ],    
-        [
-                "name" => "file",
-                "type" => "file",
-                "required" => true,
-                "desc" => "The audio file object (not file name) to transcribe, in one of these formats: flac, mp3, mp4, mpeg, mpga, m4a, ogg, wav, or webm.",
-                "_noDefaultValue" => true,
-                "isApiOption" => true,
-            ],
-            [
-                "name" => "prompt",
-                "type" => "string",
-                "required" => false,
-                "desc" => "An optional text to guide the model's style or continue a previous audio segment. The prompt should match the audio language.",
-                "isApiOption" => true,
-            ],
-            [
-                "name" => "response_format",
-                "type" => "string",
-                "required" => false,
-                "desc" => "The format of the transcript output, in one of these options: json, text, srt, verbose_json, or vtt.",
-                "default" => "text",
-                "isApiOption" => true,
-            ],
-            [
-                "name" => "temperature",
-                "type" => "number",
-                "required" => false,
-                "desc" => "The sampling temperature, between 0 and 1. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic. If set to 0, the model will use log probability to automatically increase the temperature until certain thresholds are hit.",
-                "default" => 0,
-            ],
-            [
-                "name" => "language",
-                "type" => "string",
-                "required" => false,
-                "desc" => "The language of the input audio. Supplying the input language in ISO-639-1 format will improve accuracy and latency.",
-                "isApiOption" => true,
-            ]
+    protected $features = [
+        'cachingOptions',
+        'openAITranscriptionOptions',
+        'openAIAudioCommonOptions',
+        'debugOptions'
     ];
+
+    protected $ApiModel;
+    protected $api_id;
+    protected $app_id;
+    protected $httpRequest;
+
+
+    public function __construct($userOptions = [], $ApiModel = null, $httpRequest = null, $app = null){
+        if($userOptions) {
+            $this->ApiModel = $ApiModel;
+            $this->api_id = $ApiModel->id;
+            $this->app_id = $app->id ?? 0;
+            $debug = [
+                'requestOptions' => $userOptions
+            ];
+            $this->httpRequest = $httpRequest;
+            if($httpRequest) $debug['header'] = $httpRequest->header();
+            $this->initOptions($userOptions);
+
+            $this->debug('input', $debug);
+        }
+    }
+
+    public function execute(){
+        try {
+            $clearCache = false;
+
+            if ($this->httpRequest && $this->httpRequest->file('file')->isValid()) {
+                $this->options['file'] = $this->httpRequest->file->path() . '.' . $this->httpRequest->file('file')->getClientOriginalName();
+            }elseif(isset($this->options['fileURL'])){
+                $tempFile = tempnam(sys_get_temp_dir(), 'audioFile_');
+                $response = Http::sink($tempFile)->get($this->options['fileURL']);
+                $response->throw();
+                $this->options['file'] = $tempFile;
+            }
+
+            $this->__cacheInit([
+                'userMessage',
+                'openaiBaseUri',
+                'openaiApiVersion',
+                'openaiOrganization',
+                'model',
+                'prompt',
+                'temperature',
+                'response_format',
+                'language',
+            ], md5_file($this->options['file']));
+
+            if($this->options['clearCache']) $clearCache = $this->clearCache();
+
+            if(!$this->options['file']) {
+                if($clearCache) {
+                    return $this->responseMessage(['status' => true, 'message' => 'Cache cleared']);
+                }
+                return $this->responseMessage(['message' => 'No file defined.']);
+            }
+
+            $serviceResponse = $this->getCache();
+            if($serviceResponse) {
+                return $this->responseMessage(['status' => true, 'serviceResponse' => $serviceResponse, 'cached'=>true, 'cacheScope' => $this->options['cacheScope']]);
+            }
+
+            $serviceResponse = $this->sendAudioToLLM($this->options['file'],'transcribe');
+            
+            $this->setCache($serviceResponse);
+
+            $response = [
+                'status' => true, 
+                'serviceResponse' => $serviceResponse,
+                'serviceMeta' => $this->getMeta($serviceResponse),
+                'usage' => $this->usage
+            ];
+
+        } catch (\Throwable $th) {
+            $response = [
+                'status' => false, 
+                'message' => $th->getMessage(), 
+            ];
+        }
+
+        return $this->responseMessage($response);
+    }
 
 }

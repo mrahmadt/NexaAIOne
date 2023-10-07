@@ -3,20 +3,20 @@
 namespace App\Services;
 
 use App\Features\HasCaching;
-use App\Features\LLMs\OpenAIAudio\HasOpenAIAudio;
+use App\Features\LLMs\OpenAIImage\HasOpenAIImage;
 use App\Features\HasDebug;
 use Illuminate\Support\Facades\Http;
 
-class OpenAITranslationService extends BaseService
+class OpenAIEditImageService extends BaseService
 {
     use HasCaching;
-    use HasOpenAIAudio;
+    use HasOpenAIImage;
     use HasDebug;
 
     protected $features = [
         'cachingOptions',
-        'openAITranslationOptions',
-        'openAIAudioCommonOptions',
+        'openAIEditImageOptions',
+        'openAIImageCommonOptions',
         'debugOptions'
     ];
 
@@ -46,33 +46,47 @@ class OpenAITranslationService extends BaseService
         try {
             $clearCache = false;
 
-            if ($this->httpRequest && $this->httpRequest->file('file')->isValid()) {
-                $this->options['file'] = $this->httpRequest->file->path() . '.' . $this->httpRequest->file('file')->getClientOriginalName();
-            }elseif(isset($this->options['fileURL'])){
-                $tempFile = tempnam(sys_get_temp_dir(), 'audioFile_');
-                $response = Http::sink($tempFile)->get($this->options['fileURL']);
+            if ($this->httpRequest && $this->httpRequest->file('image')->isValid()) {
+                $this->options['image'] = $this->httpRequest->file->path() . '.' . $this->httpRequest->file('image')->getClientOriginalName();
+            }elseif(isset($this->options['imageURL'])){
+                $tempFile = tempnam(sys_get_temp_dir(), 'imageFile_');
+                $response = Http::sink($tempFile)->get($this->options['imageURL']);
                 $response->throw();
-                $this->options['file'] = $tempFile;
+                $this->options['image'] = $tempFile;
+            }
+
+            if ($this->httpRequest && $this->httpRequest->file('mask')->isValid()) {
+                $this->options['mask'] = $this->httpRequest->file->path() . '.' . $this->httpRequest->file('mask')->getClientOriginalName();
+            }elseif(isset($this->options['maskURL'])){
+                $tempFile = tempnam(sys_get_temp_dir(), 'imageFile_');
+                $response = Http::sink($tempFile)->get($this->options['maskURL']);
+                $response->throw();
+                $this->options['mask'] = $tempFile;
+            }
+
+            $md5file = md5_file($this->options['image']);
+            if (isset($this->options['mask'])) {
+                $md5file .=  md5_file($this->options['mask']);
             }
 
             $this->__cacheInit([
-                'userMessage',
                 'openaiBaseUri',
                 'openaiApiVersion',
                 'openaiOrganization',
-                'model',
                 'prompt',
-                'temperature',
+                'n',
+                'size',
+                'user',
                 'response_format',
-            ], md5_file($this->options['file']));
+            ], $md5file);
 
             if($this->options['clearCache']) $clearCache = $this->clearCache();
 
-            if(!$this->options['file']) {
+            if(!$this->options['prompt']) {
                 if($clearCache) {
                     return $this->responseMessage(['status' => true, 'message' => 'Cache cleared']);
                 }
-                return $this->responseMessage(['message' => 'No file defined.']);
+                return $this->responseMessage(['message' => 'No prompt defined.']);
             }
 
             $serviceResponse = $this->getCache();
@@ -80,7 +94,7 @@ class OpenAITranslationService extends BaseService
                 return $this->responseMessage(['status' => true, 'serviceResponse' => $serviceResponse, 'cached'=>true, 'cacheScope' => $this->options['cacheScope']]);
             }
 
-            $serviceResponse = $this->sendAudioToLLM($this->options['file'], 'translate');
+            $serviceResponse = $this->sendImageRequestToLLM('edit');
             
             $this->setCache($serviceResponse);
 
@@ -88,7 +102,6 @@ class OpenAITranslationService extends BaseService
                 'status' => true, 
                 'serviceResponse' => $serviceResponse,
                 'serviceMeta' => $this->getMeta($serviceResponse),
-                'usage' => $this->usage
             ];
 
         } catch (\Throwable $th) {

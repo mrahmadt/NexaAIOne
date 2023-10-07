@@ -1,10 +1,10 @@
 <?php
-namespace App\Features\LLMs\OpenAI;
+namespace App\Features\LLMs\OpenAIChat;
 
 use OpenAI;
 use Faker\Factory;
 
-trait HasOpenAI
+trait HasOpenAIChat
 {
     /**
      * An instance of the OpenAI API client.
@@ -205,7 +205,7 @@ We generally recommend altering this or top_p but not both.",
         if(!isset($this->options['openaiApiKey'])) {
             $this->options['openaiApiKey'] = config('openai.api_key');
         }
-        foreach(['model','openaiApiVersion','max_tokens','temperature','top_p','n','stop','presence_penalty','frequency_penalty','user','logit_bias'] as $key) {
+        foreach(['model','max_tokens','temperature','top_p','n','stop','presence_penalty','frequency_penalty','user','logit_bias'] as $key) {
             if($this->options[$key]) {
                 $this->ChatCompletionOptions[$key] = $this->options[$key];
             }
@@ -251,29 +251,32 @@ We generally recommend altering this or top_p but not both.",
 
         $responseID = "chatcmpl-" . mt_rand(100, 10000);
         $responseCreated = time();
-        $jsonResponse = <<<EOT
-{
-"id": "{$responseID}",
-"fakeLLM": true,
-"object": "chat.completion",
-"created": {$responseCreated},
-"model": "{$ChatCompletionOptions['model']}",
-"choices": [{
-    "index": 0,
-    "message": {
-        "role": "assistant",
-        "content": "{$responseMessageContent}",
-        "functionCall": null
-    },
-    "finish_reason": "stop"
-}],
-"usage": {
-    "promptTokens": {$promptTokens},
-    "completionTokens": {$completionTokens},
-    "totalTokens": {$totalTokens}
-}
-}
-EOT;
+
+        $jsonResponse = [
+            'id' => $responseID,
+            'fakeLLM' => true,
+            'object' => 'chat.completion',
+            'created' => $responseCreated,
+            'model' => $ChatCompletionOptions['model'],
+            'choices' => [
+                [
+                    'index' => 0,
+                    'message' => [
+                        'role' => 'assistant',
+                        'content' => $responseMessageContent,
+                        'functionCall' => null
+                    ],
+                    'finish_reason' => 'stop'
+                ]
+            ],
+            'usage' => [
+                'promptTokens' => $promptTokens,
+                'completionTokens' => $completionTokens,
+                'totalTokens' => $totalTokens
+            ]
+        ];
+        $jsonResponse = json_encode($jsonResponse);
+        
         $this->usage['promptTokens'] += $promptTokens;
         $this->usage['completionTokens'] += $completionTokens;
         $this->usage['totalTokens'] += $totalTokens;
@@ -288,7 +291,7 @@ EOT;
      * @param bool $noStreamClient
      * @return mixed
      */
-    private function sendMessageToLLM($messages = [], $ChatCompletionOptions = [], $noStreamClient = false)
+    private function sendMessageToLLM($messages = [], $ChatCompletionOptions = [], $allowStreamClient = true)
     {
         if(!$this->LLMReady) {
             $this->setupLLM();
@@ -306,11 +309,10 @@ EOT;
         if(isset($this->options['fakeLLM']) && $this->options['fakeLLM']) {
             $response = $this->sendMessageToFakeLLM($ChatCompletionOptions);
         } else {
-            if($this->options['stream'] && $noStreamClient == false) {
+            if($this->options['stream'] && $allowStreamClient == true) {
                 $messages = [
                     ['role' => 'user', 'content' => 'Hello!'],
                 ];
-                $stream = $this->stream($messages);
                 $stream = $this->LLMclient->chat()->createStreamed(
                     array_merge(
                         $ChatCompletionOptions,

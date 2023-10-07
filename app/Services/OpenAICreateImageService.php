@@ -3,20 +3,19 @@
 namespace App\Services;
 
 use App\Features\HasCaching;
-use App\Features\LLMs\OpenAIAudio\HasOpenAIAudio;
+use App\Features\LLMs\OpenAIImage\HasOpenAIImage;
 use App\Features\HasDebug;
-use Illuminate\Support\Facades\Http;
 
-class OpenAITranslationService extends BaseService
+class OpenAICreateImageService extends BaseService
 {
     use HasCaching;
-    use HasOpenAIAudio;
+    use HasOpenAIImage;
     use HasDebug;
 
     protected $features = [
         'cachingOptions',
-        'openAITranslationOptions',
-        'openAIAudioCommonOptions',
+        'openAICreateImageOptions',
+        'openAIImageCommonOptions',
         'debugOptions'
     ];
 
@@ -46,33 +45,24 @@ class OpenAITranslationService extends BaseService
         try {
             $clearCache = false;
 
-            if ($this->httpRequest && $this->httpRequest->file('file')->isValid()) {
-                $this->options['file'] = $this->httpRequest->file->path() . '.' . $this->httpRequest->file('file')->getClientOriginalName();
-            }elseif(isset($this->options['fileURL'])){
-                $tempFile = tempnam(sys_get_temp_dir(), 'audioFile_');
-                $response = Http::sink($tempFile)->get($this->options['fileURL']);
-                $response->throw();
-                $this->options['file'] = $tempFile;
-            }
-
             $this->__cacheInit([
-                'userMessage',
                 'openaiBaseUri',
                 'openaiApiVersion',
                 'openaiOrganization',
-                'model',
                 'prompt',
-                'temperature',
+                'n',
+                'size',
+                'user',
                 'response_format',
-            ], md5_file($this->options['file']));
+            ]);
 
             if($this->options['clearCache']) $clearCache = $this->clearCache();
 
-            if(!$this->options['file']) {
+            if(!$this->options['prompt']) {
                 if($clearCache) {
                     return $this->responseMessage(['status' => true, 'message' => 'Cache cleared']);
                 }
-                return $this->responseMessage(['message' => 'No file defined.']);
+                return $this->responseMessage(['message' => 'No prompt defined.']);
             }
 
             $serviceResponse = $this->getCache();
@@ -80,15 +70,13 @@ class OpenAITranslationService extends BaseService
                 return $this->responseMessage(['status' => true, 'serviceResponse' => $serviceResponse, 'cached'=>true, 'cacheScope' => $this->options['cacheScope']]);
             }
 
-            $serviceResponse = $this->sendAudioToLLM($this->options['file'], 'translate');
-            
+            $serviceResponse = $this->sendImageRequestToLLM('create');
             $this->setCache($serviceResponse);
 
             $response = [
                 'status' => true, 
                 'serviceResponse' => $serviceResponse,
                 'serviceMeta' => $this->getMeta($serviceResponse),
-                'usage' => $this->usage
             ];
 
         } catch (\Throwable $th) {

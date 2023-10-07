@@ -2,7 +2,7 @@
 // Need Summary to be part of LLM
 // What if the messages are large?
 // FIX code based on new options
-namespace App\Features\LLMs\OpenAI;
+namespace App\Features\LLMs\OpenAIChat;
 
 use Illuminate\Support\Facades\Cache;
 use App\Models\Memory;
@@ -217,7 +217,7 @@ trait HasMemory
             $prompt_user = [ 'role'=> 'user', 'content'=> $conversationToSummary ];
             $ChatCompletionOptions = [];
             $ChatCompletionOptions['model'] = config('openai.memory_summarization_model') ?? $this->ChatCompletionOptions['model'];
-            $response = $this->sendMessageToLLM([$prompt_system, $prompt_user], $ChatCompletionOptions, true);
+            $response = $this->sendMessageToLLM([$prompt_system, $prompt_user], $ChatCompletionOptions, false);
 
             $messagesToKeep[] = ['role'=>'system', 'content'=> 'Previous context:'. $response->choices[0]->message->content];
             $messagesMetaToKeep[] = [ 'tokens'=> $response->usage->completionTokens + 3];

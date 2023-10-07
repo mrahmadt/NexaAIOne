@@ -15,7 +15,7 @@ trait HasCaching
             "name" => "cachingPeriod",
             "type" => "number",
             "required" => false,
-            "desc" => "How long should a message response be cached, in minutes? If the same message is submitted again, the response will be retrieved from the cache if available. Set to 0 to disable caching.",
+            "desc" => "How long should a response be cached, in minutes? If the same request is submitted again, the response will be retrieved from the cache if available. Set to 0 to disable caching.",
             "default" => 0,
             "isApiOption" => true,
             "_group" => 'Caching',
@@ -37,7 +37,7 @@ trait HasCaching
             "name" => "clearCache",
             "type" => "boolean",
             "required" => false,
-            "desc" => "Clear cache for the specified message.",
+            "desc" => "Clear cache for the specified request.",
             "isApiOption" => true,
             'default' => 0,
             "_group" => 'Caching',
@@ -46,7 +46,7 @@ trait HasCaching
             "name" => "session",
             "type" => "string",
             "required" => false,
-            "desc" => "Unique session id for this message.",
+            "desc" => "Unique session id for this request.",
             "default" => "global",
             "isApiOption" => true,
             "_group" => 'General',
@@ -77,7 +77,7 @@ trait HasCaching
      * @access private
      * @return bool Returns true if cache key is generated, otherwise false.
      */
-    private function __cacheInit()
+    private function __cacheInit($optionsForCachingKey = [], $extraString = null)
     {
         if (!isset($this->options['cachingPeriod']) || $this->options['cachingPeriod'] == 0) {
             return false;
@@ -86,12 +86,22 @@ trait HasCaching
             return true;
         }
         $this->cacheInit = true;
-        
-        if($this->options['cacheScope'] == 'session') {
-            $this->cacheKey = 'msg:' . $this->api_id. ':'. $this->options['session'] . ':' .  md5($this->options['userMessage']);
-        } else {
-            $this->cacheKey = 'msg:' . $this->api_id. ':'. md5($this->options['userMessage']);
+
+        $requestCachingKeyOptionName = null;
+
+        foreach($optionsForCachingKey as $key){
+            if(isset($this->options[$key])) {
+                $requestCachingKeyOptionName .= ':' . (string)$this->options[$key];
+            }
         }
+        $mdKey = md5($requestCachingKeyOptionName . $extraString);
+
+        if($this->options['cacheScope'] == 'session') {
+            $this->cacheKey = 'msg:' . $this->api_id. ':'. $this->options['session'] . ':' .  $mdKey;
+        } else {
+            $this->cacheKey = 'msg:' . $this->api_id. ':'. $mdKey;
+        }
+
         $this->debug('__cacheInit()', $this->cacheKey);
         return true;
     }
@@ -104,7 +114,7 @@ trait HasCaching
      */
     private function clearCache()
     {
-        if(!$this->__cacheInit()) {
+        if(!$this->cacheInit) {
             return false;
         }
         $this->debug('clearCache()', true);
@@ -125,7 +135,7 @@ trait HasCaching
      */
     private function getCache($default = false)
     {
-        if(!$this->__cacheInit()) {
+        if(!$this->cacheInit) {
             return false;
         }
         if(Cache::has($this->cacheKey)) {
@@ -149,14 +159,10 @@ trait HasCaching
      * @param mixed $value The value to be cached.
      * @return void
      */
-    private function setCache($value = null)
+    private function setCache($value)
     {
-        if(!$this->__cacheInit()) {
+        if(!$this->cacheInit) {
             return false;
-        }
-        if(!$value) {
-            $value = end($this->messages);
-            reset($this->messages);
         }
         $this->debug('setCache()', $value);
         $seconds = $this->options['cachingPeriod'] * 60;

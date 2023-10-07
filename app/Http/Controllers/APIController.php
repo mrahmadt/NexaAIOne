@@ -16,16 +16,6 @@ class APIController extends Controller
 
     public function execute(string $appId, string $apiId, Request $request) : JsonResponse{
         $authToken = $request->header('Authorization');
-        
-        // dd($authToken);
-        return response()->json([
-            'appId' => $appId, 
-            'apiId' => $apiId, 
-            'request' => $request->all(),
-            'authToken' => $authToken, 
-        ], 200);
-        // dd($authToken, $appId, $apiId, $request->all());
-
         $token = str_replace('Bearer ', '', $authToken);
         if($token == '') return $this->responseMessage(['message'=>'No Token'], 403);
 
@@ -37,8 +27,8 @@ class APIController extends Controller
             return $this->responseMessage(['message'=>'Invalid token'], 403);
         }
 
-        $this->ApiModel = Cache::rememberForever('appId:'.$app.'apiModel:'.$apiId, function () use($app, $apiId) {
-            return $app->apis()->wherePivot('id', $apiId)->first();
+        $this->ApiModel = Cache::rememberForever('appId:'.$app->id.'apiModel:'.$apiId, function () use($app, $apiId) {
+            return $app->apis()->wherePivot('api_id', $apiId)->first();
         });
 
         if (is_null($this->ApiModel) || $this->ApiModel->isActive == false) {
@@ -48,7 +38,6 @@ class APIController extends Controller
         $className = '\App\Services\\' . Cache::rememberForever('service:class:'.$this->ApiModel->service_id, function () {
             return $this->ApiModel->service->className;
         });
-        // $className = '\App\Services\\' . $this->ApiModel->service->className;
 
         $APIservice = new $className($request->all(), $this->ApiModel, $request, $app);
         $response = $APIservice->execute();
@@ -58,7 +47,6 @@ class APIController extends Controller
             $response['usage']['api_id'] = $apiId;
             UpdateAPIUsageJob::dispatch($response['usage']);      
         }
- 
         unset($response['usage']);
         return $this->responseMessage($response);
     }

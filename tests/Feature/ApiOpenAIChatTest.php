@@ -7,6 +7,7 @@ use App\Models\App;
 use App\Models\Service;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Illuminate\Support\Facades\DB;
 
 class ApiOpenAIChatTest extends TestCase
 {
@@ -21,7 +22,9 @@ class ApiOpenAIChatTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->seed();
+        // $test = DB::table('services')->get();
+        // dd($test);
+        // $this->seed();
     }
     public function tearDown(): void
     {
@@ -30,7 +33,7 @@ class ApiOpenAIChatTest extends TestCase
 
     public function create_app_api($options_values = [], $options_apiOptions = [], $options_notApiOptions = [])
     {
-        $this->serviceModel = Service::find($this->service_id);
+      $this->serviceModel = Service::find($this->service_id);
         $className = 'App\Services\\' . $this->serviceModel->className;
         $this->serviceClass = new $className(false);
 
@@ -84,22 +87,22 @@ class ApiOpenAIChatTest extends TestCase
       return $total;
     }
     // app and api creation
-    public function x_test_app_api_creation()
+    public function test_app_api_creation()
     {
         $this->create_app_api();
         $this->assertEquals($this->api->name, 'test');
     }
 
     // allow only api options
-    public function x_test_allow_only_api_options()
+    public function test_allow_only_api_options()
     {
         $this->create_app_api([], ['cachingPeriod', 'session', 'model', 'enableMemory', 'systemMessage', 'updateSystemMessage', 'userMessage'], ['cacheScope']);
         $this->assertEquals($this->api->name, 'test');
-        $this->assertEquals($this->api->options['cachingPeriod']['isApiOption'], true);
-        $this->assertEquals($this->api->options['cacheScope']['isApiOption'], false);
+        $this->assertEquals($this->api->options['Caching']['cachingPeriod']['isApiOption'], true);
+        $this->assertEquals($this->api->options['Caching']['cacheScope']['isApiOption'], false);
     }
     // no auth
-    public function x_test_no_auth()
+    public function test_no_auth()
     {
         $this->create_app_api();
         $response = $this->post('/api/v1/app/'.$this->myApp->id.'/' .$this->api->id.'/' . $this->api->name, [
@@ -110,7 +113,7 @@ class ApiOpenAIChatTest extends TestCase
     }
 
     // wrong auth
-    public function x_test_wrong_auth()
+    public function test_wrong_auth()
     {
         $this->create_app_api();
         $response = $this->withHeaders([
@@ -123,7 +126,7 @@ class ApiOpenAIChatTest extends TestCase
     }
 
     // api not mapped to app
-    public function x_test_api_not_mapped_to_app()
+    public function test_api_not_mapped_to_app()
     {
         $this->create_app_api();
 
@@ -150,10 +153,9 @@ class ApiOpenAIChatTest extends TestCase
     // systemMessage with variable
     // enableMemory = disabled
     // fake LLM
-    public function x_test_no_memory_set_system_custom_message()
+    public function test_no_memory_set_system_custom_message()
     {
         $this->create_app_api([], ['returnMemory','cachingPeriod','session','model','enableMemory','systemMessage','userMessage', 'fakeLLM','fakeLLMOutput']);
-        // dd($this->api->options);
         $session = uniqid();
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->myApp->authToken,
@@ -167,6 +169,7 @@ class ApiOpenAIChatTest extends TestCase
             'fakeLLMOutput' => 'My Fake response',
             'userMessage' => 'My userMessage response',
         ]);
+
         $response->assertStatus(200);
         $response->assertJsonPath('status', true);
         $response->assertJsonPath('serviceResponse.fakeLLM', true);
@@ -192,7 +195,7 @@ class ApiOpenAIChatTest extends TestCase
 
 
     // enable usage
-    public function x_test_usage()
+    public function test_usage()
     {
         $this->create_app_api([], ['returnMemory','cachingPeriod','session','model','enableMemory','systemMessage','userMessage', 'fakeLLM','fakeLLMOutput']);
         $response = $this->withHeaders([
@@ -222,7 +225,7 @@ class ApiOpenAIChatTest extends TestCase
         ]);
     }
 
-    public function x_test_must_return_cached_response_scope_session_and_global_and_clear_cache()
+    public function test_must_return_cached_response_scope_session_and_global_and_clear_cache()
     {
         $this->create_app_api([], ['returnMemory','cachingPeriod', 'cacheScope','session','model','enableMemory','systemMessage','userMessage', 'fakeLLM','fakeLLMOutput']);
         $session = uniqid();
@@ -282,7 +285,7 @@ class ApiOpenAIChatTest extends TestCase
     }
 
     // send messages
-    public function x_test_send_messages()
+    public function test_send_messages()
     {
         $this->create_app_api([], ['returnMemory','messages','cachingPeriod','session','model','enableMemory','systemMessage','userMessage', 'fakeLLM','fakeLLMOutput']);
         $response = $this->withHeaders([
@@ -318,7 +321,7 @@ class ApiOpenAIChatTest extends TestCase
     
 
     // check none api options
-    public function x_test_none_api_option()
+    public function test_none_api_option()
     {
         $this->create_app_api();
         $response = $this->withHeaders([
@@ -337,7 +340,7 @@ class ApiOpenAIChatTest extends TestCase
 
     // enableMemory long memory saved in database
     // clearMemory long memory (db)
-    public function x_test_long_memory_no_optimization()
+    public function test_long_memory_no_optimization()
     {
         $this->create_app_api([], ['fakeLLM','session','clearMemory','returnMemory','enableMemory','memoryOptimization','fakeLLMOutput','userMessage']);
         $session = uniqid();
@@ -405,7 +408,7 @@ class ApiOpenAIChatTest extends TestCase
     }
     // enableMemory short memory saved in memory
     // clearMemory short memory
-    public function x_test_short_memory_no_optimization()
+    public function test_short_memory_no_optimization()
     {
         $this->create_app_api([], ['fakeLLM','session','clearMemory','returnMemory','enableMemory','memoryOptimization','fakeLLMOutput','userMessage']);
         $session = uniqid();
@@ -471,7 +474,7 @@ class ApiOpenAIChatTest extends TestCase
 
     
     // updateSystemMessage
-    public function x_test_system_update()
+    public function test_system_update()
     {
         $this->create_app_api([], ['updateSystemMessage','fakeLLM','session','clearMemory','returnMemory','enableMemory','memoryOptimization','fakeLLMOutput','userMessage']);
         $session = uniqid();
@@ -516,7 +519,7 @@ class ApiOpenAIChatTest extends TestCase
     }
 
         // Test model
-        public function x_test_model()
+        public function test_model()
         {
             $model = 'gpt-3.5-turbo';
             $this->create_app_api([], ['fakeLLM','model']);
@@ -535,7 +538,7 @@ class ApiOpenAIChatTest extends TestCase
             
     
         // using memory optimization truncate
-        public function x_test_using_memory_optimization_truncate()
+        public function test_using_memory_optimization_truncate()
         {
             $session = uniqid();
             $memoryMaxTokenPercentage = 30;
@@ -591,7 +594,7 @@ class ApiOpenAIChatTest extends TestCase
             $response->assertJsonPath('memory.3.content', 'My Fake response');
         }
 
-        public function x_test_return_debug()
+        public function test_return_debug()
         {
             $this->create_app_api([], ['returnMemory','messages','debug','session','model','enableMemory','systemMessage','userMessage', 'fakeLLM','fakeLLMOutput']);
             $response = $this->withHeaders([
@@ -665,12 +668,38 @@ class ApiOpenAIChatTest extends TestCase
         $response->assertJsonPath('memory.3.role', 'assistant');
         $response->assertJsonPath('memory.3.content', 'My Fake response');
     }
+    // openai
+    public function test_openai_api_stream()
+    {
+        $model = 'gpt-3.5-turbo';
+        $this->create_app_api([], ['stream','updateSystemMessage','fakeLLM','session','clearMemory','returnMemory','enableMemory','memoryPeriod','memoryMaxTokenPercentage', 'memoryOptimization','fakeLLMOutput','userMessage','model']);
+        ob_start();
+        
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $this->myApp->authToken,
+        ])
+        ->post('/api/v1/app/'.$this->myApp->id.'/' .$this->api->id.'/' . $this->api->name, [
+            'model' => $model,
+            'enableMemory' => 'disabled',
+            'returnMemory' => true,
+            'stream' => true,
+            'userMessage' => 'My name is Ice tea. What is my name?',
+        ]);
+        $response->assertStatus(200);
+        $response->assertSeeText('StreamedMessage');
+        $ob = ob_get_contents();
+        $this->assertTrue(strpos($ob, '"index":0,"delta":{"role":"assistant","content":""') !== false);
+        // dd($ob);
+        ob_end_flush();
+        ob_get_clean();
+    }
 
     // openai
-    public function x_test_openai_api()
+    public function test_openai_api()
     {
         $model = 'gpt-3.5-turbo';
         $this->create_app_api([], ['updateSystemMessage','fakeLLM','session','clearMemory','returnMemory','enableMemory','memoryPeriod','memoryMaxTokenPercentage', 'memoryOptimization','fakeLLMOutput','userMessage','model']);
+        
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->myApp->authToken,
         ])->post('/api/v1/app/'.$this->myApp->id.'/' .$this->api->id.'/' . $this->api->name, [
@@ -683,6 +712,22 @@ class ApiOpenAIChatTest extends TestCase
         $response->assertStatus(200);
         $response->assertSeeText('Ice tea');
     }
-    // stream
+
     // RAG
+    public function test_rag()
+    {
+        //api id = 7
+        //get api with endpoint = HRSupportAgent
+        $api = Api::where(['endpoint'=>'HRSupportAgent'])->first();
+        $app = DB::table('apps')->where(['id'=>1])->first();
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $app->authToken,
+        ])->post('/api/v1/app/'.$app->id.'/' .$api->id.'/' . $api->name, [
+            'userMessage' => 'How many vacation days I can carry over?',
+        ]);
+        $response->assertJsonPath('status', true);
+        $response->assertStatus(200);
+        $response->assertSeeText('25 days');
+    }
+    // stream
 }

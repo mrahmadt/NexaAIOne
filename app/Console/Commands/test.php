@@ -59,8 +59,79 @@ class test extends Command
         );
         return $response;
     }
-    
+    private function audio($audioLocalFile, $service, $response_format = 'json')
+    {
+        $openaiApiKey = config('openai.api_key');
+
+        $OpenAIAudioOptions['model'] = 'whisper-1';
+        $OpenAIAudioOptions['response_format'] = $response_format;
+        $OpenAIAudioOptions['file'] = fopen((string) $audioLocalFile, 'r');
+        $LLMclient = OpenAI::factory()->withApiKey($openaiApiKey)->make();
+        if($service == 'transcribe'){
+            $response = $LLMclient->audio()->transcribe($OpenAIAudioOptions);
+        }else{
+            $response = $LLMclient->audio()->translate($OpenAIAudioOptions);
+        }
+        return $response;
+    }
+
+    private function image($prompt, $service = 'create', $response_format = 'url')
+    {
+        $openaiApiKey = config('openai.api_key');
+        $OpenAIOptions['prompt'] = $prompt;
+        $OpenAIOptions['response_format'] = $response_format;
+        $LLMclient = OpenAI::factory()->withApiKey($openaiApiKey)->make();
+        
+        if($service == 'create'){
+            $response = $LLMclient->images()->create($OpenAIOptions);
+        }else{
+            $response = $LLMclient->images()->create($OpenAIOptions);
+        }
+        return $response;
+    }
+
+    private function getRandomImage($size='256x256', $response_format='url', $keyword = null)
+    {
+        $imageUrl = 'https://source.unsplash.com/random/' . $size . '/?' . $keyword;
+        $image = [
+            'url' => null,
+            'b64_json' => null,
+        ];
+
+        if($response_format == 'b64_json'){
+            $image['b64_json'] = file_get_contents($imageUrl);
+        }else{
+            $image['url'] = $imageUrl;
+        }
+        return $image;
+    }
+
+
     public function handle(){
+        $messages = [
+            ['role' => 'user', 'content' => 'Hello!'],
+        ];
+
+        $response = $this->llm($messages);
+        print_r(json_encode($response));
+        exit;
+        
+
+        $response = $this->image('A picture of a dog in airplane', 'create', 'b64_json');
+        print_r($response);
+        exit;
+        // $audioFile = public_path('examples/Example.ogg');
+
+        // $response = [];
+        // $response['text'] = $this->audio($audioFile, 'transcribe','text');
+        // $response['json'] = $this->audio($audioFile, 'transcribe','json');
+        // $response['verbose_json'] = $this->audio($audioFile, 'transcribe','verbose_json');
+        // $response['srt'] = $this->audio($audioFile, 'transcribe','srt');
+        // $response['vtt'] = $this->audio($audioFile, 'transcribe','vtt');
+
+        print_r($response);
+        exit;
+
         $messages = [
             ['role' => 'user', 'content' => 'Hello!'],
         ];

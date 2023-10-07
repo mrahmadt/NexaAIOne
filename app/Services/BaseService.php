@@ -105,7 +105,7 @@ abstract class BaseService{
             reset($sysOptions['model']['options']);
             $this->options['model'] = key($sysOptions['model']['options']);
         }
-        if (isset($sysOptions['model']['maxTokens'][$this->options['model']])) {
+        if (isset($this->options['model']) && isset($sysOptions['model']['maxTokens'][$this->options['model']])) {
             $this->options['_model_maxTokens'] = $sysOptions['model']['maxTokens'][$this->options['model']];
         } else {
             $this->options['_model_maxTokens'] = 4097;
@@ -194,5 +194,17 @@ abstract class BaseService{
         }
         return $serviceMeta;
     }
+
+    function getFileExtensionFromUrl($url, $default_extension = null) {
+        $parsed_url = parse_url($url);
+        $path = isset($parsed_url["path"]) ? $parsed_url["path"] : "";
+        $file_extension = pathinfo($path, PATHINFO_EXTENSION);
+        if ($file_extension) {
+            return $file_extension;
+        } else {
+            return $default_extension;
+        }
+    }
+    
 }
 

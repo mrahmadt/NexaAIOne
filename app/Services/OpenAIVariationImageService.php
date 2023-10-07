@@ -15,8 +15,8 @@ class OpenAIVariationImageService extends BaseService
 
     protected $features = [
         'cachingOptions',
-        'openAIEditImageOptions',
         'openAIVariationsImageOptions',
+        'openAIImageCommonOptions',
         'debugOptions'
     ];
 
@@ -46,10 +46,12 @@ class OpenAIVariationImageService extends BaseService
         try {
             $clearCache = false;
 
-            if ($this->httpRequest && $this->httpRequest->file('image')->isValid()) {
-                $this->options['image'] = $this->httpRequest->file->path() . '.' . $this->httpRequest->file('image')->getClientOriginalName();
+            if ($this->httpRequest &&  $this->httpRequest->hasFile('image') && $this->httpRequest->file('image')->isValid()) {
+                $newName = $this->httpRequest->file('image')->path() . '.' . $this->httpRequest->file('image')->getClientOriginalName();
+                rename($this->httpRequest->file('image')->path(), $newName);
+                $this->options['image'] = $newName;
             }elseif(isset($this->options['imageURL'])){
-                $tempFile = tempnam(sys_get_temp_dir(), 'imageFile_');
+                $tempFile = tempnam(sys_get_temp_dir(), 'imageFile_'). '.' . $this->getFileExtensionFromUrl($this->options['imageURL']);;
                 $response = Http::sink($tempFile)->get($this->options['imageURL']);
                 $response->throw();
                 $this->options['image'] = $tempFile;

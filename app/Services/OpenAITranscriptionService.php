@@ -46,15 +46,16 @@ class OpenAITranscriptionService extends BaseService
         try {
             $clearCache = false;
 
-            if ($this->httpRequest && $this->httpRequest->file('file')->isValid()) {
-                $this->options['file'] = $this->httpRequest->file->path() . '.' . $this->httpRequest->file('file')->getClientOriginalName();
+            if ($this->httpRequest && $this->httpRequest->hasFile('file') && $this->httpRequest->file('file')->isValid()) {
+                $newName = $this->httpRequest->file('file')->path() . '.' . $this->httpRequest->file('file')->getClientOriginalName();
+                rename($this->httpRequest->file('file')->path(), $newName);
+                $this->options['file'] = $newName;
             }elseif(isset($this->options['fileURL'])){
-                $tempFile = tempnam(sys_get_temp_dir(), 'audioFile_');
+                $tempFile = tempnam(sys_get_temp_dir(), 'audioFile_') . '.' . $this->getFileExtensionFromUrl($this->options['fileURL']);
                 $response = Http::sink($tempFile)->get($this->options['fileURL']);
                 $response->throw();
                 $this->options['file'] = $tempFile;
             }
-
             $this->__cacheInit([
                 'userMessage',
                 'openaiBaseUri',

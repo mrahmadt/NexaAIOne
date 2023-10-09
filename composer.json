@@ -13,6 +13,7 @@
         "filament/filament": "^3.0-stable",
         "guzzlehttp/guzzle": "^7.8",
         "invaders-xx/filament-jsoneditor": "^3.0",
+        "kdabrow/seeder-once": "^4.0",
         "laravel/framework": "^10.10",
         "laravel/horizon": "^5.21",
         "laravel/sanctum": "^3.2",

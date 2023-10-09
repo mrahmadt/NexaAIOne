@@ -5,8 +5,8 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-
-class LLMsTableSeeder extends Seeder
+use Kdabrow\SeederOnce\SeederOnce;
+class LLMsTableSeeder extends SeederOnce
 {
     /**
      * Run the database seeds.

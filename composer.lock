@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b984a7aeba151c4cb71610f617ffabb3",
+    "content-hash": "842fa2189e12732a266fadca1f509640",
     "packages": [
         {
             "name": "ankane/pgvector",
@@ -2178,6 +2178,66 @@
                 "source": "https://github.com/invaders-xx/filament-jsoneditor/tree/3.0"
             },
             "time": "2023-08-23T08:45:23+00:00"
+        },
+        {
+            "name": "kdabrow/seeder-once",
+            "version": "4.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/karoldabro/seeder-once.git",
+                "reference": "700d9e9d6ba32a10de12366f3ba5bed423667d06"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/karoldabro/seeder-once/zipball/700d9e9d6ba32a10de12366f3ba5bed423667d06",
+                "reference": "700d9e9d6ba32a10de12366f3ba5bed423667d06",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/console": "^10.0",
+                "illuminate/database": "^10.0",
+                "illuminate/support": "^10.0",
+                "php": ">=8.0.2"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^8.0"
+            },
+            "type": "package",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Kdabrow\\SeederOnce\\Providers\\SeederOnceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Kdabrow\\SeederOnce\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Karol Dąbrowski",
+                    "email": "20278897+karoldabro@users.noreply.github.com",
+                    "homepage": "https://kdabrow.com"
+                }
+            ],
+            "description": "Run your laravel seeders only once",
+            "keywords": [
+                "database",
+                "laravel",
+                "php",
+                "seeder"
+            ],
+            "support": {
+                "issues": "https://github.com/karoldabro/seeder-once/issues",
+                "source": "https://github.com/karoldabro/seeder-once/tree/4.0.0"
+            },
+            "time": "2023-04-10T16:01:34+00:00"
         },
         {
             "name": "kirschbaum-development/eloquent-power-joins",

@@ -5,8 +5,8 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-
-class ServiceTableSeeder extends Seeder
+use Kdabrow\SeederOnce\SeederOnce;
+class ServiceTableSeeder extends SeederOnce
 {
     /**
      * Run the database seeds.

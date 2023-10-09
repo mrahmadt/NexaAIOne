@@ -6,8 +6,8 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use App\Models\Api;
-
-class AppsTableSeeder extends Seeder
+use Kdabrow\SeederOnce\SeederOnce;
+class AppsTableSeeder extends SeederOnce
 {
     /**
      * Run the database seeds.

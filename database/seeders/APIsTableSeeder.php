@@ -7,8 +7,8 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use App\Models\Service;
 use Illuminate\Support\Str;
- 
-class APIsTableSeeder extends Seeder
+use Kdabrow\SeederOnce\SeederOnce;
+class APIsTableSeeder extends SeederOnce
 {
     /**
      * Run the database seeds.

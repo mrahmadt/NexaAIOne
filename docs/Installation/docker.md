@@ -40,7 +40,7 @@ Run the installation script to set up the necessary Docker containers:
 
 ## Step 4: Edit Configuration File
 
-Open the `.env` file using your preferred text editor and configure it according to your requirements. Make sure to follow the inline comments provided within the file for guidance on each setting.
+Open the `docker/NexaAIOne/.env` file using your preferred text editor and configure it according to your requirements. Make sure to follow the inline comments provided within the file for guidance on each setting.
 
 ## Step 5: Run Installation Script Again
 

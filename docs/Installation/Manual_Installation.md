@@ -83,4 +83,4 @@ You can now log in to the Admin portal by navigating to [https://localhost/admin
 
 ---
 
-Congratulations, you've successfully deployed NexaAIOne manually! If you encounter any issues, please refer to the official documentation or support channels.
+Congratulations, you've successfully deployed NexaAIOne manually! If you encounter any issues, feel free to open an ticket https://github.com/mrahmadt/NexaAIOne/issues

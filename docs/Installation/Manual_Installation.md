@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This guide provides step-by-step instructions on how to manually deploy NexaAIOne. Although this guide focuses on manual installation, we also offer a Docker container for faster and simpler deployment. The Docker method is recommended for most use cases.
+This guide provides step-by-step instructions on how to manually deploy NexaAIOne. Although this guide focuses on manual installation, we also offer a [Docker container](https://github.com/mrahmadt/NexaAIOne/blob/main/docs/Installation/docker.md) for faster and simpler deployment. [The Docker method is recommended for most use cases](https://github.com/mrahmadt/NexaAIOne/blob/main/docs/Installation/docker.md).
 
 ## Prerequisites
 

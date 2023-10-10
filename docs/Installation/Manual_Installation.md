@@ -18,25 +18,25 @@ Ensure the following software is installed:
 
 First, clone the NexaAIOne repository to your desired directory:
 
-\`\`\`bash
+```bash
 git clone https://github.com/mrahmadt/NexaAIOne.git
-\`\`\`
+```
 
 ## Step 2: Change Directory
 
 Navigate into the cloned directory:
 
-\`\`\`bash
+```bash
 cd NexaAIOne
-\`\`\`
+```
 
 ## Step 3: Create Configuration File
 
 Make a copy of the example configuration file:
 
-\`\`\`bash
+```bash
 cp .env.example .env
-\`\`\`
+```
 
 ## Step 4: Edit Configuration File
 
@@ -50,7 +50,7 @@ For additional settings and optimization, refer to the Laravel deployment docume
 
 Run the following commands to set up and optimize your Laravel application:
 
-\`\`\`bash
+```bash
 su www-data -s /bin/bash -c "composer install --optimize-autoloader --no-dev"
 su www-data -s /bin/bash -c "php artisan key:generate"
 su www-data -s /bin/bash -c "php artisan config:cache"
@@ -59,23 +59,23 @@ su www-data -s /bin/bash -c "php artisan view:cache"
 su www-data -s /bin/bash -c "php artisan storage:link"
 su www-data -s /bin/bash -c "php artisan optimize"
 su www-data -s /bin/bash -c "php artisan horizon:publish"
-\`\`\`
+```
 
 ## Step 7: Create Database and Seed Data
 
 Run the following command to create the database tables and seed them:
 
-\`\`\`bash
+```bash
 php artisan migrate --seed --force
-\`\`\`
+```
 
 ## Step 8: Create Admin User
 
 Create an admin user for the admin portal:
 
-\`\`\`bash
+```bash
 php artisan make:filament-user
-\`\`\`
+```
 
 ## Step 9: Access Admin Portal
 

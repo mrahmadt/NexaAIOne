@@ -68,7 +68,7 @@ Do you want to use AI services in your web/mobile application but overwhelmed by
 
 
 ## Installation
-Coming soon!
+[Manual_Installation Guide](https://github.com/mrahmadt/NexaAIOne/blob/main/docs/Installation/Manual_Installation.md)
 
 
 ## Getting Started

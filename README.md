@@ -66,9 +66,9 @@ Do you want to use AI services in your web/mobile application but overwhelmed by
 
 # Documentation & Getting Started:
 
-
 ## Installation
-[Manual_Installation Guide](https://github.com/mrahmadt/NexaAIOne/blob/main/docs/Installation/Manual_Installation.md)
+- [Docker Installation Guide](https://github.com/mrahmadt/NexaAIOne/blob/main/docs/Installation/docker.md)
+- [Manual Installation Guide](https://github.com/mrahmadt/NexaAIOne/blob/main/docs/Installation/Manual_Installation.md)
 
 
 ## Getting Started

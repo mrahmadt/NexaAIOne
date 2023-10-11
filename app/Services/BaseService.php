@@ -85,9 +85,9 @@ abstract class BaseService{
         foreach($this->ApiModel->options as $group => $options){
             foreach ($options as $index => $item) {
                 if(isset($item['isApiOption']) && $item['isApiOption']){
-                    $apiOptions[$item['name']] = $item['default'] ?? $defaultOptions[$item['name']]['default'];
+                    $apiOptions[$item['name']] = $item['default'] ?? $defaultOptions[$item['name']]['default'] ?? null;
                 }elseif(( !isset($item['isApiOption']) || $item['isApiOption'] == false )){
-                    $NotOptions[$item['name']] = $item['default'] ?? $defaultOptions[$item['name']]['default'];
+                    $NotOptions[$item['name']] = $item['default'] ?? $defaultOptions[$item['name']]['default'] ?? null;
                 }
                 $sysOptions[$item['name']] = $item;
             }

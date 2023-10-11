@@ -71,7 +71,7 @@
                             this.formLoading = true;
                             this.submitText = 'Loading...';
 
-                            fetch("http://localhost/api/v1/app/appId/apiId/name", {
+                            fetch("{{ route('api.execute', ['appId' => $app->id, 'apiId' => $api->id, 'name' => $api->endpoint]) }}", {
                                     method: "POST",
                                     cache: "no-cache",
                                     headers: {

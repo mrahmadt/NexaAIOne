@@ -1,4 +1,4 @@
-# Core Concept
+# Core Components
 
 If you're diving into NexaAIOne and want to get a grip on its main bits and pieces, you're at the right spot. We've broken down the main components below. It's pretty much everything you need to know to get started and make the most of the platform. Let's jump in.
 

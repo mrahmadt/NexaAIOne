@@ -72,7 +72,7 @@ Do you want to use AI services in your web/mobile application but overwhelmed by
 
 
 ## Getting Started
-Coming soon!
+- [Core Components](https://github.com/mrahmadt/NexaAIOne/blob/main/docs/Getting_Started/Core_Concept.md)
 
 
 ## Use Case Examples

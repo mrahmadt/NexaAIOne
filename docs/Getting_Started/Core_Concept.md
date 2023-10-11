@@ -22,12 +22,19 @@ As we delve into the essence of NexaAIOne, it's imperative to understand these p
     - Customize API behavior, defining parameters and return values.
     - Set permissions and access levels for each API.
 
+<img src="https://github.com/mrahmadt/NexaAIOne/blob/main/docs/Getting_Started/images/API.png" width="50%">
+<img src="https://github.com/mrahmadt/NexaAIOne/blob/main/docs/Getting_Started/images/Create_API.png" width="50%">
+
+
 ## 3. Prompts
 - **Definition**: Pre-defined queries or statements that can be used to interact with AI services.
 - **Functionality**:
     - Store commonly used or repetitive queries.
     - Categorize prompts for easier access and management.
     - It's your own library, use it to store and save your own prompts for NexaAIOne or any AI platform.
+
+<img src="https://github.com/mrahmadt/NexaAIOne/blob/main/docs/Getting_Started/images/prompts.png" width="50%">
+
 
 ## 4 Collections
 - **Definition**: Structured data storage units for text-based documents.
@@ -55,11 +62,20 @@ As we delve into the essence of NexaAIOne, it's imperative to understand these p
     - Manage collections, add new ones, or fetch data from existing collections.
     - Manipulate and search through documents in collections.
 
+<img src="https://github.com/mrahmadt/NexaAIOne/blob/main/docs/Getting_Started/images/collections.png" width="40%">
+<img src="https://github.com/mrahmadt/NexaAIOne/blob/main/docs/Getting_Started/images/Create_Collection.png" width="40%">
+<img src="https://github.com/mrahmadt/NexaAIOne/blob/main/docs/Getting_Started/images/Collection-API.png" width="40%">
+
+
+
 ## 5. Services
 - **Definition**: Pre-built AI functionalities provided by NexaAIOne.
 - **Functionality**:
     - Lists all the available AI services within the platform.
     - Allows activation, deactivation, and customization of each service.
+
+<img src="https://github.com/mrahmadt/NexaAIOne/blob/main/docs/Getting_Started/images/services.png" width="40%">
+
 
 ## 6. LLMs (Language Learning Models)
 - **Definition**: Core models required by the built-in AI services.
@@ -67,11 +83,17 @@ As we delve into the essence of NexaAIOne, it's imperative to understand these p
     - Provides information about each model's token capacity, owner, and other technical specifics.
     - Supports multiple versions and variants of models.
 
+<img src="https://github.com/mrahmadt/NexaAIOne/blob/main/docs/Getting_Started/images/llms.png" width="40%">
+
+
 ## 7. Loaders
 - **Definition**: Modules designed to load or download documents and extract text from specified URLs or files.
 - **Functionality**: 
     - Supports various file formats such as txt, csv, and xlsx.
     - Provides error handling for unsupported or inaccessible files.
+
+<img src="https://github.com/mrahmadt/NexaAIOne/blob/main/docs/Getting_Started/images/loaders.png" width="40%">
+
 
 ## 8. Splitters
 - **Definition**: Utility modules to break down large text into smaller chunks compatible with language models.
@@ -79,8 +101,13 @@ As we delve into the essence of NexaAIOne, it's imperative to understand these p
     - Supports various splitting strategies based on characters or tokens.
     - Ensures optimal token usage when interacting with AI models.
 
+<img src="https://github.com/mrahmadt/NexaAIOne/blob/main/docs/Getting_Started/images/splitters.png" width="40%">
+
+
 ## 9. Embedders
 - **Definition**: Tools to create vector representations of documents for semantic analyses.
 - **Functionality**:
     - Uses advanced algorithms to generate embeddings.
     - Supports semantic searches and content similarity checks.
+
+<img src="https://github.com/mrahmadt/NexaAIOne/blob/main/docs/Getting_Started/images/embedders.png" width="40%">

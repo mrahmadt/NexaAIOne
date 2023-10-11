@@ -13,7 +13,13 @@ As we delve into the essence of NexaAIOne, it's imperative to understand these p
 
     <img src="images/Apps.png"  width="200">
     
-    ![Alt text](images/Apps.png) ![Alt text](images/Create_API.png) ![Alt text](images/App_API.png)
+![Alt text](images/Create_API.png) 
+
+![Alt text](images/Apps.png) 
+    
+![Alt text](images/Create_API.png) 
+    
+![Alt text](images/App_API.png)
    
 ## 2. APIs
 - **Definition**: Interfaces that allow you to integrate AI services into your application.

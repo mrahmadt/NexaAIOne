@@ -11,11 +11,11 @@ As we delve into the essence of NexaAIOne, it's imperative to understand these p
     - Assign specific APIs to each app.
     - Manage app authentication tokens for secure access.
 
-![Alt text](images/Apps.png){width=50%}
+![Apps](images/Apps.png)
     
-![Alt text](images/Create_API.png) 
+![Create App](images/Create_App.png){width=250}
     
-![Alt text](images/App_API.png)
+![App API Auto Generated Documentation](images/App_API.png)
    
 ## 2. APIs
 - **Definition**: Interfaces that allow you to integrate AI services into your application.

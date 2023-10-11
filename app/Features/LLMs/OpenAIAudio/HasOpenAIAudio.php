@@ -74,7 +74,7 @@ trait HasOpenAIAudio
             "_group" => 'OpenAI',
         ],
         'fileURL' => [
-            "name" => "file",
+            "name" => "fileURL",
             "type" => "file url",
             "required" => true,
             "desc" => "The audio file URL in one of these formats: flac, mp3, mp4, mpeg, mpga, m4a, ogg, wav, or webm. (you can use this or file option)",

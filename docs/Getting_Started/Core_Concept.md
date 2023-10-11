@@ -12,14 +12,12 @@ As we delve into the essence of NexaAIOne, it's imperative to understand these p
     - Manage app authentication tokens for secure access.
 
 
-<img src="images/Apps.png" width="50%">
+<img src="https://github.com/mrahmadt/NexaAIOne/blob/main/docs/Getting_Started/images/Apps.png" width="50%">
 
+<img src="https://github.com/mrahmadt/NexaAIOne/blob/main/docs/Getting_Started/images/Create_App.png" width="50%">
 
-![Apps](images/Apps.png)
-    
-![Create App](images/Create_App.png){width=250}
-    
-![App API Auto Generated Documentation](images/App_API.png)
+<img src="https://github.com/mrahmadt/NexaAIOne/blob/main/docs/Getting_Started/images/App_API.png" width="50%">
+
    
 ## 2. APIs
 - **Definition**: Interfaces that allow you to integrate AI services into your application.

@@ -11,11 +11,7 @@ As we delve into the essence of NexaAIOne, it's imperative to understand these p
     - Assign specific APIs to each app.
     - Manage app authentication tokens for secure access.
 
-    <img src="images/Apps.png"  width="200">
-    
-![Alt text](images/Create_API.png) 
-
-![Alt text](images/Apps.png) 
+![Alt text](images/Apps.png){width=50%}
     
 ![Alt text](images/Create_API.png) 
     

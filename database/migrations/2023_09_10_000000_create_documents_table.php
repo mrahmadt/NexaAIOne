@@ -21,7 +21,7 @@ return new class extends Migration
             $table->unsignedBigInteger('content_tokens')->nullable();
             $table->unsignedBigInteger('collection_id');
             $table->timestamps();
-            $table->foreign('collection_id')->references('id')->on('collections');
+            $table->foreign('collection_id')->references('id')->on('collections')->onDelete('cascade')->onUpdate('cascade')->onDelete('cascade');
         });
 
         // https://github.com/pgvector/pgvector#query-options

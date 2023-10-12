@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('debugs', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('api_id');
-            $table->foreign('api_id')->references('id')->on('apis');
+            $table->foreign('api_id')->references('id')->on('apis')->onDelete('cascade');
             $table->string('session')->default('global');
             $table->json('input')->nullable();
             $table->json('output')->nullable();

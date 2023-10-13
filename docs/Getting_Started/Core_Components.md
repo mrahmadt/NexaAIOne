@@ -4,6 +4,10 @@ If you're diving into NexaAIOne and want to get a grip on its main bits and piec
 
 As we delve into the essence of NexaAIOne, it's imperative to understand these pillars that uphold its robust structure. From managing applications to handling vast datasets.
 
+
+<img src="https://github.com/mrahmadt/NexaAIOne/blob/main/docs/images/HL-Design.png?raw=true">
+
+
 ## 1. Apps
 - **Definition**: Apps are individual interfaces or endpoints that can be utilized to access the various AI services provided by NexaAIOne.
 - **Functionality**: 

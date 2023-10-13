@@ -1,6 +1,6 @@
 # 🧞‍♂️ **NexaAIOne**
 
-Welcome to **NexaAIOne**, the open-source RESTful API management platform for Artificial intelligence (AI). Designed for every developer. **NexaAIOne** platform offers a centralized AI API management that brings advanced features and customizability right to your fingertips.
+Welcome to **NexaAIOne**, a centralized RESTful API hub for Artificial intelligence (AI). Designed for every developer. **NexaAIOne** platform brings advanced features and customizability right to your fingertips.
 
 - [Why Choose **NexaAIOne**?](https://github.com/mrahmadt/NexaAIOne#why-choose-nexaaione)
 - [Why you should use **NexaAIOne**](https://github.com/mrahmadt/NexaAIOne#why-you-should-use-nexaaione)

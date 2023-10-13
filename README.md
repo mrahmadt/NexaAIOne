@@ -35,6 +35,7 @@ Do you want to use AI services in your web/mobile application but overwhelmed by
 - **Swift Deployment**: Enjoy compatibility across Linux, Windows, Mac OS, or deploy as a container.
 - **Versatile Deployment**: Opt for on-premises, cloud-based, or any deployment method you choose.
 
+<img src="https://github.com/mrahmadt/NexaAIOne/blob/main/docs/images/HL-Design.png?raw=true">
 
 # Features:
 - **RESTful API** All AI services are configured to be consumed as RESTful API, this way you can use them in any application you want.
@@ -49,7 +50,6 @@ Do you want to use AI services in your web/mobile application but overwhelmed by
 - **Custom APIs**: Design bespoke APIs tailored to each AI service.
 - **Auto-API-Documentation**: Seamlessly generates comprehensive documentation for all APIs, ensuring clarity and ease of use for developers at every skill level.
 
-<img src="https://github.com/mrahmadt/NexaAIOne/blob/main/docs/images/HL-Design.png?raw=true">
 
 # Supported AI Services
 - OpenAI ChatCompletion: Creates a model response for the given chat conversation.

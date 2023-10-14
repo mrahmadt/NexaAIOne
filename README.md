@@ -13,19 +13,19 @@ Welcome to **NexaAIOne**, a centralized RESTful API hub for Artificial intellige
 In simple terms, NexaAIOne is a wrapper for OpenAI API that adds multiple essential capabilities, such as Memory, Caching, Document Q&A, and more.
 
 
-**Basic** example for using NexaAIOne via API from your application:
+<u>>**Basic**</u> example for using NexaAIOne via API from your application:
 ```bash
 curl https://localhost/api/v1/app/1/1/chatgpt \
     -H "Content-Type: application/json" \
     -H "Authorization: Bearer $AUTH_TOKEN" \
     -d '{
-    "cachingPeriod": 60, //cache AI answer for 60 minutes
-    "session": "user-1397", //Define unique session ID for every user to have different memory & cache management 
-    "fakeLLM": 0, //If you would like to use fakeLLM (during development & testing), or you want this request to be routed to OpenAI
-    "enableMemory": "shortMemory", //Do you want to enable conversation tracking? Turning this on will retain a record of past conversations.
-    "memoryOptimization": "summarization", // Which memory management method you want to use (noOptimization, truncate, or summarization)
-    "collection_id": 33, //Use documents from collection id 33 to answer user question
-    "userMessage": "How can I subscripe to your service?" //send user question to NexaAIOne
+    "cachingPeriod": 60, --> cache AI answer for 60 minutes
+    "session": "user-1397", --> Define unique session ID for every user to have different memory & cache management 
+    "fakeLLM": 0, --> If you would like to use fakeLLM (during development & testing), or you want this request to be routed to OpenAI
+    "enableMemory": "shortMemory", --> Do you want to enable conversation tracking? Turning this on will retain a record of past conversations.
+    "memoryOptimization": "summarization", --> Which memory management method you want to use (noOptimization, truncate, or summarization)
+    "collection_id": 33, --> Use documents from collection id 33 to answer user question
+    "userMessage": "How can I subscribe to your service?" --> send user question to NexaAIOne
 }'
 ```
 

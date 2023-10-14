@@ -37,16 +37,14 @@ curl https://localhost/api/v1/app/1/1/chatgpt \
 - **RESTful API** All AI services are configured to be consumed as RESTful API, this way you can use them in any application you want.
 - **Memory Management**: Enhance your LLM requests with contextual memory, leveraging strategies from truncating old messages to embedding and summarizing conversations.
 - **Collections (Retrieval-augmented generation (RAG))**: create your own AI chat that answers from your own enterprise documents.
-- **Track Usage**: Gain insights into API requests, token usage per application, and more.
 - **Caching Management**: Improve response times and conserve tokens with efficient caching mechanisms.
 - **Ready AI Services**: Engage with AI for chats, audio, images, document chat.
 - **Developing & Testing**: Efficiently debug AI requests, use the "Fake LLM" AI interface, and ensure no wastage of AI tokens.
 - **Troubleshooting & Debugging**: Monitor and inspect all your API requests for a smoother troubleshooting experience.
-- **Application Authentication Management**: Secure your applications with robust authentication processes.
 - **Custom APIs**: Design bespoke APIs tailored to each AI service.
 - **Auto-API-Documentation**: Seamlessly generates comprehensive documentation for all APIs, ensuring clarity and ease of use for developers at every skill level.
 - **Transparent Costs**: Crafted to minimize AI token expenses without hidden prompts or costs.
-- **Swift Deployment**: Enjoy compatibility across Linux, Windows, Mac OS, or deploy as a container.
+- **Track Usage**: Gain insights into API requests, token usage per application, and more.
 
 
 # Supported AI Services

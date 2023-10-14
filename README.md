@@ -10,10 +10,10 @@ Welcome to **NexaAIOne**, a centralized RESTful API hub for Artificial intellige
 
 
 # What is **NexaAIOne**?
-In simple terms, NexaAIOne is a wrapper for OpenAI API (for now) and adds multiple capabilities, such as Memory, Caching, Document Q&A, and more.
+In simple terms, NexaAIOne is a wrapper for OpenAI API that adds multiple essential capabilities, such as Memory, Caching, Document Q&A, and more.
 
 
-Example for using NexaAIOne via API from your application:
+**Basic** example for using NexaAIOne via API from your application:
 ```bash
 curl https://localhost/api/v1/app/1/1/chatgpt \
     -H "Content-Type: application/json" \

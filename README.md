@@ -6,10 +6,7 @@ Welcome to **NexaAIOne**, a centralized RESTful API hub for Artificial intellige
 - [Why you should use **NexaAIOne**](https://github.com/mrahmadt/NexaAIOne#why-you-should-use-nexaaione)
 - [Features](https://github.com/mrahmadt/NexaAIOne#features)
 - [Supported AI Services](https://github.com/mrahmadt/NexaAIOne#supported-ai-services)
-- [Documentation & Getting Started](https://github.com/mrahmadt/NexaAIOne#documentation--getting-started)
-- [Installation](https://github.com/mrahmadt/NexaAIOne#installation) 
-- [Getting Started](https://github.com/mrahmadt/NexaAIOne#getting-started) 
-- [Use Case Examples](https://github.com/mrahmadt/NexaAIOne#use-case-examples) 
+- [Installation & Getting Started](https://github.com/mrahmadt/NexaAIOne#documentation--getting-started)
 
 
 # What is **NexaAIOne**?

@@ -70,8 +70,7 @@ class CollectionResource extends Resource
             Forms\Components\Textarea::make('context_prompt')
             ->default("Answer the following Question based on the Context only. Only answer from the Context. When you want to refer to the context provided, call it 'HR Policy' not just 'context'. Try to provide a reference to the HR Policy number. If you don't know the answer mention that you couldn't find the answer in the HR Policy\nCONTEXT: {{context}}\n\nQuestion:{{userMessage}}")
                 ->rows(4)
-                ->required()
-                ->maxLength(255),
+                ->required(),
             Forms\Components\Select::make('defaultTotalReturnDocuments')
             ->options([
                 1 => 'One',

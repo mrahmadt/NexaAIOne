@@ -13,7 +13,7 @@ Welcome to **NexaAIOne**, a centralized RESTful API hub for Artificial intellige
 In simple terms, NexaAIOne is a wrapper for OpenAI API that adds multiple essential capabilities, such as Memory, Caching, Document Q&A, and more.
 
 
-<u>**Basic**</u> example for using NexaAIOne via API from your application (check [documentation](https://github.com/mrahmadt/NexaAIOne#documentation--getting-started) for more):
+**Basic** example for using NexaAIOne via API from your application (check [documentation](https://github.com/mrahmadt/NexaAIOne#documentation--getting-started) for more):
 ```bash
 curl https://localhost/api/v1/app/1/1/chatgpt \
     -H "Content-Type: application/json" \
@@ -29,7 +29,7 @@ curl https://localhost/api/v1/app/1/1/chatgpt \
 }'
 ```
 
-High Level Design of NexaAIOne
+### High Level Design of NexaAIOne
 
 <img src="https://github.com/mrahmadt/NexaAIOne/blob/main/docs/images/HL-Design.png?raw=true">
 

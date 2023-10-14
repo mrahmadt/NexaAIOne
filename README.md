@@ -84,8 +84,7 @@ High Level Design of NexaAIOne
 
 ## Getting Started
 - [Core Components](https://github.com/mrahmadt/NexaAIOne/blob/main/docs/Getting_Started/Core_Components.md)
-
-**Youtube: Harnessing the Power of AI with NexaAIOne**
+- [Youtube: Harnessing the Power of AI with NexaAIOne](https://www.youtube.com/watch?v=tzAxDwR12V4)
 [![Youtube: Harnessing the Power of AI with NexaAIOne](http://img.youtube.com/vi/tzAxDwR12V4/0.jpg)](https://www.youtube.com/watch?v=tzAxDwR12V4 "Youtube: Harnessing the Power of AI with NexaAIOne")
 
 

@@ -2,7 +2,7 @@
 
 Welcome to **NexaAIOne**, a centralized RESTful API hub for Artificial intelligence (AI). Designed for every developer. **NexaAIOne** platform brings advanced features and customizability right to your fingertips.
 
-- [Why Choose **NexaAIOne**?](https://github.com/mrahmadt/NexaAIOne#why-choose-nexaaione)
+- [What is **NexaAIOne**?](https://github.com/mrahmadt/NexaAIOne#what-is-nexaaione)
 - [Why you should use **NexaAIOne**](https://github.com/mrahmadt/NexaAIOne#why-you-should-use-nexaaione)
 - [Features](https://github.com/mrahmadt/NexaAIOne#features)
 - [Supported AI Services](https://github.com/mrahmadt/NexaAIOne#supported-ai-services)
@@ -12,15 +12,29 @@ Welcome to **NexaAIOne**, a centralized RESTful API hub for Artificial intellige
 - [Use Case Examples](https://github.com/mrahmadt/NexaAIOne#use-case-examples) 
 
 
-# Why Choose **NexaAIOne**?
-Do you want to use AI services in your web/mobile application but overwhelmed by the plethora of AI services and libraries out there?
-- Too many new technologies and terminologies and no time to learn all of it?
-- Too many choices for simple task (just google “vector databases” and you will get lost with many options)
-- You want to continue coding with your existing programming language but many AI libraries designed for different programming languages?
-- You feel many AI libraries are good for research but not ready for production use?
-- You want one platform to control AI service usage across many applications in your company?
+# What is **NexaAIOne**?
+In simple terms, NexaAIOne is a wrapper for OpenAI API (for now) and adds multiple capabilities, such as Memory, Caching, Document Q&A, and more.
 
-**NexaAIOne** is designed to cut through the noise and give you a singular platform for most common AI use cases.
+
+Example for using NexaAIOne via API from your application:
+```bash
+curl https://localhost/api/v1/app/1/1/chatgpt \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer $AUTH_TOKEN" \
+    -d '{
+    "cachingPeriod": 60, //cache AI answer for 60 minutes
+    "session": "user-1397", //Define unique session ID for every user to have different memory & cache management 
+    "fakeLLM": 0, //If you would like to use fakeLLM (during development & testing), or you want this request to be routed to OpenAI
+    "enableMemory": "shortMemory", //Do you want to enable conversation tracking? Turning this on will retain a record of past conversations.
+    "memoryOptimization": "summarization", // Which memory management method you want to use (noOptimization, truncate, or summarization)
+    "collection_id": 33, //Use documents from collection id 33 to answer user question
+    "userMessage": "How can I subscripe to your service?" //send user question to NexaAIOne
+}'
+```
+
+High Level Design of NexaAIOne
+
+<img src="https://github.com/mrahmadt/NexaAIOne/blob/main/docs/images/HL-Design.png?raw=true">
 
 
 # Why you should use **NexaAIOne**:
@@ -35,7 +49,6 @@ Do you want to use AI services in your web/mobile application but overwhelmed by
 - **Swift Deployment**: Enjoy compatibility across Linux, Windows, Mac OS, or deploy as a container.
 - **Versatile Deployment**: Opt for on-premises, cloud-based, or any deployment method you choose.
 
-<img src="https://github.com/mrahmadt/NexaAIOne/blob/main/docs/images/HL-Design.png?raw=true">
 
 # Features:
 - **RESTful API** All AI services are configured to be consumed as RESTful API, this way you can use them in any application you want.
@@ -78,24 +91,6 @@ Do you want to use AI services in your web/mobile application but overwhelmed by
 **Youtube: Harnessing the Power of AI with NexaAIOne**
 [![Youtube: Harnessing the Power of AI with NexaAIOne](http://img.youtube.com/vi/tzAxDwR12V4/0.jpg)](https://www.youtube.com/watch?v=tzAxDwR12V4 "Youtube: Harnessing the Power of AI with NexaAIOne")
 
-
-## Use Case Examples
-
-### Customer Support Chatbot
-**Summary**: Implement a chatbot that can assist in customer queries, using your own Support knowledge base.
-**Benefits**: 24/7 support, reduced human error, and faster response times.
-### Human Resources (HR) Support Chatbot
-**Summary**: Implement a chatbot that can assist in employee queries, using your own Support knowledge base.
-**Benefits**: 24/7 support, reduced human error, and faster response times.
-### Multi-Lingual Content Management
-**Summary**: Use OpenAI Text and Auto Translation to offer your content in multiple languages.
-**Benefits**: Reach a broader audience without the complexity of managing multiple translations.
-### Content Summarization for News Platforms
-**Summary**: Use OpenAI Text Summarizer to offer concise versions of long articles.
-**Benefits**: Higher reader engagement and improved user experience.
-### Content Classification for Digital Libraries
-**Summary**: Use OpenAI Classification to categorize digital assets in a library.
-**Benefits**: Improved searchability and content discovery.
 
 
 Feel free to contribute, suggest features, or join us on this journey to making AI accessible and efficient for all developers.
